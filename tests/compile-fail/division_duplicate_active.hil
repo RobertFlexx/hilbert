@@ -1,0 +1,15 @@
+MODULE DivisionDuplicateActive;
+
+DIVISION first WHEN HOSTED;
+PROCEDURE Same;
+BEGIN
+END Same;
+END first;
+
+DIVISION second WHEN TARGET("linux");
+PROCEDURE Same;
+BEGIN
+END Same;
+END second;
+
+END DivisionDuplicateActive.

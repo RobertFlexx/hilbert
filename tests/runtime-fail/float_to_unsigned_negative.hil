@@ -1,0 +1,4 @@
+MODULE FloatToUnsignedNegative;
+VAR Value: CARDINAL32;
+BEGIN Value := CARDINAL32(-1.0)
+END FloatToUnsignedNegative.

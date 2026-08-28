@@ -1,0 +1,10 @@
+MODULE Types;
+TYPE
+    UserId = DISTINCT CARDINAL64;
+    Port = CARDINAL RANGE 0 .. 65535;
+    Entity = RECORD X, Y: REAL64; END;
+    Player = RECORD(Entity) Health: INTEGER; END;
+VAR P: Player;
+BEGIN
+    P.Health := 100;
+END Types.

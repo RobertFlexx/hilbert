@@ -1,0 +1,8 @@
+MODULE Collections;
+EXPORT Vector;
+TYPE Vector[T] = RECORD
+    Data: POINTER TO T;
+    Length: SIZE;
+    Capacity: SIZE;
+END;
+END Collections.

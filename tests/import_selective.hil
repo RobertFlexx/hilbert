@@ -1,0 +1,14 @@
+MODULE ImportSelective;
+FROM ImportSurfaceDep IMPORT Number, Counter, Answer, Huge, Add, Ready;
+
+VAR Value: Number;
+
+BEGIN
+    ASSERT Counter = 5;
+    ASSERT INTEGER(Ready) = 0;
+    ASSERT CARDINAL64(Huge) = 18446744073709551615;
+    Value := Add(Counter, Number(Answer));
+    ASSERT Value = 47;
+    Counter := Value;
+    ASSERT Counter = 47
+END ImportSelective.

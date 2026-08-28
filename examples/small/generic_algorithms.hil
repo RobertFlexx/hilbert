@@ -1,0 +1,19 @@
+MODULE GenericAlgorithmsExample;
+IMPORT Algorithms, IO;
+
+TYPE Pair = RECORD Left, Right: INTEGER; END;
+VAR A, B: INTEGER;
+    First, Second: Pair;
+
+BEGIN
+    ASSERT Algorithms.Min[INTEGER](9, 4) = 4;
+    ASSERT Algorithms.Max[REAL64](2.5, 7.5) = 7.5;
+    ASSERT Algorithms.Clamp[CARDINAL32](90, 10, 50) = 50;
+    A := 12; B := 30;
+    Algorithms.Swap[INTEGER](A, B);
+    ASSERT (A = 30) AND (B = 12);
+    First.Left := 20; First.Right := 22;
+    Algorithms.Swap[Pair](First, Second);
+    ASSERT Second.Left + Second.Right = 42;
+    IO.WriteLn("generic algorithms passed")
+END GenericAlgorithmsExample.

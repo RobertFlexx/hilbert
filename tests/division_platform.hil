@@ -1,0 +1,8 @@
+MODULE DivisionPlatform;
+
+IMPORT Platform;
+
+BEGIN
+  ASSERT(Platform.IsHosted);
+  ASSERT(Platform.PointerBits = 64)
+END DivisionPlatform.

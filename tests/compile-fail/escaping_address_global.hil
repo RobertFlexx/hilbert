@@ -1,0 +1,12 @@
+MODULE EscapingAddressGlobal;
+
+VAR Saved: ADDRESS;
+
+PROCEDURE Bad;
+VAR X: INTEGER;
+BEGIN
+    Saved := ADR(X)
+END Bad;
+
+BEGIN
+END EscapingAddressGlobal.

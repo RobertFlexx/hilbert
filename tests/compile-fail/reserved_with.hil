@@ -1,0 +1,5 @@
+MODULE ReservedWith;
+VAR X: INTEGER;
+BEGIN
+    WITH X DO X := 1 END
+END ReservedWith.

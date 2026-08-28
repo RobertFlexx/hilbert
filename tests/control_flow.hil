@@ -1,0 +1,50 @@
+MODULE ControlFlow;
+
+VAR Trace, Sum: INTEGER;
+    Values: ARRAY 4 OF INTEGER;
+
+PROCEDURE Mark(N: INTEGER);
+BEGIN Trace := Trace * 10 + N END Mark;
+
+PROCEDURE Deferred(): INTEGER;
+BEGIN
+    DEFER Mark(3);
+    Mark(1);
+    BEGIN
+        DEFER Mark(2);
+        RETURN 7
+    END
+END Deferred;
+
+PROCEDURE Positive(N: INTEGER): INTEGER;
+PRE N > 0;
+BEGIN RETURN N END Positive;
+
+BEGIN
+    Trace := 0;
+    ASSERT Deferred() = 7;
+    ASSERT Trace = 123;
+
+    Values[0] := 1; Values[1] := 2; Values[2] := 3; Values[3] := 4;
+    Sum := 0;
+    FOR Value IN Values DO Sum := Sum + Value END;
+    ASSERT Sum = 10;
+
+    Sum := 0;
+    WHILE Sum < 3 DO Sum := Sum + 1 END;
+    ASSERT Sum = 3;
+    REPEAT Sum := Sum - 1 UNTIL Sum = 0;
+    ASSERT Sum = 0;
+    LOOP Sum := Sum + 1; IF Sum = 4 THEN EXIT END END;
+    ASSERT Sum = 4;
+
+    CASE Sum OF
+    0, 1: ASSERT FALSE
+    | 4, 5: ASSERT TRUE
+    ELSE ASSERT FALSE
+    END;
+    IF Positive(2) = 1 THEN ASSERT FALSE
+    ELSIF Positive(2) = 2 THEN ASSERT TRUE
+    ELSE ASSERT FALSE
+    END
+END ControlFlow.

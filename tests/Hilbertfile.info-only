@@ -1,0 +1,10 @@
+PROJECT InfoOnly;
+IDENTIFICATION
+  NAME "info-only"
+  VERSION "1.0.0"
+  DESCRIPTION "metadata command regression"
+  LICENSE "MIT"
+END
+ROOT "tests/definitely-not-a-source-file.hil";
+OUTPUT "build/info-only";
+END InfoOnly.

@@ -1,0 +1,6 @@
+MODULE DivisionByZero;
+VAR Divisor, Value: INTEGER;
+BEGIN
+    Divisor := 0;
+    Value := 1 DIV Divisor
+END DivisionByZero.

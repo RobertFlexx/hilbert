@@ -1,0 +1,33 @@
+MODULE PCRE2Match;
+IMPORT IO, PCRE2;
+
+VAR Pattern, Subject: CSTRING;
+    Code: PCRE2.Code;
+    Matches: PCRE2.MatchData;
+    ErrorCode, Result: INTEGER32;
+    ErrorOffset: SIZE;
+
+BEGIN
+    Pattern := "^[a-z]+[0-9]+$";
+    Subject := "hilbert4";
+    UNSAFE BEGIN
+        Code := PCRE2.pcre2_compile_8(
+            ADR(Pattern[0]), PCRE2.PCRE2_ZERO_TERMINATED, 0,
+            ADR(ErrorCode), ADR(ErrorOffset), NIL)
+    END;
+    IF Code = NIL THEN
+        IO.Write("pattern error at byte "); IO.WriteCard(CARDINAL(ErrorOffset)); IO.NewLine
+    ELSE
+        DEFER PCRE2.pcre2_code_free_8(Code);
+        Matches := PCRE2.pcre2_match_data_create_from_pattern_8(Code, NIL);
+        IF Matches # NIL THEN
+            DEFER PCRE2.pcre2_match_data_free_8(Matches);
+            UNSAFE BEGIN
+                Result := PCRE2.pcre2_match_8(
+                    Code, ADR(Subject[0]), 8, 0, 0, Matches, NIL)
+            END;
+            IO.Write("regular expression matched: ");
+            IO.WriteBool(Result >= 0); IO.NewLine
+        END
+    END
+END PCRE2Match.

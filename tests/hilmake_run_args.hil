@@ -1,0 +1,8 @@
+MODULE HilmakeRunArgs;
+IMPORT Arguments, CStrings;
+
+BEGIN
+    ASSERT Arguments.Count() = 3;
+    ASSERT CStrings.Equal(Arguments.Get(1), "space arg");
+    ASSERT CStrings.Equal(Arguments.Get(2), "apostrophe's")
+END HilmakeRunArgs.

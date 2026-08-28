@@ -1,0 +1,59 @@
+MODULE VariantRecords;
+
+TYPE
+    ValueKind = (IntValue, RealValue, TextValue, PairValue);
+    GenericKind = (NoValue, HasValue);
+    Pair = RECORD Left, Right: INTEGER; END;
+    Value = RECORD
+        Marker: CARDINAL8;
+        CASE Kind: ValueKind OF
+            IntValue:
+                I: INTEGER;
+        | RealValue:
+                R: REAL64;
+        | TextValue:
+                S: CSTRING;
+        | PairValue:
+                P: Pair;
+        END
+    END;
+    GenericValue[T] = RECORD
+        CASE Kind: GenericKind OF
+            NoValue:
+                Empty: CARDINAL8;
+        | HasValue:
+                Data: T;
+        END
+    END;
+
+VAR V: Value;
+    GI: GenericValue[INTEGER];
+    GB: GenericValue[CARDINAL8];
+
+BEGIN
+    ASSERT SIZEOF(Value) = 24;
+    ASSERT ALIGNOF(Value) = 8;
+    ASSERT SIZEOF(GenericValue[INTEGER]) = 16;
+    ASSERT SIZEOF(GenericValue[CARDINAL8]) = 8;
+    V.Marker := 7;
+    V.Kind := IntValue;
+    V.I := 42;
+    ASSERT V.I = 42;
+    ASSERT V.Marker = 7;
+    V.Kind := RealValue;
+    V.R := 3.5;
+    ASSERT V.R = 3.5;
+    V.Kind := TextValue;
+    V.S := "hilbert";
+    ASSERT V.S # NIL;
+    V.Kind := PairValue;
+    V.P.Left := 11;
+    V.P.Right := 31;
+    ASSERT V.P.Left + V.P.Right = 42;
+    GI.Kind := HasValue;
+    GI.Data := 42;
+    ASSERT GI.Data = 42;
+    GB.Kind := HasValue;
+    GB.Data := 9;
+    ASSERT GB.Data = 9
+END VariantRecords.

@@ -1,0 +1,30 @@
+MODULE SQLiteMemory;
+IMPORT IO, SQLite3;
+
+VAR Database: SQLite3.Database;
+    Statement: SQLite3.Statement;
+    Code: INTEGER32;
+
+BEGIN
+    Database := NIL; Statement := NIL;
+    UNSAFE BEGIN
+        Code := SQLite3.sqlite3_open(":memory:", ADR(Database))
+    END;
+    IF Code # SQLite3.SQLITE_OK THEN
+        IO.Write("sqlite open failed: "); IO.WriteLn(SQLite3.sqlite3_errmsg(Database))
+    ELSE
+        DEFER SQLite3.sqlite3_close(Database);
+        UNSAFE BEGIN
+            Code := SQLite3.sqlite3_prepare_v2(
+                Database, "SELECT 6 * 7", -1, ADR(Statement), NIL)
+        END;
+        IF Code = SQLite3.SQLITE_OK THEN
+            DEFER SQLite3.sqlite3_finalize(Statement);
+            IF SQLite3.sqlite3_step(Statement) = SQLite3.SQLITE_ROW THEN
+                IO.Write("sqlite says 6 * 7 = ");
+                IO.WriteInt(INTEGER(SQLite3.sqlite3_column_int(Statement, 0)));
+                IO.NewLine
+            END
+        END
+    END
+END SQLiteMemory.

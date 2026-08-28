@@ -1,0 +1,3 @@
+MODULE DuplicateRecordField;
+TYPE Bad = RECORD Value: INTEGER; Value: INTEGER; END;
+END DuplicateRecordField.

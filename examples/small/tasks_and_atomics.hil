@@ -1,0 +1,29 @@
+MODULE TasksAndAtomics;
+IMPORT IO, Atomics;
+
+VAR Count: Atomics.Counter64;
+    Handle: ADDRESS;
+
+TASK Worker;
+BEGIN
+    Count.FetchAdd(1)
+END Worker;
+
+PROCEDURE AnotherWorker;
+BEGIN
+    Count.FetchAdd(1)
+END AnotherWorker;
+
+BEGIN
+    Count.Store(0);
+    Handle := START Worker;
+    AWAIT Handle;
+    PARALLEL BEGIN
+        Worker()
+    AND
+        AnotherWorker()
+    END;
+    IO.Write("completed workers: ");
+    IO.WriteCard(CARDINAL(Count.Load())); IO.NewLine;
+    ASSERT Count.Load() = 3
+END TasksAndAtomics.

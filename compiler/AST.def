@@ -1,0 +1,35 @@
+DEFINITION MODULE AST;
+
+FROM HStrings IMPORT Text;
+
+CONST MaxNodes = 200000;
+TYPE NodeId = CARDINAL;
+TYPE NodeKind = (
+    NNone, NModule, NDivision, NImport, NExport, NConst, NType, NSubtype, NVar, NParam,
+    NProcedure, NTask, NProtected, NForeign, NForeignLibrary, NException,
+    NRecordType, NArrayType, NSliceType, NSetType, NPointerType, NRefType, NRangeType, NNamedType, NResolvedType, NGenericType,
+    NEnumType, NVariantType, NVariantArm, NProcedureType, NProtectedType, NField, NGenericParam, NReceiver,
+    NBlock, NAssign, NCall, NReturn, NIf, NWhile, NRepeat, NFor, NForIn, NLoop, NExit, NCase, NWith,
+    NAssert, NRaise, NExcept, NUnsafe, NDefer, NParallel, NStart, NAwait,
+    NName, NInteger, NReal, NString, NChar, NBoolean, NNil, NSetLiteral,
+    NUnary, NBinary, NSelect, NIndex, NDeref, NAddressOf, NSizeOf, NAlignOf, NNew, NCast,
+    NPre, NPost, NInvariant
+);
+TYPE Node = RECORD
+    Kind: NodeKind;
+    A, B, C, D, Next: NodeId;
+    Text: Text;
+    Line, Column: CARDINAL;
+    IntValue: LONGINT;
+    Flags: BITSET;
+END;
+
+PROCEDURE Init;
+PROCEDURE New(K: NodeKind; Line, Column: CARDINAL): NodeId;
+PROCEDURE Get(Id: NodeId): Node;
+PROCEDURE Put(Id: NodeId; N: Node);
+PROCEDURE Count(): CARDINAL;
+PROCEDURE Append(VAR Head, Tail: NodeId; Item: NodeId);
+PROCEDURE Dump(Root: NodeId);
+
+END AST.

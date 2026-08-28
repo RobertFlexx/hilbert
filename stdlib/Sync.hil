@@ -1,0 +1,18 @@
+MODULE Sync;
+EXPORT Mutex, Lock, Unlock;
+
+TYPE Mutex = RECORD
+    State: ATOMIC[CARDINAL32];
+END;
+
+PROCEDURE Lock(VAR M: Mutex);
+BEGIN
+    WHILE NOT M.State.CompareExchange(0, 1) DO END
+END Lock;
+
+PROCEDURE Unlock(VAR M: Mutex);
+BEGIN
+    M.State.Store(0)
+END Unlock;
+
+END Sync.

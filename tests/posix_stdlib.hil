@@ -1,0 +1,89 @@
+MODULE PosixStdlib;
+IMPORT BufferedIO, CStrings, Convert, Directory, FileInfo, Files, Glob, Path,
+       Process, Terminal, TextFile;
+
+VAR
+    Dir: Directory.Directory;
+    Item: Directory.Entry;
+    Status: INTEGER32;
+    FoundModule, EmptyDirectory: BOOLEAN;
+    Metadata, LinkMetadata: FileInfo.Info;
+    Built: Path.Builder;
+    Output: BufferedIO.Writer;
+    NullFile: Files.Handle;
+    Command: ARRAY 3 OF CSTRING;
+    ParsedInteger: INTEGER32;
+    ParsedCardinal: CARDINAL64;
+    TextInput: TextFile.Reader;
+    Line: CSTRING;
+
+BEGIN
+    Dir := Directory.Open("stdlib");
+    ASSERT Directory.Valid(Dir);
+    ASSERT Directory.Descriptor(Dir) >= 0;
+    FoundModule := FALSE;
+    Status := Directory.Next(Dir, Item);
+    WHILE Status = Directory.EntryAvailable DO
+        IF CStrings.Equal(Item.Name, "Directory.hil") THEN
+            FoundModule := TRUE;
+            ASSERT (Item.Kind = Directory.RegularFile) OR (Item.Kind = Directory.Unknown);
+            ASSERT FileInfo.LinkStatAt(Dir, Item.Name, Metadata);
+            ASSERT FileInfo.IsFile(Metadata);
+            ASSERT Metadata.Size > 0
+        END;
+        Status := Directory.Next(Dir, Item)
+    END;
+    ASSERT Status = Directory.EndOfDirectory;
+    ASSERT FoundModule;
+    ASSERT Directory.Close(Dir);
+
+    ASSERT FileInfo.LinkStat("stdlib/Directory.hil", Metadata);
+    ASSERT FileInfo.IsFile(Metadata);
+    ASSERT NOT FileInfo.Empty(Metadata);
+    ASSERT FileInfo.LinkStat("/proc/self/exe", LinkMetadata);
+    ASSERT FileInfo.IsLink(LinkMetadata);
+    ASSERT FileInfo.Stat("/proc/self/exe", LinkMetadata);
+    ASSERT FileInfo.IsFile(LinkMetadata);
+    ASSERT FileInfo.DirectoryEmpty("stdlib", EmptyDirectory);
+    ASSERT NOT EmptyDirectory;
+
+    Path.Init(Built, 8);
+    ASSERT Path.Join(Built, "stdlib", "Directory.hil");
+    ASSERT CStrings.Equal(Path.Value(Built), "stdlib/Directory.hil");
+    ASSERT CStrings.Equal(Path.BaseName(Path.Value(Built)), "Directory.hil");
+    ASSERT CStrings.Equal(Path.Extension(Path.Value(Built)), "hil");
+    ASSERT Path.HasExtension(Path.Value(Built), ".hil");
+    Path.Dispose(Built);
+
+    ASSERT Glob.MatchName("*.hil", "Directory.hil");
+    ASSERT NOT Glob.MatchName("*.txt", "Directory.hil");
+    ASSERT Glob.MatchPath("stdlib/*.hil", "stdlib/Directory.hil");
+    ASSERT Glob.Match("*.HIL", "Directory.hil", Glob.CaseFold);
+    ASSERT CStrings.ContainsIgnoreCase("Technically Modula 4", "modula");
+    ASSERT Convert.ParseInteger32("-2048", 10, ParsedInteger);
+    ASSERT ParsedInteger = -2048;
+    ASSERT Convert.ParseCardinal64("0xff", 0, ParsedCardinal);
+    ASSERT ParsedCardinal = 255;
+    ASSERT NOT Convert.ParseCardinal64("-1", 10, ParsedCardinal);
+
+    ASSERT TextFile.Open(TextInput, "README.md");
+    Line := TextFile.Next(TextInput);
+    ASSERT Line # NIL;
+    ASSERT TextFile.Length(TextInput) # 0;
+    ASSERT TextFile.Close(TextInput);
+
+    NullFile := Files.OpenWrite("/dev/null");
+    ASSERT Files.Valid(NullFile);
+    BufferedIO.Init(Output, NullFile, 32);
+    ASSERT BufferedIO.WriteString(Output, "buffered");
+    ASSERT BufferedIO.WriteByte(Output, BYTE(0));
+    ASSERT BufferedIO.WriteLine(Output, " output");
+    ASSERT BufferedIO.Flush(Output);
+    ASSERT NOT BufferedIO.Failed(Output);
+    BufferedIO.Dispose(Output);
+    ASSERT Files.Close(NullFile);
+
+    Command[0] := "/bin/sh"; Command[1] := "-c"; Command[2] := "exit 7";
+    ASSERT Process.Run(Command) = 7;
+    ASSERT NOT Terminal.UseColor(Files.Descriptor(Files.Handle(Files.StandardOutput)), Terminal.ColorNever)
+END PosixStdlib.

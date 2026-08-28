@@ -1,0 +1,20 @@
+MODULE RangesAndDistinct;
+IMPORT IO;
+
+TYPE
+    Port = CARDINAL RANGE 0 .. 65535;
+    UserId = DISTINCT CARDINAL64;
+
+PROCEDURE ShowPort(Value: Port);
+BEGIN
+    IO.Write("port "); IO.WriteCard(CARDINAL(Value)); IO.NewLine
+END ShowPort;
+
+VAR HttpPort: Port; User: UserId;
+
+BEGIN
+    HttpPort := 8080;
+    User := UserId(1001);
+    ShowPort(HttpPort);
+    IO.Write("user "); IO.WriteCard(CARDINAL(User)); IO.NewLine
+END RangesAndDistinct.

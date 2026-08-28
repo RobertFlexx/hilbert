@@ -1,0 +1,45 @@
+MODULE Buffer;
+IMPORT Memory;
+EXPORT Buffer, Init, Dispose, Empty, Clear, Reserve, Resize, Append;
+TYPE
+    Buffer = RECORD
+        Data: ADDRESS;
+        Length, Capacity: SIZE;
+    END;
+PROCEDURE Init(VAR B: Buffer; Capacity: SIZE);
+BEGIN B.Data := Memory.Alloc(Capacity); B.Length := 0; B.Capacity := Capacity END Init;
+PROCEDURE Dispose(VAR B: Buffer);
+BEGIN IF B.Data # NIL THEN Memory.Free(B.Data) END; B.Data := NIL; B.Length := 0; B.Capacity := 0 END Dispose;
+PROCEDURE Empty(VAR B: Buffer): BOOLEAN; BEGIN RETURN B.Length = 0 END Empty;
+PROCEDURE Clear(VAR B: Buffer); BEGIN B.Length := 0 END Clear;
+PROCEDURE Reserve(VAR B: Buffer; NewCapacity: SIZE): BOOLEAN;
+VAR P: ADDRESS;
+BEGIN
+    IF NewCapacity <= B.Capacity THEN RETURN TRUE END;
+    P := Memory.Realloc(B.Data, NewCapacity);
+    IF P = NIL THEN RETURN FALSE END;
+    B.Data := P; B.Capacity := NewCapacity; RETURN TRUE
+END Reserve;
+PROCEDURE Resize(VAR B: Buffer; NewLength: SIZE): BOOLEAN;
+BEGIN
+    IF (NewLength > B.Capacity) AND NOT Reserve(B, NewLength) THEN RETURN FALSE END;
+    B.Length := NewLength; RETURN TRUE
+END Resize;
+PROCEDURE Append(VAR B: Buffer; Data: ADDRESS; Count: SIZE): BOOLEAN;
+VAR Needed, NewCapacity: SIZE;
+BEGIN
+    IF Count = 0 THEN RETURN TRUE END;
+    IF Data = NIL THEN RETURN FALSE END;
+    Needed := B.Length + Count;
+    IF Needed < B.Length THEN RETURN FALSE END;
+    IF Needed > B.Capacity THEN
+        NewCapacity := B.Capacity;
+        IF NewCapacity < 64 THEN NewCapacity := 64 END;
+        WHILE NewCapacity < Needed DO
+            IF NewCapacity > Needed DIV 2 THEN NewCapacity := Needed ELSE NewCapacity := NewCapacity * 2 END
+        END;
+        IF NOT Reserve(B, NewCapacity) THEN RETURN FALSE END
+    END;
+    Memory.Copy(ADDRESS(SIZE(B.Data) + B.Length), Data, Count); B.Length := Needed; RETURN TRUE
+END Append;
+END Buffer.

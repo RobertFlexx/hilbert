@@ -1,0 +1,15 @@
+MODULE Workload;
+IMPORT Arguments;
+
+VAR I, State: CARDINAL64;
+
+BEGIN
+    State := 88172645463325252;
+    IF Arguments.Count() > 1 THEN State := State + 1 END;
+    FOR I := 0 TO 4999999 DO
+        State := State XOR (State SHL 13);
+        State := State XOR (State SHR 7);
+        State := State XOR (State SHL 17)
+    END;
+    ASSERT State # 0
+END Workload.

@@ -1,0 +1,8 @@
+MODULE DuplicateCaseLabel;
+VAR Value: INTEGER;
+BEGIN
+    CASE Value OF
+    1: ASSERT TRUE
+    | 1: ASSERT FALSE
+    END
+END DuplicateCaseLabel.

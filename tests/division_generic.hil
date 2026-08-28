@@ -1,0 +1,16 @@
+MODULE DivisionGeneric;
+
+DIVISION algorithms;
+EXPORT Maximum;
+
+PROCEDURE Maximum[T](A, B: T): T;
+BEGIN
+  IF A > B THEN RETURN A ELSE RETURN B END
+END Maximum;
+
+END algorithms;
+
+BEGIN
+  ASSERT(Maximum[INTEGER](12, 4) = 12);
+  ASSERT(Maximum[REAL64](2.5, 8.0) = 8.0)
+END DivisionGeneric.

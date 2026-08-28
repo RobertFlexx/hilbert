@@ -1,0 +1,32 @@
+MODULE DefaultInitialization;
+TYPE Kind = (IntegerValue, TextValue);
+     Value = RECORD
+         CASE Tag: Kind OF
+         IntegerValue: Number: INTEGER;
+         | TextValue: Text: CSTRING;
+         END
+     END;
+     Numbers = ARRAY 4 OF INTEGER32;
+VAR GlobalValue: Value;
+
+PROCEDURE CheckLocals;
+VAR Flag: BOOLEAN;
+    Number: INTEGER;
+    Pointer: ADDRESS;
+    Items: Numbers;
+    LocalValue: Value;
+BEGIN
+    ASSERT NOT Flag;
+    ASSERT Number = 0;
+    ASSERT Pointer = NIL;
+    ASSERT Items[0] = 0;
+    ASSERT Items[3] = 0;
+    ASSERT LocalValue.Tag = IntegerValue;
+    ASSERT LocalValue.Number = 0
+END CheckLocals;
+
+BEGIN
+    ASSERT GlobalValue.Tag = IntegerValue;
+    ASSERT GlobalValue.Number = 0;
+    CheckLocals
+END DefaultInitialization.

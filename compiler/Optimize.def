@@ -1,0 +1,4 @@
+DEFINITION MODULE Optimize;
+FROM Options IMPORT OptLevel;
+PROCEDURE Run(Level:OptLevel);
+END Optimize.

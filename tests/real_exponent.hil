@@ -1,0 +1,10 @@
+MODULE RealExponent;
+
+VAR X, Y: REAL64;
+
+BEGIN
+    X := 1.0e3;
+    Y := 2.5E-2;
+    ASSERT X = 1000.0;
+    ASSERT Y = 0.025
+END RealExponent.

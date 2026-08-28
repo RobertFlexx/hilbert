@@ -1,0 +1,7 @@
+MODULE BoundsFailure;
+VAR Values: ARRAY 2 OF INTEGER;
+    Index: INTEGER;
+BEGIN
+    Index := 2;
+    Values[Index] := 1
+END BoundsFailure.

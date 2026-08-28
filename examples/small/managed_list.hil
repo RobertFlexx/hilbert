@@ -1,0 +1,19 @@
+MODULE ManagedList;
+IMPORT IO, LinkedList;
+
+VAR List: LinkedList.List[INTEGER];
+    First, Second: REF LinkedList.Node[INTEGER];
+
+BEGIN
+    First := NEW(LinkedList.Node[INTEGER]);
+    Second := NEW(LinkedList.Node[INTEGER]);
+    First.Value := 10;
+    First.Next := Second;
+    Second.Value := 20;
+    Second.Next := NIL;
+    List.Head := First;
+    List.Length := 2;
+    IO.Write("managed list sum: ");
+    IO.WriteInt(List.Head.Value + List.Head.Next.Value); IO.NewLine;
+    ASSERT List.Head.Next.Value = 20
+END ManagedList.

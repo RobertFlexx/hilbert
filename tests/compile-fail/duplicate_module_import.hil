@@ -1,0 +1,4 @@
+MODULE DuplicateModuleImport;
+IMPORT ImportSurfaceDep;
+FROM ImportSurfaceDep IMPORT Answer;
+END DuplicateModuleImport.

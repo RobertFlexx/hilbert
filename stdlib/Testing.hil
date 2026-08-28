@@ -1,0 +1,8 @@
+MODULE Testing;
+IMPORT Runtime;
+EXPORT Check, CheckMessage, Fail;
+PROCEDURE Check(Condition: BOOLEAN); BEGIN ASSERT Condition END Check;
+PROCEDURE CheckMessage(Condition: BOOLEAN; Message: CSTRING);
+BEGIN IF NOT Condition THEN Runtime.Panic(Message) END END CheckMessage;
+PROCEDURE Fail(Message: CSTRING); BEGIN Runtime.Panic(Message) END Fail;
+END Testing.

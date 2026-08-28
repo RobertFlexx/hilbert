@@ -1,0 +1,34 @@
+MODULE Terminal;
+IMPORT Environment, CStrings;
+EXPORT ColorAuto, ColorAlways, ColorNever, IsTTY, SupportsColor, UseColor, Flush,
+       Reset, Bold, Dim, Underline, Red, Green, Yellow, Blue, Magenta, Cyan, White,
+       BrightRed, BrightGreen, BrightYellow, BrightBlue, BrightMagenta, BrightCyan, BrightWhite,
+       ClearScreen, ClearLine, CursorHome;
+CONST
+    ColorAuto = 0; ColorAlways = 1; ColorNever = 2;
+    Reset = "\e[0m"; Bold = "\e[1m"; Dim = "\e[2m"; Underline = "\e[4m";
+    Red = "\e[31m"; Green = "\e[32m"; Yellow = "\e[33m"; Blue = "\e[34m";
+    Magenta = "\e[35m"; Cyan = "\e[36m"; White = "\e[37m";
+    BrightRed = "\e[91m"; BrightGreen = "\e[92m"; BrightYellow = "\e[93m";
+    BrightBlue = "\e[94m"; BrightMagenta = "\e[95m"; BrightCyan = "\e[96m"; BrightWhite = "\e[97m";
+    ClearScreen = "\e[2J"; ClearLine = "\e[2K"; CursorHome = "\e[H";
+FOREIGN "C" PROCEDURE isatty(Fd: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE fflush(Stream: ADDRESS): INTEGER32;
+PROCEDURE IsTTY(Fd: INTEGER32): BOOLEAN; BEGIN RETURN isatty(Fd) # 0 END IsTTY;
+PROCEDURE SupportsColor(Fd: INTEGER32): BOOLEAN;
+VAR Term, Disabled: CSTRING;
+BEGIN
+    IF NOT IsTTY(Fd) THEN RETURN FALSE END;
+    Disabled := Environment.Get("NO_COLOR");
+    IF (Disabled # NIL) AND (Disabled[0] # CHR(0)) THEN RETURN FALSE END;
+    Term := Environment.Get("TERM");
+    RETURN (Term = NIL) OR NOT CStrings.Equal(Term, "dumb")
+END SupportsColor;
+PROCEDURE UseColor(Fd, Mode: INTEGER32): BOOLEAN;
+BEGIN
+    IF Mode = ColorAlways THEN RETURN TRUE END;
+    IF Mode = ColorNever THEN RETURN FALSE END;
+    RETURN SupportsColor(Fd)
+END UseColor;
+PROCEDURE Flush(Stream: ADDRESS); BEGIN fflush(Stream) END Flush;
+END Terminal.

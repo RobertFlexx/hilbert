@@ -1,0 +1,24 @@
+MODULE Errors;
+EXPORT PermissionDenied, NotFound, Interrupted, AlreadyExists, NotDirectory,
+       IsDirectory, InvalidArgument, TooManyOpenFiles, BrokenPipe, RangeError, NameTooLong,
+       SymbolicLinkLoop, Errno, SetErrno, Clear, Message;
+CONST
+    PermissionDenied = 13; NotFound = 2; Interrupted = 4; AlreadyExists = 17;
+    NotDirectory = 20; IsDirectory = 21; InvalidArgument = 22;
+    TooManyOpenFiles = 24; BrokenPipe = 32; RangeError = 34; NameTooLong = 36; SymbolicLinkLoop = 40;
+FOREIGN "C" PROCEDURE strerror(Number: INTEGER32): CSTRING;
+FOREIGN "C" PROCEDURE __errno_location(): POINTER TO INTEGER32;
+PROCEDURE Errno(): INTEGER32;
+VAR P: POINTER TO INTEGER32;
+BEGIN
+    P := __errno_location();
+    UNSAFE BEGIN
+        RETURN P^
+    END
+END Errno;
+PROCEDURE SetErrno(Number: INTEGER32);
+VAR P: POINTER TO INTEGER32;
+BEGIN P := __errno_location(); UNSAFE BEGIN P^ := Number END END SetErrno;
+PROCEDURE Clear; BEGIN SetErrno(0) END Clear;
+PROCEDURE Message(Number: INTEGER32): CSTRING; BEGIN RETURN strerror(Number) END Message;
+END Errors.

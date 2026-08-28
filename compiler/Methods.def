@@ -1,0 +1,19 @@
+DEFINITION MODULE Methods;
+
+FROM HStrings IMPORT Text;
+FROM Types IMPORT TypeId;
+
+CONST MaxMethods=32768;
+TYPE
+    Method=RECORD
+        Owner,ProcType:TypeId;
+        Name,LinkName:Text;
+        ByRef:BOOLEAN
+    END;
+
+PROCEDURE Init;
+PROCEDURE Add(Owner:TypeId; Name:ARRAY OF CHAR; ProcType:TypeId; LinkName:ARRAY OF CHAR; ByRef:BOOLEAN);
+PROCEDURE Find(Owner:TypeId; Name:ARRAY OF CHAR; VAR Out:Method):BOOLEAN;
+PROCEDURE Count():CARDINAL;
+
+END Methods.

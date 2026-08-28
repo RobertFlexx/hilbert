@@ -1,0 +1,30 @@
+MODULE Optional;
+EXPORT Kind, None, Some, Option, Clear, Put, HasValue;
+TYPE
+    Kind = (None, Some);
+    Option[T] = RECORD
+        CASE State: Kind OF
+            None:
+                Empty: CARDINAL8;
+        | Some:
+                Value: T;
+        END
+    END;
+
+PROCEDURE Clear[T](VAR O: Option[T]);
+BEGIN
+    O.State := None
+END Clear;
+
+PROCEDURE Put[T](VAR O: Option[T]; Value: T);
+BEGIN
+    O.State := Some;
+    O.Value := Value
+END Put;
+
+PROCEDURE HasValue[T](VAR O: Option[T]): BOOLEAN;
+BEGIN
+    RETURN O.State = Some
+END HasValue;
+
+END Optional.

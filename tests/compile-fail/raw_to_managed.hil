@@ -1,0 +1,14 @@
+MODULE RawToManaged;
+
+TYPE
+    Node = RECORD
+        Value: INTEGER;
+    END;
+
+VAR
+    Raw: ADDRESS;
+    Managed: REF Node;
+
+BEGIN
+    Managed := Raw
+END RawToManaged.

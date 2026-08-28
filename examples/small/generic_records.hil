@@ -1,0 +1,31 @@
+MODULE GenericRecords;
+IMPORT IO, Optional, Result;
+
+TYPE
+    Pair[A, B] = RECORD
+        First: A;
+        Second: B;
+    END;
+
+VAR
+    Coordinates: Pair[INTEGER, INTEGER];
+    MaybeAnswer: Optional.Option[INTEGER];
+    Parsed: Result.Result[INTEGER, STRING];
+
+BEGIN
+    Coordinates.First := 6;
+    Coordinates.Second := 7;
+    Optional.Put[INTEGER](MaybeAnswer, Coordinates.First * Coordinates.Second);
+    IF Optional.HasValue[INTEGER](MaybeAnswer) THEN
+        Result.PutValue[INTEGER, STRING](Parsed, MaybeAnswer.Value)
+    ELSE
+        Result.PutError[INTEGER, STRING](Parsed, "missing answer")
+    END;
+
+    IF Result.IsSuccess[INTEGER, STRING](Parsed) THEN
+        IO.WriteInt(Parsed.Value); IO.NewLine
+    ELSE
+        IO.WriteLn(Parsed.Error)
+    END;
+    ASSERT Parsed.Value = 42
+END GenericRecords.

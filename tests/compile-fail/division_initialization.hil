@@ -1,0 +1,7 @@
+MODULE DivisionInitialization;
+
+DIVISION wrong;
+BEGIN
+END wrong;
+
+END DivisionInitialization.

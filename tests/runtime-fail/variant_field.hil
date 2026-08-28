@@ -1,0 +1,15 @@
+MODULE VariantFieldFailure;
+TYPE Kind = (IntegerArm, RealArm);
+     Value = RECORD
+         CASE Tag: Kind OF
+             IntegerArm: I: INTEGER;
+         | RealArm: R: REAL64;
+         END
+     END;
+VAR V: Value;
+    X: REAL64;
+BEGIN
+    V.Tag := IntegerArm;
+    V.I := 12;
+    X := V.R
+END VariantFieldFailure.

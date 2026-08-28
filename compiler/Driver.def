@@ -1,0 +1,4 @@
+DEFINITION MODULE Driver;
+FROM Options IMPORT Settings;
+PROCEDURE Run(VAR S:Settings):INTEGER;
+END Driver.

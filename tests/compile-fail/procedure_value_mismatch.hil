@@ -1,0 +1,6 @@
+MODULE ProcedureValueMismatch;
+TYPE
+    Unary = PROCEDURE(A: INTEGER): INTEGER;
+    Binary = PROCEDURE(A, B: INTEGER): INTEGER;
+VAR U: Unary; B: Binary;
+BEGIN U := B END ProcedureValueMismatch.

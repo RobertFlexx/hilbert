@@ -1,0 +1,6 @@
+MODULE OptimizerLoop;
+IMPORT OptimizerLoopDep;
+
+BEGIN
+    ASSERT OptimizerLoopDep.Value() = 2016
+END OptimizerLoop.

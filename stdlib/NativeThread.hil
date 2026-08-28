@@ -1,0 +1,43 @@
+MODULE NativeThread;
+EXPORT Thread, Entry, Mutex, Condition, Create, Join, Detach, MutexInit, MutexLock, MutexTryLock, MutexUnlock, MutexDestroy;
+EXPORT ConditionInit, ConditionWait, ConditionSignal, ConditionBroadcast, ConditionDestroy;
+
+TYPE
+    Thread = CARDINAL64;
+    Entry = PROCEDURE(Data: ADDRESS): ADDRESS;
+    (* Storage is deliberately opaque.  64 bytes covers pthread_mutex_t and
+       pthread_cond_t on the supported x86-64 Linux ABIs without teaching the
+       language library glibc's private layouts. *)
+    Mutex = RECORD Storage: ARRAY 8 OF CARDINAL64; END;
+    Condition = RECORD Storage: ARRAY 8 OF CARDINAL64; END;
+
+FOREIGN "C" LIBRARY "pthread";
+FOREIGN "C" PROCEDURE hilbert_rt_native_thread_create(ThreadOut: POINTER TO Thread; StartRoutine: Entry; Arg: ADDRESS): INTEGER32;
+FOREIGN "C" PROCEDURE hilbert_rt_native_thread_join(ThreadData: Thread): INTEGER32;
+FOREIGN "C" PROCEDURE hilbert_rt_native_thread_detach(ThreadData: Thread): INTEGER32;
+FOREIGN "C" PROCEDURE pthread_mutex_init(MutexData: POINTER TO Mutex; Attr: ADDRESS): INTEGER32;
+FOREIGN "C" PROCEDURE pthread_mutex_destroy(MutexData: POINTER TO Mutex): INTEGER32;
+FOREIGN "C" PROCEDURE pthread_mutex_lock(MutexData: POINTER TO Mutex): INTEGER32;
+FOREIGN "C" PROCEDURE pthread_mutex_trylock(MutexData: POINTER TO Mutex): INTEGER32;
+FOREIGN "C" PROCEDURE pthread_mutex_unlock(MutexData: POINTER TO Mutex): INTEGER32;
+FOREIGN "C" PROCEDURE pthread_cond_init(ConditionData: POINTER TO Condition; Attr: ADDRESS): INTEGER32;
+FOREIGN "C" PROCEDURE pthread_cond_destroy(ConditionData: POINTER TO Condition): INTEGER32;
+FOREIGN "C" PROCEDURE pthread_cond_wait(ConditionData: POINTER TO Condition; MutexData: POINTER TO Mutex): INTEGER32;
+FOREIGN "C" PROCEDURE pthread_cond_signal(ConditionData: POINTER TO Condition): INTEGER32;
+FOREIGN "C" PROCEDURE pthread_cond_broadcast(ConditionData: POINTER TO Condition): INTEGER32;
+
+PROCEDURE Create(VAR T: Thread; StartRoutine: Entry; Data: ADDRESS): BOOLEAN;
+BEGIN UNSAFE BEGIN RETURN hilbert_rt_native_thread_create(ADR(T),StartRoutine,Data)=0 END END Create;
+PROCEDURE Join(T: Thread): BOOLEAN; BEGIN RETURN hilbert_rt_native_thread_join(T)=0 END Join;
+PROCEDURE Detach(T: Thread): BOOLEAN; BEGIN RETURN hilbert_rt_native_thread_detach(T)=0 END Detach;
+PROCEDURE MutexInit(VAR M: Mutex): BOOLEAN; BEGIN UNSAFE BEGIN RETURN pthread_mutex_init(ADR(M),NIL)=0 END END MutexInit;
+PROCEDURE MutexLock(VAR M: Mutex): BOOLEAN; BEGIN UNSAFE BEGIN RETURN pthread_mutex_lock(ADR(M))=0 END END MutexLock;
+PROCEDURE MutexTryLock(VAR M: Mutex): BOOLEAN; BEGIN UNSAFE BEGIN RETURN pthread_mutex_trylock(ADR(M))=0 END END MutexTryLock;
+PROCEDURE MutexUnlock(VAR M: Mutex): BOOLEAN; BEGIN UNSAFE BEGIN RETURN pthread_mutex_unlock(ADR(M))=0 END END MutexUnlock;
+PROCEDURE MutexDestroy(VAR M: Mutex): BOOLEAN; BEGIN UNSAFE BEGIN RETURN pthread_mutex_destroy(ADR(M))=0 END END MutexDestroy;
+PROCEDURE ConditionInit(VAR C: Condition): BOOLEAN; BEGIN UNSAFE BEGIN RETURN pthread_cond_init(ADR(C),NIL)=0 END END ConditionInit;
+PROCEDURE ConditionWait(VAR C: Condition; VAR M: Mutex): BOOLEAN; BEGIN UNSAFE BEGIN RETURN pthread_cond_wait(ADR(C),ADR(M))=0 END END ConditionWait;
+PROCEDURE ConditionSignal(VAR C: Condition): BOOLEAN; BEGIN UNSAFE BEGIN RETURN pthread_cond_signal(ADR(C))=0 END END ConditionSignal;
+PROCEDURE ConditionBroadcast(VAR C: Condition): BOOLEAN; BEGIN UNSAFE BEGIN RETURN pthread_cond_broadcast(ADR(C))=0 END END ConditionBroadcast;
+PROCEDURE ConditionDestroy(VAR C: Condition): BOOLEAN; BEGIN UNSAFE BEGIN RETURN pthread_cond_destroy(ADR(C))=0 END END ConditionDestroy;
+END NativeThread.

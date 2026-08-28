@@ -1,0 +1,3 @@
+MODULE ReservedProtected;
+TYPE Lock = PROTECTED RECORD Value: INTEGER; END;
+END ReservedProtected.

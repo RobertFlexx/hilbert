@@ -1,0 +1,14 @@
+MODULE Preconditions;
+IMPORT IO;
+
+PROCEDURE Divide(Left, Right: REAL64): REAL64;
+PRE Right # 0.0;
+BEGIN
+    RETURN Left / Right
+END Divide;
+
+BEGIN
+    IO.Write("84 / 2 = ");
+    IO.WriteReal(Divide(84.0, 2.0)); IO.NewLine;
+    ASSERT Divide(84.0, 2.0) = 42.0
+END Preconditions.

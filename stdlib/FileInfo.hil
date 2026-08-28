@@ -1,0 +1,79 @@
+MODULE FileInfo;
+EXPORT Info, Unknown, RegularFile, Directory, SymbolicLink, Other,
+       FlagExecutable, FlagEmpty, Stat, LinkStat, StatAt, LinkStatAt,
+       DirectoryEmpty, DirectoryEmptyAt, IsFile, IsDirectory, IsLink, IsOther,
+       Executable, Empty, SameFile;
+
+TYPE
+    Info = RECORD
+        Device, Inode: CARDINAL64;
+        Size: INTEGER64;
+        ModifiedSeconds, ModifiedNanoseconds: INTEGER64;
+        Mode, Links, User, Group: CARDINAL32;
+        Kind: INTEGER32;
+        Flags: CARDINAL32;
+    END;
+
+CONST
+    Unknown = 0; RegularFile = 1; Directory = 2; SymbolicLink = 3; Other = 4;
+    FlagExecutable = 1; FlagEmpty = 2;
+
+FOREIGN "C" PROCEDURE hilbert_rt_posix_stat(Path: CSTRING; Follow: INTEGER32; Value: POINTER TO Info): INTEGER32;
+FOREIGN "C" PROCEDURE hilbert_rt_posix_stat_at(Dir: ADDRESS; Name: CSTRING; Follow: INTEGER32; Value: POINTER TO Info): INTEGER32;
+FOREIGN "C" PROCEDURE hilbert_rt_posix_directory_empty(Path: CSTRING): INTEGER32;
+FOREIGN "C" PROCEDURE hilbert_rt_posix_directory_empty_at(Dir: ADDRESS; Name: CSTRING): INTEGER32;
+
+PROCEDURE Stat(Path: CSTRING; VAR Value: Info): BOOLEAN;
+BEGIN
+    IF Path = NIL THEN RETURN FALSE END;
+    UNSAFE BEGIN RETURN hilbert_rt_posix_stat(Path, 1, ADR(Value)) = 0 END
+END Stat;
+
+PROCEDURE LinkStat(Path: CSTRING; VAR Value: Info): BOOLEAN;
+BEGIN
+    IF Path = NIL THEN RETURN FALSE END;
+    UNSAFE BEGIN RETURN hilbert_rt_posix_stat(Path, 0, ADR(Value)) = 0 END
+END LinkStat;
+
+PROCEDURE StatAt(Dir: ADDRESS; Name: CSTRING; VAR Value: Info): BOOLEAN;
+BEGIN
+    IF (Dir = NIL) OR (Name = NIL) THEN RETURN FALSE END;
+    UNSAFE BEGIN RETURN hilbert_rt_posix_stat_at(Dir, Name, 1, ADR(Value)) = 0 END
+END StatAt;
+
+PROCEDURE LinkStatAt(Dir: ADDRESS; Name: CSTRING; VAR Value: Info): BOOLEAN;
+BEGIN
+    IF (Dir = NIL) OR (Name = NIL) THEN RETURN FALSE END;
+    UNSAFE BEGIN RETURN hilbert_rt_posix_stat_at(Dir, Name, 0, ADR(Value)) = 0 END
+END LinkStatAt;
+
+PROCEDURE DirectoryEmpty(Path: CSTRING; VAR IsEmpty: BOOLEAN): BOOLEAN;
+VAR Result: INTEGER32;
+BEGIN
+    IF Path = NIL THEN RETURN FALSE END;
+    Result := hilbert_rt_posix_directory_empty(Path);
+    IF Result < 0 THEN RETURN FALSE END;
+    IsEmpty := Result = 1;
+    RETURN TRUE
+END DirectoryEmpty;
+
+PROCEDURE DirectoryEmptyAt(Dir: ADDRESS; Name: CSTRING; VAR IsEmpty: BOOLEAN): BOOLEAN;
+VAR Result: INTEGER32;
+BEGIN
+    IF (Dir = NIL) OR (Name = NIL) THEN RETURN FALSE END;
+    Result := hilbert_rt_posix_directory_empty_at(Dir, Name);
+    IF Result < 0 THEN RETURN FALSE END;
+    IsEmpty := Result = 1;
+    RETURN TRUE
+END DirectoryEmptyAt;
+
+PROCEDURE IsFile(VAR Value: Info): BOOLEAN; BEGIN RETURN Value.Kind = RegularFile END IsFile;
+PROCEDURE IsDirectory(VAR Value: Info): BOOLEAN; BEGIN RETURN Value.Kind = Directory END IsDirectory;
+PROCEDURE IsLink(VAR Value: Info): BOOLEAN; BEGIN RETURN Value.Kind = SymbolicLink END IsLink;
+PROCEDURE IsOther(VAR Value: Info): BOOLEAN; BEGIN RETURN Value.Kind = Other END IsOther;
+PROCEDURE Executable(VAR Value: Info): BOOLEAN; BEGIN RETURN (Value.Flags AND FlagExecutable) # 0 END Executable;
+PROCEDURE Empty(VAR Value: Info): BOOLEAN; BEGIN RETURN (Value.Flags AND FlagEmpty) # 0 END Empty;
+PROCEDURE SameFile(VAR Left, Right: Info): BOOLEAN;
+BEGIN RETURN (Left.Device = Right.Device) AND (Left.Inode = Right.Inode) END SameFile;
+
+END FileInfo.

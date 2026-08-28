@@ -1,0 +1,42 @@
+MODULE FiniteSets;
+
+TYPE
+    Permission = (Read, Write, Execute, Admin);
+    Permissions = SET OF Permission;
+    Small = INTEGER RANGE 3 .. 9;
+    SmallSet = SET OF Small;
+
+VAR P, Q, R: Permissions;
+    S: SmallSet;
+    N: INTEGER;
+
+PROCEDURE Contains(PermissionsValue: Permissions; Value: Permission): BOOLEAN;
+BEGIN
+    RETURN Value IN PermissionsValue
+END Contains;
+
+BEGIN
+    P := {Read, Write};
+    Q := {Write, Execute};
+    ASSERT Read IN P;
+    ASSERT Write IN P;
+    ASSERT NOT (Execute IN P);
+    R := P + Q;
+    ASSERT Read IN R;
+    ASSERT Execute IN R;
+    R := P * Q;
+    ASSERT Write IN R;
+    ASSERT NOT (Read IN R);
+    R := P - Q;
+    ASSERT Read IN R;
+    ASSERT NOT (Write IN R);
+    ASSERT P = {Read, Write};
+    ASSERT P # {};
+    ASSERT Contains(P, Read);
+    S := {3, 5, 9};
+    ASSERT 3 IN S;
+    ASSERT 5 IN S;
+    ASSERT NOT (4 IN S);
+    N := 9;
+    ASSERT N IN S
+END FiniteSets.

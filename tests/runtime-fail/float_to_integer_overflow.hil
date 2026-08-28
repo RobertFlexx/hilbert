@@ -1,0 +1,4 @@
+MODULE FloatToIntegerOverflow;
+VAR Value: INTEGER32;
+BEGIN Value := INTEGER32(2147483648.0)
+END FloatToIntegerOverflow.

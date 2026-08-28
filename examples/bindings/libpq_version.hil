@@ -1,0 +1,11 @@
+MODULE LibPQVersion;
+IMPORT IO, LibPQ;
+
+VAR Version: INTEGER32;
+
+BEGIN
+    Version := LibPQ.PQlibVersion();
+    IO.Write("libpq numeric version: ");
+    IO.WriteInt(INTEGER(Version)); IO.NewLine;
+    IO.Write("thread safe: "); IO.WriteBool(LibPQ.PQisthreadsafe() # 0); IO.NewLine
+END LibPQVersion.

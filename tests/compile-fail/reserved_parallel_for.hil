@@ -1,0 +1,6 @@
+MODULE ReservedParallelFor;
+VAR A: ARRAY 4 OF INTEGER;
+BEGIN
+    PARALLEL FOR X IN A DO
+    END
+END ReservedParallelFor.

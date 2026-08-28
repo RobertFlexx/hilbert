@@ -1,0 +1,20 @@
+MODULE FiniteSetsExample;
+IMPORT IO;
+
+TYPE
+    Permission = (Read, Write, Execute);
+    Permissions = SET OF Permission;
+
+VAR Granted, Requested: Permissions;
+
+BEGIN
+    Granted := {Read, Write};
+    Requested := {Write, Execute};
+    ASSERT Read IN Granted;
+    ASSERT NOT (Execute IN Granted);
+    ASSERT (Write IN (Granted * Requested));
+    ASSERT (Execute IN (Granted + Requested));
+    Granted := Granted - {Write};
+    ASSERT Granted = {Read};
+    IO.WriteLn("finite set operations passed")
+END FiniteSetsExample.

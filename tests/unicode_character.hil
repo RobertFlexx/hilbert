@@ -1,0 +1,5 @@
+MODULE UnicodeCharacter;
+BEGIN
+    ASSERT ORD('\u2603') = 9731;
+    ASSERT ORD('λ') = 955
+END UnicodeCharacter.

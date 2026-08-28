@@ -1,0 +1,15 @@
+MODULE AtomicBasic;
+VAR
+    C: ATOMIC[CARDINAL32];
+    Old: CARDINAL32;
+BEGIN
+    C.Store(3);
+    ASSERT C.Load() = 3;
+    Old := C.FetchAdd(2);
+    ASSERT Old = 3;
+    ASSERT C.Load() = 5;
+    ASSERT C.CompareExchange(5, 9);
+    ASSERT C.Load() = 9;
+    ASSERT NOT C.CompareExchange(5, 1);
+    ASSERT C.Load() = 9
+END AtomicBasic.

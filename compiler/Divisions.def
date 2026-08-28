@@ -1,0 +1,10 @@
+DEFINITION MODULE Divisions;
+
+FROM AST IMPORT NodeId;
+FROM Target IMPORT Info;
+
+PROCEDURE Configure(T:Info; Profile,Runtime:ARRAY OF CHAR);
+PROCEDURE Active(Id:NodeId; Diagnose:BOOLEAN):BOOLEAN;
+PROCEDURE Mark(Declarations:NodeId; Diagnose:BOOLEAN);
+
+END Divisions.

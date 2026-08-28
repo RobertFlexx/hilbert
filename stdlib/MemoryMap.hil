@@ -1,0 +1,12 @@
+MODULE MemoryMap;
+EXPORT Map, Unmap, Protect, Sync, PROT_NONE, PROT_READ, PROT_WRITE, PROT_EXEC, MAP_SHARED, MAP_PRIVATE, MAP_ANONYMOUS;
+CONST PROT_NONE = 0; PROT_READ = 1; PROT_WRITE = 2; PROT_EXEC = 4; MAP_SHARED = 1; MAP_PRIVATE = 2; MAP_ANONYMOUS = 32;
+FOREIGN "C" PROCEDURE mmap(Address: ADDRESS; Length: SIZE; Protection, Flags, Fd: INTEGER32; Offset: INTEGER64): ADDRESS;
+FOREIGN "C" PROCEDURE munmap(Address: ADDRESS; Length: SIZE): INTEGER32;
+FOREIGN "C" PROCEDURE mprotect(Address: ADDRESS; Length: SIZE; Protection: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE msync(Address: ADDRESS; Length: SIZE; Flags: INTEGER32): INTEGER32;
+PROCEDURE Map(Address: ADDRESS; Length: SIZE; Protection, Flags, Fd: INTEGER32; Offset: INTEGER64): ADDRESS; BEGIN RETURN mmap(Address,Length,Protection,Flags,Fd,Offset) END Map;
+PROCEDURE Unmap(Address: ADDRESS; Length: SIZE): BOOLEAN; BEGIN RETURN munmap(Address,Length)=0 END Unmap;
+PROCEDURE Protect(Address: ADDRESS; Length: SIZE; Protection: INTEGER32): BOOLEAN; BEGIN RETURN mprotect(Address,Length,Protection)=0 END Protect;
+PROCEDURE Sync(Address: ADDRESS; Length: SIZE; Flags: INTEGER32): BOOLEAN; BEGIN RETURN msync(Address,Length,Flags)=0 END Sync;
+END MemoryMap.

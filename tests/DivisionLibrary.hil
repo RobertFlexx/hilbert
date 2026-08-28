@@ -1,0 +1,15 @@
+MODULE DivisionLibrary;
+
+EXPORT Value;
+
+DIVISION implementation;
+EXPORT Value;
+
+PROCEDURE Value(): INTEGER;
+BEGIN
+  RETURN 42
+END Value;
+
+END implementation;
+
+END DivisionLibrary.

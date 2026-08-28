@@ -1,0 +1,3 @@
+MODULE ArrayWithoutCount;
+VAR A: ARRAY OF INTEGER;
+BEGIN END ArrayWithoutCount.

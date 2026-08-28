@@ -1,0 +1,22 @@
+MODULE DynamicLoader;
+(* First-party POSIX dynamic loader C ABI binding. *)
+EXPORT Handle, RTLD_LAZY, RTLD_NOW, RTLD_LOCAL, RTLD_GLOBAL, dlopen, dlclose, dlsym, dlerror, dladdr;
+
+FOREIGN "C" LIBRARY "dl";
+
+TYPE
+    Handle = ADDRESS;
+
+CONST
+    RTLD_LAZY = 1;
+    RTLD_NOW = 2;
+    RTLD_LOCAL = 0;
+    RTLD_GLOBAL = 256;
+
+FOREIGN "C" PROCEDURE dlopen(FileName: CSTRING; Flags: INTEGER32): Handle;
+FOREIGN "C" PROCEDURE dlclose(HandleData: Handle): INTEGER32;
+FOREIGN "C" PROCEDURE dlsym(HandleData: Handle; Symbol: CSTRING): ADDRESS;
+FOREIGN "C" PROCEDURE dlerror(): CSTRING;
+FOREIGN "C" PROCEDURE dladdr(Address: ADDRESS; Info: ADDRESS): INTEGER32;
+
+END DynamicLoader.

@@ -1,0 +1,63 @@
+MODULE Arena;
+IMPORT Memory;
+EXPORT Allocator, Init, Allocate, AllocateAligned, AllocateZeroed,
+       AllocateZeroedAligned, Reset, Remaining, Destroy;
+TYPE
+    Allocator = RECORD
+        Base: ADDRESS;
+        Capacity: SIZE;
+        Used: SIZE;
+    END;
+
+PROCEDURE Init(VAR A: Allocator; Capacity: SIZE);
+BEGIN
+    A.Base := Memory.Alloc(Capacity);
+    ASSERT (Capacity = 0) OR (A.Base # NIL);
+    A.Capacity := Capacity;
+    A.Used := 0
+END Init;
+
+PROCEDURE Allocate(VAR A: Allocator; Size: SIZE): ADDRESS;
+PRE A.Used <= A.Capacity;
+PRE Size <= A.Capacity - A.Used;
+VAR P: ADDRESS;
+BEGIN
+    P := ADDRESS(SIZE(A.Base) + A.Used);
+    A.Used := A.Used + Size;
+    RETURN P
+END Allocate;
+
+PROCEDURE AllocateAligned(VAR A: Allocator; Size, Alignment: SIZE): ADDRESS;
+PRE A.Used <= A.Capacity;
+PRE Alignment > 0;
+VAR Current, Remainder, Padding: SIZE;
+    P: ADDRESS;
+BEGIN
+    Current := SIZE(A.Base) + A.Used;
+    Remainder := Current MOD Alignment;
+    IF Remainder = 0 THEN Padding := 0
+    ELSE Padding := Alignment - Remainder
+    END;
+    ASSERT Padding <= A.Capacity - A.Used;
+    ASSERT Size <= A.Capacity - A.Used - Padding;
+    P := ADDRESS(Current + Padding);
+    A.Used := A.Used + Padding + Size;
+    RETURN P
+END AllocateAligned;
+
+PROCEDURE AllocateZeroed(VAR A: Allocator; Size: SIZE): ADDRESS;
+VAR P: ADDRESS;
+BEGIN P := Allocate(A, Size); Memory.Zero(P, Size); RETURN P END AllocateZeroed;
+
+PROCEDURE AllocateZeroedAligned(VAR A: Allocator; Size, Alignment: SIZE): ADDRESS;
+VAR P: ADDRESS;
+BEGIN P := AllocateAligned(A, Size, Alignment); Memory.Zero(P, Size); RETURN P END AllocateZeroedAligned;
+
+PROCEDURE Remaining(VAR A: Allocator): SIZE;
+BEGIN IF A.Used >= A.Capacity THEN RETURN 0 END; RETURN A.Capacity - A.Used END Remaining;
+
+PROCEDURE Reset(VAR A: Allocator); BEGIN A.Used := 0 END Reset;
+
+PROCEDURE Destroy(VAR A: Allocator);
+BEGIN Memory.Free(A.Base); A.Base := NIL; A.Capacity := 0; A.Used := 0 END Destroy;
+END Arena.

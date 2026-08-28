@@ -1,0 +1,19 @@
+MODULE ArenaAllocator;
+IMPORT IO, Arena;
+
+VAR Storage: Arena.Allocator;
+    First, Second: ADDRESS;
+
+BEGIN
+    Arena.Init(Storage, 256);
+    DEFER Arena.Destroy(Storage);
+    First := Arena.AllocateZeroed(Storage, 32);
+    Second := Arena.Allocate(Storage, 64);
+    ASSERT First # NIL;
+    ASSERT Second # NIL;
+    ASSERT Arena.Remaining(Storage) = 160;
+    IO.Write("arena bytes remaining: ");
+    IO.WriteCard(CARDINAL(Arena.Remaining(Storage))); IO.NewLine;
+    Arena.Reset(Storage);
+    ASSERT Arena.Remaining(Storage) = 256
+END ArenaAllocator.

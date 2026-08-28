@@ -1,0 +1,6 @@
+MODULE RawPointerSafe;
+VAR P: POINTER TO INTEGER;
+    X: INTEGER;
+BEGIN
+    X := P^;
+END RawPointerSafe.

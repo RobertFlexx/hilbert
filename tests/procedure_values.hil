@@ -1,0 +1,38 @@
+MODULE ProcedureValues;
+
+TYPE
+    Binary = PROCEDURE(A, B: INTEGER): INTEGER;
+    Holder = RECORD Operation: Binary; END;
+    BinaryArray = ARRAY 2 OF Binary;
+
+VAR Current: Binary;
+    Saved: Holder;
+    Operations: BinaryArray;
+
+PROCEDURE Add(A, B: INTEGER): INTEGER;
+BEGIN RETURN A + B END Add;
+
+PROCEDURE Subtract(A, B: INTEGER): INTEGER;
+BEGIN RETURN A - B END Subtract;
+
+PROCEDURE Apply(Operation: Binary; A, B: INTEGER): INTEGER;
+BEGIN RETURN Operation(A, B) END Apply;
+
+PROCEDURE Choose(Addition: BOOLEAN): Binary;
+BEGIN IF Addition THEN RETURN Add ELSE RETURN Subtract END END Choose;
+
+BEGIN
+    Current := Add;
+    ASSERT Current(7, 5) = 12;
+    ASSERT Apply(Current, 9, 4) = 13;
+    Saved.Operation := Subtract;
+    ASSERT Saved.Operation(9, 4) = 5;
+    Operations[0] := Add; Operations[1] := Subtract;
+    ASSERT Operations[0](6, 3) = 9;
+    ASSERT Operations[1](6, 3) = 3;
+    Current := Choose(FALSE);
+    ASSERT Current(11, 8) = 3;
+    Current := NIL;
+    ASSERT Current = NIL;
+    ASSERT Add # NIL
+END ProcedureValues.

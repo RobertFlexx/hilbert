@@ -1,0 +1,7 @@
+MODULE FloatToIntegerNaN;
+VAR Source: REAL64;
+    Value: INTEGER32;
+BEGIN
+    Source := 0.0 / 0.0;
+    Value := INTEGER32(Source)
+END FloatToIntegerNaN.

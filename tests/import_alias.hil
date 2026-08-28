@@ -1,0 +1,15 @@
+MODULE ImportAlias;
+IMPORT Surface := ImportSurfaceDep;
+
+VAR Value: Surface.Number;
+
+BEGIN
+    ASSERT Surface.Counter = 5;
+    ASSERT INTEGER(Surface.Ready) = 0;
+    ASSERT INTEGER(Surface.Busy) = 1;
+    ASSERT CARDINAL64(Surface.Huge) = 18446744073709551615;
+    Value := Surface.Add(Surface.Counter, Surface.Number(Surface.Answer));
+    ASSERT Value = 47;
+    Surface.Counter := Value;
+    ASSERT Surface.Counter = 47
+END ImportAlias.

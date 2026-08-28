@@ -1,0 +1,3 @@
+MODULE SelectiveImportPrivate;
+FROM ImportSurfaceDep IMPORT Hidden;
+END SelectiveImportPrivate.

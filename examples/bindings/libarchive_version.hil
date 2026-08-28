@@ -1,0 +1,8 @@
+MODULE LibArchiveVersion;
+IMPORT IO, LibArchive;
+
+BEGIN
+    IO.Write("libarchive version: ");
+    IO.WriteLn(LibArchive.archive_version_string());
+    ASSERT LibArchive.archive_version_number() > 0
+END LibArchiveVersion.

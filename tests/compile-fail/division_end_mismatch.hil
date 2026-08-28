@@ -1,0 +1,6 @@
+MODULE DivisionEndMismatch;
+
+DIVISION first;
+END second;
+
+END DivisionEndMismatch.

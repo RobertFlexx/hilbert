@@ -1,0 +1,13 @@
+DEFINITION MODULE Signatures;
+FROM Types IMPORT TypeId;
+CONST MaxSignatures=32768; MaxSignatureParams=131072;
+TYPE ParamIndex=CARDINAL;
+PROCEDURE Init;
+PROCEDURE BeginProcedure(ProcType:TypeId);
+PROCEDURE AddParameter(ProcType,ParamType:TypeId; ByRef:BOOLEAN);
+PROCEDURE SetVariadic(ProcType:TypeId; Value:BOOLEAN);
+PROCEDURE IsVariadic(ProcType:TypeId):BOOLEAN;
+PROCEDURE ParameterCount(ProcType:TypeId):CARDINAL;
+PROCEDURE ParameterType(ProcType:TypeId; Index:CARDINAL):TypeId;
+PROCEDURE ParameterByRef(ProcType:TypeId; Index:CARDINAL):BOOLEAN;
+END Signatures.

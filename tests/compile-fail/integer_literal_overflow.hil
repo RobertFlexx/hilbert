@@ -1,0 +1,4 @@
+MODULE IntegerLiteralOverflow;
+VAR Value: CARDINAL64;
+BEGIN Value := 18446744073709551616
+END IntegerLiteralOverflow.

@@ -1,0 +1,12 @@
+MODULE LinkedList;
+EXPORT Node, List;
+TYPE
+    Node[T] = RECORD
+        Value: T;
+        Next: REF Node[T];
+    END;
+    List[T] = RECORD
+        Head: REF Node[T];
+        Length: SIZE;
+    END;
+END LinkedList.

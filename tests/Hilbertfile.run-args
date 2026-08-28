@@ -1,0 +1,7 @@
+PROJECT HilmakeRunArgs;
+ROOT "tests/hilmake_run_args.hil";
+OUTPUT "build/hilmake run's test";
+BUILD_DIR "build/.hilmake run's cache";
+MODULE_PATH "stdlib";
+PROFILE DEBUG;
+END HilmakeRunArgs;

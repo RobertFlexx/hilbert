@@ -1,0 +1,39 @@
+MODULE Convert;
+IMPORT Errors;
+EXPORT ParseInteger32, ParseInteger64, ParseCardinal64;
+
+FOREIGN "C" PROCEDURE strtoll(Text: CSTRING; End: POINTER TO CSTRING; Base: INTEGER32): INTEGER64;
+FOREIGN "C" PROCEDURE strtoull(Text: CSTRING; End: POINTER TO CSTRING; Base: INTEGER32): CARDINAL64;
+
+PROCEDURE ParseInteger64(Text: CSTRING; Base: INTEGER32; VAR Value: INTEGER64): BOOLEAN;
+VAR End: CSTRING; Parsed: INTEGER64;
+BEGIN
+    IF (Text = NIL) OR (Text[0] = CHR(0)) THEN RETURN FALSE END;
+    Errors.Clear;
+    UNSAFE BEGIN Parsed := strtoll(Text, ADR(End), Base) END;
+    IF (End = Text) OR (End[0] # CHR(0)) OR (Errors.Errno() = Errors.RangeError) THEN RETURN FALSE END;
+    Value := Parsed;
+    RETURN TRUE
+END ParseInteger64;
+
+PROCEDURE ParseInteger32(Text: CSTRING; Base: INTEGER32; VAR Value: INTEGER32): BOOLEAN;
+VAR Parsed: INTEGER64;
+BEGIN
+    IF NOT ParseInteger64(Text, Base, Parsed) THEN RETURN FALSE END;
+    IF (Parsed < -2147483648) OR (Parsed > 2147483647) THEN RETURN FALSE END;
+    Value := INTEGER32(Parsed);
+    RETURN TRUE
+END ParseInteger32;
+
+PROCEDURE ParseCardinal64(Text: CSTRING; Base: INTEGER32; VAR Value: CARDINAL64): BOOLEAN;
+VAR End: CSTRING; Parsed: CARDINAL64;
+BEGIN
+    IF (Text = NIL) OR (Text[0] = CHR(0)) OR (Text[0] = '-') THEN RETURN FALSE END;
+    Errors.Clear;
+    UNSAFE BEGIN Parsed := strtoull(Text, ADR(End), Base) END;
+    IF (End = Text) OR (End[0] # CHR(0)) OR (Errors.Errno() = Errors.RangeError) THEN RETURN FALSE END;
+    Value := Parsed;
+    RETURN TRUE
+END ParseCardinal64;
+
+END Convert.

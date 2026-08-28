@@ -1,0 +1,9 @@
+MODULE OpenSSLVersion;
+IMPORT IO, OpenSSL;
+
+BEGIN
+    IO.Write("OpenSSL version: ");
+    IO.WriteLn(OpenSSL.OpenSSL_version(0));
+    IO.Write("numeric version: ");
+    IO.WriteHex(OpenSSL.OpenSSL_version_num()); IO.NewLine
+END OpenSSLVersion.

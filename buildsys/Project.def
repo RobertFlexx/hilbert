@@ -1,0 +1,24 @@
+DEFINITION MODULE Project;
+
+FROM HStrings IMPORT Text;
+
+CONST MaxProjectPaths=64; MaxProjectLibraries=128;
+TYPE
+    Profile=(Debug,Release,Size);
+    TextArray=ARRAY [0..MaxProjectPaths-1] OF Text;
+    LibArray=ARRAY [0..MaxProjectLibraries-1] OF Text;
+    Config=RECORD
+        Name,Root,Output,Target,BuildDir,Runtime,InstallDir:Text;
+        IdentificationName,Version,Description,Author,License:Text;
+        ModulePaths,LibraryPaths:TextArray;
+        Libraries:LibArray;
+        ModulePathCount,LibraryPathCount,LibraryCount:CARDINAL;
+        Mode:Profile;
+        StaticLink,Strip,WarningsAsErrors,Incremental,KeepTemps:BOOLEAN;
+    END;
+
+PROCEDURE Load(Path:ARRAY OF CHAR; VAR C:Config):BOOLEAN;
+PROCEDURE Print(C:Config);
+PROCEDURE PrintInfo(C:Config);
+
+END Project.

@@ -1,0 +1,19 @@
+MODULE NumericConversion;
+VAR I: INTEGER32; U: CARDINAL64; R: REAL64; S: REAL32; Small: INTEGER8; ByteValue: BYTE;
+BEGIN
+    I := 42;
+    R := REAL64(I);
+    ASSERT R = 42.0;
+    S := REAL32(R);
+    ASSERT REAL64(S) = 42.0;
+    U := CARDINAL64(I);
+    ASSERT U = 42;
+    I := INTEGER32(U);
+    ASSERT I = 42;
+    I := INTEGER32(-2147483648.0);
+    ASSERT I = -2147483647 - 1;
+    Small := INTEGER8(127.9);
+    ASSERT Small = 127;
+    ByteValue := BYTE(255.9);
+    ASSERT ByteValue = 255
+END NumericConversion.

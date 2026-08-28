@@ -1,0 +1,14 @@
+PROJECT HilmakeTest;
+IDENTIFICATION
+  NAME "hilmake-test"
+  VERSION "1.0.0"
+  DESCRIPTION "hilmake integration fixture"
+  AUTHOR "Hilbert contributors"
+  LICENSE "GPL-3.0"
+END
+ROOT "tests/smoke.hil";
+OUTPUT "build/hilmake-test";
+BUILD_DIR "build/.hilmake-test-cache";
+PROFILE DEBUG;
+WARNINGS_AS_ERRORS TRUE;
+END HilmakeTest;

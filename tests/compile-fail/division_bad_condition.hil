@@ -1,0 +1,6 @@
+MODULE DivisionBadCondition;
+
+DIVISION bad WHEN ReadFile("target.txt");
+END bad;
+
+END DivisionBadCondition.

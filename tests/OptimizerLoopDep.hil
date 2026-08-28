@@ -1,0 +1,22 @@
+MODULE OptimizerLoopDep;
+EXPORT Value;
+
+VAR Total: INTEGER;
+
+PROCEDURE Reset;
+VAR I: INTEGER;
+BEGIN
+    Total := 0;
+    FOR I := 0 TO 63 DO
+        Total := Total + I
+    END
+END Reset;
+
+PROCEDURE Value(): INTEGER;
+BEGIN
+    RETURN Total
+END Value;
+
+BEGIN
+    Reset
+END OptimizerLoopDep.

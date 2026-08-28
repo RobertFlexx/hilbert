@@ -1,0 +1,34 @@
+DEFINITION MODULE HIR;
+FROM HStrings IMPORT Text;
+CONST MaxInst=400000; MaxFuncs=16384; MaxGlobals=32768;
+TYPE ValueId=CARDINAL; InstId=CARDINAL; FuncId=CARDINAL;
+TYPE Op=(OpNop,OpConstI,OpConstF,OpConstS,OpParam,OpArg,OpLoad,OpStore,OpMove,OpConvert,
+         OpAddrGlobal,OpAddrLocal,OpLoadPtr,OpStorePtr,OpLeaOffset,
+         OpAdd,OpSub,OpMul,OpDiv,OpMod,OpNeg,OpNot,OpAnd,OpOr,OpXor,OpShl,OpShr,
+         OpFAdd,OpFSub,OpFMul,OpFDiv,OpFNeg,
+         OpCmpEq,OpCmpNe,OpCmpLt,OpCmpLe,OpCmpGt,OpCmpGe,
+         OpFCmpEq,OpFCmpNe,OpFCmpLt,OpFCmpLe,OpFCmpGt,OpFCmpGe,
+         OpCall,OpCallIndirect,OpRet,OpLabel,OpJump,OpBranch,OpAssert,OpTrap,
+         OpAtomicLoad,OpAtomicStore,OpAtomicAdd,OpAtomicCAS,OpTaskStart,OpTaskAwait);
+TYPE Inst=RECORD
+    Opcode:Op; Dst,A,B:ValueId; Imm:LONGINT; Label,TypeId:CARDINAL; Text:Text; Next:InstId
+END;
+TYPE Func=RECORD
+    Name:Text; First,Last:InstId; ParamCount,LocalCount,ValueCount,StackSize:CARDINAL;
+    Exported,Foreign:BOOLEAN
+END;
+TYPE Global=RECORD
+    Name:Text; Size,Align:CARDINAL; Exported:BOOLEAN
+END;
+PROCEDURE Init;
+PROCEDURE NewFunc(Name:ARRAY OF CHAR):FuncId;
+PROCEDURE Emit(F:FuncId; O:Op; D,A,B:ValueId; Imm:LONGINT):InstId;
+PROCEDURE GetInst(I:InstId):Inst; PROCEDURE PutInst(I:InstId; X:Inst);
+PROCEDURE GetFunc(F:FuncId):Func; PROCEDURE PutFunc(F:FuncId; X:Func);
+PROCEDURE FuncCount():CARDINAL; PROCEDURE InstCount():CARDINAL;
+PROCEDURE NewValue(F:FuncId):ValueId;
+PROCEDURE NewGlobal(Name:ARRAY OF CHAR; Size,Align:CARDINAL):CARDINAL;
+PROCEDURE GetGlobal(G:CARDINAL):Global;
+PROCEDURE GlobalCount():CARDINAL;
+PROCEDURE Dump;
+END HIR.

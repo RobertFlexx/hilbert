@@ -1,0 +1,10 @@
+MODULE NonConstantConst;
+
+PROCEDURE ReadValue(): INTEGER;
+BEGIN
+    RETURN 42
+END ReadValue;
+
+CONST Answer = ReadValue();
+
+END NonConstantConst.

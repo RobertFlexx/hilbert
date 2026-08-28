@@ -1,0 +1,6 @@
+PROJECT UnsafeClean;
+ROOT "tests/smoke.hil";
+OUTPUT "/";
+BUILD_DIR "/";
+PROFILE DEBUG;
+END UnsafeClean;

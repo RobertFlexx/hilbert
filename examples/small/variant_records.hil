@@ -1,0 +1,23 @@
+MODULE VariantRecordsExample;
+IMPORT IO;
+
+TYPE
+    ValueKind = (IntegerValue, RealValue, TextValue);
+    Value = RECORD
+        CASE Kind: ValueKind OF
+            IntegerValue: IntegerData: INTEGER;
+        | RealValue: RealData: REAL64;
+        | TextValue: TextData: CSTRING;
+        END
+    END;
+
+VAR Item: Value;
+
+BEGIN
+    Item.Kind := IntegerValue;
+    Item.IntegerData := 42;
+    ASSERT Item.IntegerData = 42;
+    Item.Kind := TextValue;
+    Item.TextData := "tagged storage";
+    IO.WriteLn(Item.TextData)
+END VariantRecordsExample.

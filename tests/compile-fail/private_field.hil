@@ -1,0 +1,7 @@
+MODULE PrivateField;
+TYPE Thing = RECORD
+    Public: INTEGER;
+PRIVATE
+    Secret: INTEGER;
+END;
+BEGIN END PrivateField.

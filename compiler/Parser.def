@@ -1,0 +1,4 @@
+DEFINITION MODULE Parser;
+FROM AST IMPORT NodeId;
+PROCEDURE Parse(VAR Root: NodeId): BOOLEAN;
+END Parser.

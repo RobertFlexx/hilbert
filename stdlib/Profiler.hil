@@ -1,0 +1,10 @@
+MODULE Profiler;
+IMPORT DateTime;
+EXPORT Stamp, Begin, Now, ElapsedNanoseconds, ElapsedMicroseconds, ElapsedMilliseconds;
+TYPE Stamp = DateTime.Timespec;
+PROCEDURE Begin(VAR S: Stamp); BEGIN DateTime.Monotonic(S) END Begin;
+PROCEDURE Now(VAR S: Stamp): BOOLEAN; BEGIN RETURN DateTime.Monotonic(S) END Now;
+PROCEDURE ElapsedNanoseconds(Start, Finish: Stamp): INTEGER64; BEGIN RETURN DateTime.DifferenceNanoseconds(Start,Finish) END ElapsedNanoseconds;
+PROCEDURE ElapsedMicroseconds(Start, Finish: Stamp): REAL64; BEGIN RETURN REAL64(ElapsedNanoseconds(Start,Finish)) / 1000.0 END ElapsedMicroseconds;
+PROCEDURE ElapsedMilliseconds(Start, Finish: Stamp): REAL64; BEGIN RETURN REAL64(ElapsedNanoseconds(Start,Finish)) / 1000000.0 END ElapsedMilliseconds;
+END Profiler.

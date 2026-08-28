@@ -1,0 +1,11 @@
+PROJECT Hello;
+IDENTIFICATION
+  NAME "hello"
+  VERSION "1.0.0"
+  DESCRIPTION "small Hilbert example"
+END
+ROOT "examples/hello.hil";
+OUTPUT "build/hello";
+BUILD_DIR "build/.hilbert";
+PROFILE RELEASE;
+END Hello;

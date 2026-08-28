@@ -1,0 +1,15 @@
+DEFINITION MODULE Symbols;
+FROM HStrings IMPORT Text;
+FROM AST IMPORT NodeId;
+CONST MaxSymbols=65535; MaxScopes=4096;
+TYPE SymbolId=CARDINAL; ScopeId=CARDINAL;
+TYPE SymbolKind=(SymNone,SymModule,SymConst,SymType,SymVar,SymParam,SymProc,SymTask,SymException,SymForeign);
+TYPE Symbol=RECORD Name:Text; Kind:SymbolKind; Decl:NodeId; TypeId:CARDINAL; Scope:ScopeId; Flags:BITSET END;
+PROCEDURE Init;
+PROCEDURE OpenScope(Parent:ScopeId):ScopeId;
+PROCEDURE Define(Scope:ScopeId; Name:ARRAY OF CHAR; Kind:SymbolKind; Decl:NodeId):SymbolId;
+PROCEDURE Lookup(Scope:ScopeId; Name:ARRAY OF CHAR):SymbolId;
+PROCEDURE LookupLocal(Scope:ScopeId; Name:ARRAY OF CHAR):SymbolId;
+PROCEDURE Get(Id:SymbolId):Symbol;
+PROCEDURE Put(Id:SymbolId; S:Symbol);
+END Symbols.

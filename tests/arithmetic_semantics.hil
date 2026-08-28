@@ -1,0 +1,35 @@
+MODULE ArithmeticSemantics;
+TYPE SmallRecord = RECORD Value: INTEGER8; END;
+VAR Signed8: INTEGER8;
+    Unsigned8: CARDINAL8;
+    Signed64: INTEGER64;
+    Unsigned64: CARDINAL64;
+    Quotient, Remainder: INTEGER;
+    RecordValue: SmallRecord;
+BEGIN
+    Signed8 := 127;
+    Signed8 := Signed8 + 1;
+    ASSERT Signed8 = INTEGER8(-128);
+    RecordValue.Value := -7;
+    ASSERT RecordValue.Value = INTEGER8(-7);
+    Unsigned8 := 255;
+    Unsigned8 := Unsigned8 + 1;
+    ASSERT Unsigned8 = 0;
+
+    Signed64 := 9223372036854775807;
+    Signed64 := Signed64 + 1;
+    ASSERT Signed64 = INTEGER64(-9223372036854775807 - 1);
+    Unsigned64 := 18446744073709551615;
+    Unsigned64 := Unsigned64 + 1;
+    ASSERT Unsigned64 = 0;
+
+    Quotient := -7 DIV 3;
+    Remainder := -7 MOD 3;
+    ASSERT Quotient = -2;
+    ASSERT Remainder = -1;
+    Quotient := 7 DIV -3;
+    Remainder := 7 MOD -3;
+    ASSERT Quotient = -2;
+    ASSERT Remainder = 1;
+    ASSERT (INTEGER8(-2) SHR 1) = INTEGER8(-1)
+END ArithmeticSemantics.

@@ -1,0 +1,8 @@
+MODULE Deque;
+EXPORT Deque;
+TYPE
+    Deque[T] = RECORD
+        Data: POINTER TO T;
+        Capacity, Count, Head, Tail: SIZE;
+    END;
+END Deque.

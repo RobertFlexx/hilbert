@@ -1,0 +1,26 @@
+DEFINITION MODULE Layout;
+FROM HStrings IMPORT Text;
+FROM Types IMPORT TypeId;
+
+CONST MaxFields = 131072; MaxVariantTags = 262144;
+TYPE
+    FieldId = CARDINAL;
+    Field = RECORD
+        Id: FieldId;
+        Owner, TypeId: TypeId;
+        Name: Text;
+        Offset, Size, Align: CARDINAL;
+        VariantArm, FirstVariantTag, VariantTagCount: CARDINAL;
+        TagName: Text;
+        Flags: BITSET;
+    END;
+
+PROCEDURE Init;
+PROCEDURE AddField(Owner: TypeId; Name: ARRAY OF CHAR; FieldType: TypeId; Offset, Size, Align: CARDINAL; Flags: BITSET): FieldId;
+PROCEDURE AddVariantField(Owner: TypeId; Name: ARRAY OF CHAR; FieldType: TypeId; Offset, Size, Align, Arm: CARDINAL; TagName: ARRAY OF CHAR; Flags: BITSET): FieldId;
+PROCEDURE AddVariantTag(Field:FieldId; Value:LONGINT);
+PROCEDURE VariantTag(Field:FieldId; Index:CARDINAL):LONGINT;
+PROCEDURE FindField(Owner: TypeId; Name: ARRAY OF CHAR; VAR Out: Field): BOOLEAN;
+PROCEDURE Count(): CARDINAL;
+PROCEDURE Get(Id: FieldId): Field;
+END Layout.

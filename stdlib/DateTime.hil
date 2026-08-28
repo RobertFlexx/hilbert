@@ -1,0 +1,24 @@
+MODULE DateTime;
+EXPORT Time, Timespec, NowUnix, Realtime, Monotonic, Sleep, SleepMilliseconds, ToNanoseconds, DifferenceNanoseconds;
+TYPE
+    Time = INTEGER64;
+    Timespec = RECORD Seconds: INTEGER64; Nanoseconds: INTEGER64; END;
+FOREIGN "C" PROCEDURE time(Out: POINTER TO Time): Time;
+FOREIGN "C" PROCEDURE clock_gettime(ClockId: INTEGER32; Value: POINTER TO Timespec): INTEGER32;
+FOREIGN "C" PROCEDURE nanosleep(Request, Remaining: POINTER TO Timespec): INTEGER32;
+PROCEDURE NowUnix(): Time; BEGIN RETURN time(NIL) END NowUnix;
+PROCEDURE Realtime(VAR T: Timespec): BOOLEAN; BEGIN UNSAFE BEGIN RETURN clock_gettime(0, ADR(T)) = 0 END END Realtime;
+PROCEDURE Monotonic(VAR T: Timespec): BOOLEAN; BEGIN UNSAFE BEGIN RETURN clock_gettime(1, ADR(T)) = 0 END END Monotonic;
+PROCEDURE Sleep(Seconds: INTEGER64; Nanoseconds: INTEGER64): BOOLEAN;
+VAR T: Timespec;
+BEGIN T.Seconds := Seconds; T.Nanoseconds := Nanoseconds; UNSAFE BEGIN RETURN nanosleep(ADR(T), NIL) = 0 END END Sleep;
+PROCEDURE SleepMilliseconds(Milliseconds: CARDINAL64): BOOLEAN;
+VAR T: Timespec;
+BEGIN
+    T.Seconds := INTEGER64(Milliseconds DIV 1000);
+    T.Nanoseconds := INTEGER64((Milliseconds MOD 1000) * 1000000);
+    UNSAFE BEGIN RETURN nanosleep(ADR(T), NIL) = 0 END
+END SleepMilliseconds;
+PROCEDURE ToNanoseconds(T: Timespec): INTEGER64; BEGIN RETURN T.Seconds * 1000000000 + T.Nanoseconds END ToNanoseconds;
+PROCEDURE DifferenceNanoseconds(Start, Finish: Timespec): INTEGER64; BEGIN RETURN ToNanoseconds(Finish) - ToNanoseconds(Start) END DifferenceNanoseconds;
+END DateTime.

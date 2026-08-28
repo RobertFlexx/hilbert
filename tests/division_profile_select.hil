@@ -1,0 +1,21 @@
+MODULE DivisionProfileSelect;
+
+DIVISION debug WHEN DEBUG;
+EXPORT BuildKind;
+CONST BuildKind = 1;
+END debug;
+
+DIVISION release WHEN RELEASE;
+EXPORT BuildKind;
+CONST BuildKind = 2;
+END release;
+
+DIVISION size WHEN SIZE;
+EXPORT BuildKind;
+CONST BuildKind = 3;
+END size;
+
+BEGIN
+  ASSERT(BuildKind >= 1);
+  ASSERT(BuildKind <= 3)
+END DivisionProfileSelect.

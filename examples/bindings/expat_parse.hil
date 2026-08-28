@@ -1,0 +1,21 @@
+MODULE ExpatParse;
+IMPORT IO, Expat;
+
+VAR Parser: Expat.Parser;
+    Status: INTEGER32;
+
+BEGIN
+    Parser := Expat.XML_ParserCreate(NIL);
+    IF Parser = NIL THEN
+        IO.WriteLn("could not allocate an Expat parser")
+    ELSE
+        DEFER Expat.XML_ParserFree(Parser);
+        Status := Expat.XML_Parse(Parser, "<greeting>Hello</greeting>", 26, 1);
+        IF Status = Expat.XML_STATUS_OK THEN
+            IO.WriteLn("Expat accepted the document")
+        ELSE
+            IO.Write("Expat error: ");
+            IO.WriteLn(Expat.XML_ErrorString(Expat.XML_GetErrorCode(Parser)))
+        END
+    END
+END ExpatParse.

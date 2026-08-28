@@ -1,0 +1,7 @@
+MODULE SetElementOutOfRange;
+TYPE Small = INTEGER RANGE 0 .. 7;
+     Values = SET OF Small;
+VAR V: Values;
+BEGIN
+    V := {8}
+END SetElementOutOfRange.

@@ -1,0 +1,21 @@
+MODULE ControlFlowExample;
+IMPORT IO;
+
+VAR I, Total: INTEGER;
+
+BEGIN
+    Total := 0;
+    FOR I := 1 TO 5 DO
+        Total := Total + I
+    END;
+
+    CASE Total OF
+    0: IO.WriteLn("nothing")
+    | 15: IO.WriteLn("one plus two plus three plus four plus five")
+    ELSE IO.WriteLn("unexpected total")
+    END;
+
+    WHILE I > 2 DO I := I - 1 END;
+    REPEAT I := I + 1 UNTIL I = 5;
+    ASSERT (Total = 15) AND (I = 5)
+END ControlFlowExample.

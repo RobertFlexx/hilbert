@@ -1,0 +1,14 @@
+MODULE Hello;
+IMPORT IO;
+
+PROCEDURE Twice(X: INTEGER): INTEGER;
+PRE X >= 0;
+BEGIN
+    RETURN X * 2
+END Twice;
+
+BEGIN
+    IO.WriteLn("hello from Hilbert");
+    IO.WriteInt(Twice(21));
+    IO.NewLine
+END Hello.

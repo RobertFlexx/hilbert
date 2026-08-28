@@ -1,0 +1,28 @@
+MODULE GenericAlgorithms;
+
+EXPORT Max, Identity, Swap, ClampLow;
+
+PROCEDURE Max[T](A, B: T): T;
+BEGIN
+    IF A > B THEN RETURN A ELSE RETURN B END
+END Max;
+
+PROCEDURE Identity[T](Value: T): T;
+BEGIN
+    RETURN Value
+END Identity;
+
+PROCEDURE Swap[T](VAR A, B: T);
+VAR Temporary: T;
+BEGIN
+    Temporary := A;
+    A := B;
+    B := Temporary
+END Swap;
+
+PROCEDURE ClampLow[T](Value, Floor: T): T;
+BEGIN
+    RETURN Max[T](Value, Floor)
+END ClampLow;
+
+END GenericAlgorithms.

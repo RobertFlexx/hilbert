@@ -1,0 +1,7 @@
+MODULE Console;
+IMPORT IO;
+EXPORT Put, PutLine, NewLine;
+PROCEDURE Put(S: CSTRING); BEGIN IO.Write(S) END Put;
+PROCEDURE PutLine(S: CSTRING); BEGIN IO.WriteLn(S) END PutLine;
+PROCEDURE NewLine; BEGIN IO.NewLine END NewLine;
+END Console.

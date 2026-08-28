@@ -1,0 +1,119 @@
+MODULE CStrings;
+IMPORT ASCII;
+EXPORT Length, At, Compare, CompareIgnoreCase, NCompare, Equal, EqualIgnoreCase,
+       NEqual, Copy, NCopy, FindChar, Find, StartsWith, EndsWith, Contains,
+       ContainsIgnoreCase, HasUpper;
+
+FOREIGN "C" PROCEDURE CStrLen(S: CSTRING): SIZE EXTERNAL NAME "strlen";
+FOREIGN "C" PROCEDURE CStrCmp(A, B: CSTRING): INTEGER32 EXTERNAL NAME "strcmp";
+FOREIGN "C" PROCEDURE CStrNCmp(A, B: CSTRING; N: SIZE): INTEGER32 EXTERNAL NAME "strncmp";
+FOREIGN "C" PROCEDURE CStrCpy(Dst, Src: CSTRING): CSTRING EXTERNAL NAME "strcpy";
+FOREIGN "C" PROCEDURE CStrNCpy(Dst, Src: CSTRING; N: SIZE): CSTRING EXTERNAL NAME "strncpy";
+FOREIGN "C" PROCEDURE CStrChr(S: CSTRING; Ch: INTEGER32): CSTRING EXTERNAL NAME "strchr";
+FOREIGN "C" PROCEDURE CStrStr(Haystack, Needle: CSTRING): CSTRING EXTERNAL NAME "strstr";
+FOREIGN "C" PROCEDURE hilbert_rt_cstring_at(S: CSTRING; Offset: SIZE): CSTRING;
+
+PROCEDURE Length(S: CSTRING): SIZE;
+BEGIN IF S = NIL THEN RETURN 0 END; RETURN CStrLen(S) END Length;
+
+PROCEDURE At(S: CSTRING; Offset: SIZE): CSTRING;
+BEGIN IF S = NIL THEN RETURN NIL END; RETURN hilbert_rt_cstring_at(S, Offset) END At;
+
+PROCEDURE Compare(A, B: CSTRING): INTEGER32;
+BEGIN
+    IF A = NIL THEN IF B = NIL THEN RETURN 0 ELSE RETURN -1 END END;
+    IF B = NIL THEN RETURN 1 END;
+    RETURN CStrCmp(A, B)
+END Compare;
+
+PROCEDURE CompareIgnoreCase(A, B: CSTRING): INTEGER32;
+VAR I: SIZE; Left, Right: CHAR;
+BEGIN
+    IF A = NIL THEN IF B = NIL THEN RETURN 0 ELSE RETURN -1 END END;
+    IF B = NIL THEN RETURN 1 END;
+    I := 0;
+    WHILE (A[I] # CHR(0)) AND (B[I] # CHR(0)) DO
+        Left := ASCII.ToLower(A[I]); Right := ASCII.ToLower(B[I]);
+        IF Left < Right THEN RETURN -1 END;
+        IF Left > Right THEN RETURN 1 END;
+        I := I + 1
+    END;
+    IF A[I] = B[I] THEN RETURN 0 END;
+    IF A[I] = CHR(0) THEN RETURN -1 END;
+    RETURN 1
+END CompareIgnoreCase;
+
+PROCEDURE NCompare(A, B: CSTRING; N: SIZE): INTEGER32;
+BEGIN
+    IF N = 0 THEN RETURN 0 END;
+    IF A = NIL THEN IF B = NIL THEN RETURN 0 ELSE RETURN -1 END END;
+    IF B = NIL THEN RETURN 1 END;
+    RETURN CStrNCmp(A, B, N)
+END NCompare;
+
+PROCEDURE Equal(A, B: CSTRING): BOOLEAN;
+BEGIN RETURN Compare(A, B) = 0 END Equal;
+
+PROCEDURE EqualIgnoreCase(A, B: CSTRING): BOOLEAN;
+BEGIN RETURN CompareIgnoreCase(A, B) = 0 END EqualIgnoreCase;
+
+PROCEDURE NEqual(A, B: CSTRING; N: SIZE): BOOLEAN;
+BEGIN RETURN NCompare(A, B, N) = 0 END NEqual;
+
+PROCEDURE Copy(Dst, Src: CSTRING): CSTRING;
+BEGIN IF (Dst = NIL) OR (Src = NIL) THEN RETURN NIL END; RETURN CStrCpy(Dst, Src) END Copy;
+
+PROCEDURE NCopy(Dst, Src: CSTRING; N: SIZE): CSTRING;
+BEGIN IF (Dst = NIL) OR (Src = NIL) THEN RETURN NIL END; RETURN CStrNCpy(Dst, Src, N) END NCopy;
+
+PROCEDURE FindChar(S: CSTRING; Ch: BYTE): CSTRING;
+BEGIN IF S = NIL THEN RETURN NIL END; RETURN CStrChr(S, INTEGER32(Ch)) END FindChar;
+
+PROCEDURE Find(Haystack, Needle: CSTRING): CSTRING;
+BEGIN IF (Haystack = NIL) OR (Needle = NIL) THEN RETURN NIL END; RETURN CStrStr(Haystack, Needle) END Find;
+
+PROCEDURE StartsWith(S, Prefix: CSTRING): BOOLEAN;
+VAR N: SIZE;
+BEGIN N := Length(Prefix); IF N = 0 THEN RETURN TRUE END; IF S = NIL THEN RETURN FALSE END; RETURN CStrNCmp(S, Prefix, N) = 0 END StartsWith;
+
+PROCEDURE EndsWith(S, Suffix: CSTRING): BOOLEAN;
+VAR SL, TL, I: SIZE;
+BEGIN
+    SL := Length(S); TL := Length(Suffix);
+    IF TL = 0 THEN RETURN TRUE END;
+    IF (S = NIL) OR (TL > SL) THEN RETURN FALSE END;
+    I := 0;
+    WHILE I < TL DO IF S[SL - TL + I] # Suffix[I] THEN RETURN FALSE END; I := I + 1 END;
+    RETURN TRUE
+END EndsWith;
+
+PROCEDURE Contains(S, Part: CSTRING): BOOLEAN;
+BEGIN IF Part = NIL THEN RETURN TRUE END; IF S = NIL THEN RETURN FALSE END; RETURN CStrStr(S, Part) # NIL END Contains;
+
+PROCEDURE ContainsIgnoreCase(S, Part: CSTRING): BOOLEAN;
+VAR I, J: SIZE;
+BEGIN
+    IF Part = NIL THEN RETURN TRUE END;
+    IF S = NIL THEN RETURN FALSE END;
+    IF Part[0] = CHR(0) THEN RETURN TRUE END;
+    I := 0;
+    WHILE S[I] # CHR(0) DO
+        J := 0;
+        WHILE (S[I + J] # CHR(0)) AND (Part[J] # CHR(0)) AND
+              (ASCII.ToLower(S[I + J]) = ASCII.ToLower(Part[J])) DO J := J + 1 END;
+        IF Part[J] = CHR(0) THEN RETURN TRUE END;
+        I := I + 1
+    END;
+    RETURN FALSE
+END ContainsIgnoreCase;
+
+PROCEDURE HasUpper(S: CSTRING): BOOLEAN;
+VAR I: SIZE;
+BEGIN
+    IF S = NIL THEN RETURN FALSE END;
+    I := 0;
+    WHILE S[I] # CHR(0) DO IF ASCII.IsUpper(S[I]) THEN RETURN TRUE END; I := I + 1 END;
+    RETURN FALSE
+END HasUpper;
+
+END CStrings.

@@ -1,0 +1,48 @@
+MODULE OpenSSL;
+(* First-party OpenSSL SSL/EVP C ABI binding. *)
+EXPORT SSLContext, SSL, SSLMethod, BIO, EVPMDContext, OpenSSL_version_num, OpenSSL_version, OPENSSL_init_ssl, TLS_method, TLS_client_method, TLS_server_method, SSL_CTX_new, SSL_CTX_free, SSL_new, SSL_free, SSL_set_fd;
+EXPORT SSL_connect, SSL_accept, SSL_shutdown, SSL_read, SSL_write, SSL_get_error, SSL_get_version, SSL_get_cipher_name, SSL_CTX_load_verify_locations, SSL_CTX_set_default_verify_paths, BIO_new_file, BIO_free, EVP_MD_CTX_new, EVP_MD_CTX_free, EVP_sha256, EVP_sha512;
+EXPORT EVP_DigestInit_ex, EVP_DigestUpdate, EVP_DigestFinal_ex;
+
+FOREIGN "C" LIBRARY "ssl";
+FOREIGN "C" LIBRARY "crypto";
+
+TYPE
+    SSLContext = ADDRESS;
+    SSL = ADDRESS;
+    SSLMethod = ADDRESS;
+    BIO = ADDRESS;
+    EVPMDContext = ADDRESS;
+
+FOREIGN "C" PROCEDURE OpenSSL_version_num(): CARDINAL64;
+FOREIGN "C" PROCEDURE OpenSSL_version(Kind: INTEGER32): CSTRING;
+FOREIGN "C" PROCEDURE OPENSSL_init_ssl(Opts: CARDINAL64; Settings: ADDRESS): INTEGER32;
+FOREIGN "C" PROCEDURE TLS_method(): SSLMethod;
+FOREIGN "C" PROCEDURE TLS_client_method(): SSLMethod;
+FOREIGN "C" PROCEDURE TLS_server_method(): SSLMethod;
+FOREIGN "C" PROCEDURE SSL_CTX_new(Method: SSLMethod): SSLContext;
+FOREIGN "C" PROCEDURE SSL_CTX_free(Ctx: SSLContext);
+FOREIGN "C" PROCEDURE SSL_new(Ctx: SSLContext): SSL;
+FOREIGN "C" PROCEDURE SSL_free(Ssl: SSL);
+FOREIGN "C" PROCEDURE SSL_set_fd(Ssl: SSL; Fd: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE SSL_connect(Ssl: SSL): INTEGER32;
+FOREIGN "C" PROCEDURE SSL_accept(Ssl: SSL): INTEGER32;
+FOREIGN "C" PROCEDURE SSL_shutdown(Ssl: SSL): INTEGER32;
+FOREIGN "C" PROCEDURE SSL_read(Ssl: SSL; Buf: ADDRESS; Num: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE SSL_write(Ssl: SSL; Buf: ADDRESS; Num: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE SSL_get_error(Ssl: SSL; Ret: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE SSL_get_version(Ssl: SSL): CSTRING;
+FOREIGN "C" PROCEDURE SSL_get_cipher_name(Ssl: SSL): CSTRING;
+FOREIGN "C" PROCEDURE SSL_CTX_load_verify_locations(Ctx: SSLContext; CAFile,CAPath: CSTRING): INTEGER32;
+FOREIGN "C" PROCEDURE SSL_CTX_set_default_verify_paths(Ctx: SSLContext): INTEGER32;
+FOREIGN "C" PROCEDURE BIO_new_file(Filename, Mode: CSTRING): BIO;
+FOREIGN "C" PROCEDURE BIO_free(Bio: BIO): INTEGER32;
+FOREIGN "C" PROCEDURE EVP_MD_CTX_new(): EVPMDContext;
+FOREIGN "C" PROCEDURE EVP_MD_CTX_free(Ctx: EVPMDContext);
+FOREIGN "C" PROCEDURE EVP_sha256(): ADDRESS;
+FOREIGN "C" PROCEDURE EVP_sha512(): ADDRESS;
+FOREIGN "C" PROCEDURE EVP_DigestInit_ex(Ctx: EVPMDContext; TypeData,Impl: ADDRESS): INTEGER32;
+FOREIGN "C" PROCEDURE EVP_DigestUpdate(Ctx: EVPMDContext; Data: ADDRESS; Count: SIZE): INTEGER32;
+FOREIGN "C" PROCEDURE EVP_DigestFinal_ex(Ctx: EVPMDContext; Md: POINTER TO BYTE; SizeOut: POINTER TO CARDINAL32): INTEGER32;
+
+END OpenSSL.

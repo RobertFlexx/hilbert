@@ -1,0 +1,14 @@
+MODULE MathTable;
+IMPORT IO, Math;
+
+VAR I: INTEGER; X: REAL64;
+
+BEGIN
+    FOR I := 0 TO 4 DO
+        X := REAL64(I) / 4.0;
+        IO.Write("x="); IO.WriteReal(X);
+        IO.Write(" sin(pi*x)="); IO.WriteReal(Math.Sin(Math.Pi * X));
+        IO.NewLine
+    END;
+    ASSERT Math.Abs(Math.Sqrt(81.0) - 9.0) < 0.000001
+END MathTable.

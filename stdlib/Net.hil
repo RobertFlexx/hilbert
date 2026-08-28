@@ -1,0 +1,28 @@
+MODULE Net;
+EXPORT Socket, Invalid, IPv4, IPv6, Unix, Stream, Datagram, ProtocolDefault, ShutdownRead, ShutdownWrite, ShutdownBoth, Open, Valid, Bind, Connect, Listen, Accept, Send, Receive, Shutdown, Close;
+TYPE Socket = DISTINCT INTEGER32;
+CONST
+    Invalid = -1;
+    Unix = 1; IPv4 = 2; IPv6 = 10;
+    Stream = 1; Datagram = 2; ProtocolDefault = 0;
+    ShutdownRead = 0; ShutdownWrite = 1; ShutdownBoth = 2;
+FOREIGN "C" PROCEDURE socket(Domain, Kind, Protocol: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE bind(Fd:INTEGER32; Address:ADDRESS; AddressLength:CARDINAL32):INTEGER32;
+FOREIGN "C" PROCEDURE connect(Fd:INTEGER32; Address:ADDRESS; AddressLength:CARDINAL32):INTEGER32;
+FOREIGN "C" PROCEDURE listen(Fd,Backlog:INTEGER32):INTEGER32;
+FOREIGN "C" PROCEDURE accept(Fd:INTEGER32; Address:ADDRESS; AddressLength:POINTER TO CARDINAL32):INTEGER32;
+FOREIGN "C" PROCEDURE send(Fd:INTEGER32; Buffer:ADDRESS; Length:SIZE; Flags:INTEGER32):INTEGER64;
+FOREIGN "C" PROCEDURE recv(Fd:INTEGER32; Buffer:ADDRESS; Length:SIZE; Flags:INTEGER32):INTEGER64;
+FOREIGN "C" PROCEDURE shutdown(Fd,How:INTEGER32):INTEGER32;
+FOREIGN "C" PROCEDURE close(Fd:INTEGER32):INTEGER32;
+PROCEDURE Open(Domain,Kind,Protocol:INTEGER32):Socket; BEGIN RETURN Socket(socket(Domain,Kind,Protocol)) END Open;
+PROCEDURE Valid(S:Socket):BOOLEAN; BEGIN RETURN INTEGER32(S)>=0 END Valid;
+PROCEDURE Bind(S:Socket;Address:ADDRESS;AddressLength:CARDINAL32):BOOLEAN; BEGIN RETURN Valid(S) AND (bind(INTEGER32(S),Address,AddressLength)=0) END Bind;
+PROCEDURE Connect(S:Socket;Address:ADDRESS;AddressLength:CARDINAL32):BOOLEAN; BEGIN RETURN Valid(S) AND (connect(INTEGER32(S),Address,AddressLength)=0) END Connect;
+PROCEDURE Listen(S:Socket;Backlog:INTEGER32):BOOLEAN; BEGIN RETURN Valid(S) AND (listen(INTEGER32(S),Backlog)=0) END Listen;
+PROCEDURE Accept(S:Socket;Address:ADDRESS;AddressLength:POINTER TO CARDINAL32):Socket; BEGIN IF NOT Valid(S) THEN RETURN Socket(Invalid) END; RETURN Socket(accept(INTEGER32(S),Address,AddressLength)) END Accept;
+PROCEDURE Send(S:Socket;Buffer:ADDRESS;Length:SIZE;Flags:INTEGER32):INTEGER64; BEGIN IF NOT Valid(S) THEN RETURN -1 END; RETURN send(INTEGER32(S),Buffer,Length,Flags) END Send;
+PROCEDURE Receive(S:Socket;Buffer:ADDRESS;Length:SIZE;Flags:INTEGER32):INTEGER64; BEGIN IF NOT Valid(S) THEN RETURN -1 END; RETURN recv(INTEGER32(S),Buffer,Length,Flags) END Receive;
+PROCEDURE Shutdown(S:Socket;How:INTEGER32):BOOLEAN; BEGIN RETURN Valid(S) AND (shutdown(INTEGER32(S),How)=0) END Shutdown;
+PROCEDURE Close(S:Socket):BOOLEAN; BEGIN RETURN Valid(S) AND (close(INTEGER32(S))=0) END Close;
+END Net.

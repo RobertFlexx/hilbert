@@ -1,0 +1,20 @@
+MODULE BorrowDisjointFields;
+
+TYPE Sample = RECORD
+    Load1: REAL64;
+    Processes: INTEGER32;
+END;
+
+PROCEDURE ReadLoad(VAR Load: REAL64; VAR Processes: INTEGER32);
+BEGIN
+    Load := 1.25;
+    Processes := 7
+END ReadLoad;
+
+VAR S: Sample;
+
+BEGIN
+    ReadLoad(S.Load1, S.Processes);
+    ASSERT S.Load1 = 1.25;
+    ASSERT S.Processes = 7
+END BorrowDisjointFields.

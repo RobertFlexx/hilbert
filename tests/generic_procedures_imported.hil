@@ -1,0 +1,22 @@
+MODULE GenericProceduresImported;
+
+IMPORT GenericAlgorithms;
+
+TYPE Pair = RECORD Left, Right: INTEGER; END;
+
+VAR A, B: INTEGER;
+    P, Q: Pair;
+
+BEGIN
+    ASSERT GenericAlgorithms.Max[INTEGER](10, 4) = 10;
+    ASSERT GenericAlgorithms.Max[REAL64](1.5, 8.25) = 8.25;
+    A := 11; B := 31;
+    GenericAlgorithms.Swap[INTEGER](A, B);
+    ASSERT A = 31;
+    ASSERT B = 11;
+    P.Left := 20; P.Right := 22;
+    Q := GenericAlgorithms.Identity[Pair](P);
+    ASSERT Q.Left + Q.Right = 42;
+    ASSERT GenericAlgorithms.Max[INTEGER](2, 9) = 9;
+    ASSERT GenericAlgorithms.ClampLow[CARDINAL64](3, 8) = 8
+END GenericProceduresImported.

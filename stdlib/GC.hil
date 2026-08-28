@@ -1,0 +1,87 @@
+MODULE GC;
+EXPORT Collect, Enable, Disable, Enabled, SetTrigger,
+       LiveBytes, HeapBytes, TotalAllocated, Collections,
+       LastPauseNS, MaxPauseNS, ObjectCount,
+       RegisterThread, UnregisterThread, AddRoot, RemoveRoot, AllocAtomic, TryAlloc, TryAllocAtomic;
+
+(* The collector is non-moving.  REF values keep stable addresses across C calls.
+   Threads created with TASK/START are registered automatically.  A foreign
+   pthread that stores REF values should call RegisterThread on entry. *)
+FOREIGN "C" PROCEDURE hilbert_gc_collect;
+FOREIGN "C" PROCEDURE hilbert_gc_enable;
+FOREIGN "C" PROCEDURE hilbert_gc_disable;
+FOREIGN "C" PROCEDURE hilbert_gc_is_enabled(): INTEGER32;
+FOREIGN "C" PROCEDURE hilbert_gc_set_trigger(Bytes: SIZE);
+FOREIGN "C" PROCEDURE hilbert_gc_live_bytes(): CARDINAL64;
+FOREIGN "C" PROCEDURE hilbert_gc_heap_bytes(): CARDINAL64;
+FOREIGN "C" PROCEDURE hilbert_gc_allocated_bytes(): CARDINAL64;
+FOREIGN "C" PROCEDURE hilbert_gc_collection_count(): CARDINAL64;
+FOREIGN "C" PROCEDURE hilbert_gc_last_pause_ns(): CARDINAL64;
+FOREIGN "C" PROCEDURE hilbert_gc_max_pause_ns(): CARDINAL64;
+FOREIGN "C" PROCEDURE hilbert_gc_object_count(): CARDINAL64;
+FOREIGN "C" PROCEDURE hilbert_gc_register_thread;
+FOREIGN "C" PROCEDURE hilbert_gc_unregister_thread;
+FOREIGN "C" PROCEDURE hilbert_gc_add_root(Slot: ADDRESS): INTEGER32;
+FOREIGN "C" PROCEDURE hilbert_gc_remove_root(Slot: ADDRESS);
+FOREIGN "C" PROCEDURE hilbert_gc_alloc_atomic(Bytes: SIZE): ADDRESS;
+FOREIGN "C" PROCEDURE hilbert_gc_try_alloc(Bytes: SIZE): ADDRESS;
+FOREIGN "C" PROCEDURE hilbert_gc_try_alloc_atomic(Bytes: SIZE): ADDRESS;
+
+PROCEDURE Collect;
+BEGIN hilbert_gc_collect END Collect;
+
+PROCEDURE Enable;
+BEGIN hilbert_gc_enable END Enable;
+
+PROCEDURE Disable;
+BEGIN hilbert_gc_disable END Disable;
+
+PROCEDURE Enabled(): BOOLEAN;
+BEGIN RETURN hilbert_gc_is_enabled() # 0 END Enabled;
+
+PROCEDURE SetTrigger(Bytes: SIZE);
+BEGIN hilbert_gc_set_trigger(Bytes) END SetTrigger;
+
+PROCEDURE LiveBytes(): CARDINAL64;
+BEGIN RETURN hilbert_gc_live_bytes() END LiveBytes;
+
+PROCEDURE HeapBytes(): CARDINAL64;
+BEGIN RETURN hilbert_gc_heap_bytes() END HeapBytes;
+
+PROCEDURE TotalAllocated(): CARDINAL64;
+BEGIN RETURN hilbert_gc_allocated_bytes() END TotalAllocated;
+
+PROCEDURE Collections(): CARDINAL64;
+BEGIN RETURN hilbert_gc_collection_count() END Collections;
+
+PROCEDURE LastPauseNS(): CARDINAL64;
+BEGIN RETURN hilbert_gc_last_pause_ns() END LastPauseNS;
+
+PROCEDURE MaxPauseNS(): CARDINAL64;
+BEGIN RETURN hilbert_gc_max_pause_ns() END MaxPauseNS;
+
+PROCEDURE ObjectCount(): CARDINAL64;
+BEGIN RETURN hilbert_gc_object_count() END ObjectCount;
+
+PROCEDURE RegisterThread;
+BEGIN hilbert_gc_register_thread END RegisterThread;
+
+PROCEDURE UnregisterThread;
+BEGIN hilbert_gc_unregister_thread END UnregisterThread;
+
+PROCEDURE AddRoot(Slot: ADDRESS): BOOLEAN;
+BEGIN RETURN hilbert_gc_add_root(Slot) # 0 END AddRoot;
+
+PROCEDURE RemoveRoot(Slot: ADDRESS);
+BEGIN hilbert_gc_remove_root(Slot) END RemoveRoot;
+
+PROCEDURE AllocAtomic(Bytes: SIZE): ADDRESS;
+BEGIN RETURN hilbert_gc_alloc_atomic(Bytes) END AllocAtomic;
+
+PROCEDURE TryAlloc(Bytes: SIZE): ADDRESS;
+BEGIN RETURN hilbert_gc_try_alloc(Bytes) END TryAlloc;
+
+PROCEDURE TryAllocAtomic(Bytes: SIZE): ADDRESS;
+BEGIN RETURN hilbert_gc_try_alloc_atomic(Bytes) END TryAllocAtomic;
+
+END GC.

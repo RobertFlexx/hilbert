@@ -1,0 +1,31 @@
+MODULE Result;
+EXPORT Kind, Success, Failure, Result, PutValue, PutError, IsSuccess;
+TYPE
+    Kind = (Success, Failure);
+    Result[T, E] = RECORD
+        CASE State: Kind OF
+            Success:
+                Value: T;
+        | Failure:
+                Error: E;
+        END
+    END;
+
+PROCEDURE PutValue[T, E](VAR R: Result[T, E]; Value: T);
+BEGIN
+    R.State := Success;
+    R.Value := Value
+END PutValue;
+
+PROCEDURE PutError[T, E](VAR R: Result[T, E]; Error: E);
+BEGIN
+    R.State := Failure;
+    R.Error := Error
+END PutError;
+
+PROCEDURE IsSuccess[T, E](VAR R: Result[T, E]): BOOLEAN;
+BEGIN
+    RETURN R.State = Success
+END IsSuccess;
+
+END Result.

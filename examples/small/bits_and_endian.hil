@@ -1,0 +1,14 @@
+MODULE BitsAndEndian;
+IMPORT IO, Bits, Endian;
+
+VAR Value: CARDINAL32;
+
+BEGIN
+    Value := 305419896;
+    IO.Write("value: "); IO.WriteHex(CARDINAL64(Value)); IO.NewLine;
+    IO.Write("byte swapped: ");
+    IO.WriteHex(CARDINAL64(Endian.Swap32(Value))); IO.NewLine;
+    ASSERT Bits.PopCount32(15) = 4;
+    ASSERT Bits.IsPowerOfTwo(4096);
+    ASSERT Bits.AlignUp(65, 64) = 128
+END BitsAndEndian.

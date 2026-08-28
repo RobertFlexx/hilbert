@@ -1,0 +1,6 @@
+MODULE EnumArithmetic;
+TYPE Shade = (Dark, Light);
+VAR S: Shade;
+BEGIN
+    S := S + S
+END EnumArithmetic.

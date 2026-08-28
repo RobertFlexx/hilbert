@@ -1,0 +1,7 @@
+PROJECT UnsafeInstall;
+ROOT "tests/smoke.hil";
+OUTPUT "build/hilmake-install-unsafe";
+BUILD_DIR "build/.hilmake-install-unsafe-cache";
+INSTALL_DIR "../escaped";
+PROFILE DEBUG;
+END UnsafeInstall.

@@ -1,0 +1,7 @@
+MODULE ForeignPuts;
+
+FOREIGN "C" PROCEDURE puts(Text: CSTRING): INTEGER32;
+
+BEGIN
+    puts("hello through a direct C ABI declaration")
+END ForeignPuts.

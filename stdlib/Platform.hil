@@ -1,0 +1,25 @@
+MODULE Platform;
+
+EXPORT IsHosted, PointerBits;
+
+DIVISION hosted WHEN HOSTED;
+EXPORT IsHosted;
+CONST IsHosted = TRUE;
+END hosted;
+
+DIVISION bare WHEN FREESTANDING;
+EXPORT IsHosted;
+CONST IsHosted = FALSE;
+END bare;
+
+DIVISION x86 WHEN ARCH("x86_64");
+EXPORT PointerBits;
+CONST PointerBits = 64;
+END x86;
+
+DIVISION arm WHEN ARCH("aarch64");
+EXPORT PointerBits;
+CONST PointerBits = 64;
+END arm;
+
+END Platform.

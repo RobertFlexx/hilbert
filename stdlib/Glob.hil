@@ -1,0 +1,22 @@
+MODULE Glob;
+EXPORT PathName, NoEscape, Period, CaseFold, Match, MatchName, MatchPath;
+
+CONST
+    PathName = 1; NoEscape = 2; Period = 4; CaseFold = 16;
+    NoMatch = 1;
+
+FOREIGN "C" PROCEDURE fnmatch(Pattern, Text: CSTRING; Flags: INTEGER32): INTEGER32;
+
+PROCEDURE Match(Pattern, Text: CSTRING; Flags: INTEGER32): BOOLEAN;
+BEGIN
+    IF (Pattern = NIL) OR (Text = NIL) THEN RETURN FALSE END;
+    RETURN fnmatch(Pattern, Text, Flags) # NoMatch
+END Match;
+
+PROCEDURE MatchName(Pattern, Name: CSTRING): BOOLEAN;
+BEGIN RETURN Match(Pattern, Name, 0) END MatchName;
+
+PROCEDURE MatchPath(Pattern, Path: CSTRING): BOOLEAN;
+BEGIN RETURN Match(Pattern, Path, PathName) END MatchPath;
+
+END Glob.

@@ -1,0 +1,13 @@
+MODULE CurlVersion;
+IMPORT IO, Curl;
+
+VAR RawVersion: ADDRESS;
+
+BEGIN
+    RawVersion := Curl.curl_version();
+    ASSERT RawVersion # NIL;
+    IO.Write("libcurl version: ");
+    UNSAFE BEGIN
+        IO.WriteLn(CSTRING(RawVersion))
+    END
+END CurlVersion.

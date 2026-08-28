@@ -1,0 +1,3 @@
+DEFINITION MODULE DefinitionMismatch;
+PROCEDURE Accept(X: INTEGER);
+END DefinitionMismatch.

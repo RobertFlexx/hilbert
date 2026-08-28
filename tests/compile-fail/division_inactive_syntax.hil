@@ -1,0 +1,11 @@
+MODULE DivisionInactiveSyntax;
+
+DIVISION broken WHEN FREESTANDING;
+
+PROCEDURE Broken(
+BEGIN
+END Broken;
+
+END broken;
+
+END DivisionInactiveSyntax.

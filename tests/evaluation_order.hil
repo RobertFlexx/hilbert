@@ -1,0 +1,46 @@
+MODULE EvaluationOrder;
+
+VAR Trace, AssignmentOrder: INTEGER;
+    Values: ARRAY 1 OF INTEGER;
+
+PROCEDURE Mark(N: INTEGER): INTEGER;
+BEGIN Trace := Trace * 10 + N; RETURN N END Mark;
+
+PROCEDURE Pack(A, B, C: INTEGER): INTEGER;
+BEGIN RETURN A * 100 + B * 10 + C END Pack;
+
+PROCEDURE FalseAfter(N: INTEGER): BOOLEAN;
+BEGIN Trace := Trace * 10 + N; RETURN FALSE END FalseAfter;
+
+PROCEDURE TrueAfter(N: INTEGER): BOOLEAN;
+BEGIN Trace := Trace * 10 + N; RETURN TRUE END TrueAfter;
+
+PROCEDURE NextIndex(): INTEGER;
+BEGIN
+    ASSERT AssignmentOrder = 0;
+    AssignmentOrder := 1;
+    RETURN 0
+END NextIndex;
+
+PROCEDURE RightSide(): INTEGER;
+BEGIN
+    ASSERT AssignmentOrder = 1;
+    AssignmentOrder := 2;
+    RETURN 42
+END RightSide;
+
+BEGIN
+    Trace := 0;
+    ASSERT Pack(Mark(1), Mark(2), Mark(3)) = 123;
+    ASSERT Trace = 123;
+    Trace := 0;
+    ASSERT NOT (FalseAfter(1) AND TrueAfter(2));
+    ASSERT Trace = 1;
+    Trace := 0;
+    ASSERT TrueAfter(3) OR FalseAfter(4);
+    ASSERT Trace = 3;
+    AssignmentOrder := 0;
+    Values[NextIndex()] := RightSide();
+    ASSERT AssignmentOrder = 2;
+    ASSERT Values[0] = 42
+END EvaluationOrder.

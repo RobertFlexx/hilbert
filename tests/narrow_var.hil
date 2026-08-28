@@ -1,0 +1,18 @@
+MODULE NarrowVar;
+IMPORT Memory;
+
+PROCEDURE SetFalse(VAR Value: BOOLEAN); BEGIN Value := FALSE END SetFalse;
+PROCEDURE SetZero(VAR Value: CARDINAL8); BEGIN Value := 0 END SetZero;
+
+PROCEDURE Check;
+VAR Flag: BOOLEAN; Small: CARDINAL8;
+BEGIN
+    UNSAFE BEGIN Memory.Fill(ADR(Flag), 255, 8); Memory.Fill(ADR(Small), 255, 8) END;
+    SetFalse(Flag);
+    SetZero(Small);
+    ASSERT NOT Flag;
+    ASSERT Small = 0
+END Check;
+
+BEGIN Check
+END NarrowVar.

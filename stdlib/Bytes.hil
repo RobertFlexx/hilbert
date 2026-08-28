@@ -1,0 +1,13 @@
+MODULE Bytes;
+EXPORT Buffer, View;
+TYPE
+    Buffer = RECORD
+        Data: POINTER TO BYTE;
+        Length: SIZE;
+        Capacity: SIZE;
+    END;
+    View = RECORD
+        Data: POINTER TO BYTE;
+        Length: SIZE;
+    END;
+END Bytes.

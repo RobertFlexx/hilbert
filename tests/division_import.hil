@@ -1,0 +1,7 @@
+MODULE DivisionImport;
+
+IMPORT DivisionLibrary;
+
+BEGIN
+  ASSERT(DivisionLibrary.Value() = 42)
+END DivisionImport.

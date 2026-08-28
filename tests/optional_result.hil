@@ -1,0 +1,21 @@
+MODULE OptionalResult;
+IMPORT Optional, Result;
+
+VAR
+    Maybe: Optional.Option[INTEGER];
+    Parsed: Result.Result[INTEGER, CSTRING];
+
+BEGIN
+    Optional.Clear[INTEGER](Maybe);
+    ASSERT NOT Optional.HasValue[INTEGER](Maybe);
+    Optional.Put[INTEGER](Maybe, 42);
+    ASSERT Optional.HasValue[INTEGER](Maybe);
+    ASSERT Maybe.Value = 42;
+
+    Result.PutValue[INTEGER, CSTRING](Parsed, Maybe.Value);
+    ASSERT Result.IsSuccess[INTEGER, CSTRING](Parsed);
+    ASSERT Parsed.Value = 42;
+    Result.PutError[INTEGER, CSTRING](Parsed, "bad value");
+    ASSERT NOT Result.IsSuccess[INTEGER, CSTRING](Parsed);
+    ASSERT Parsed.Error # NIL
+END OptionalResult.

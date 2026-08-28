@@ -1,0 +1,11 @@
+MODULE Logging;
+IMPORT IO;
+EXPORT Level, Trace, Debug, Info, Warning, Error, Critical;
+TYPE Level = (TraceLevel, DebugLevel, InfoLevel, WarningLevel, ErrorLevel, CriticalLevel);
+PROCEDURE Trace(S: CSTRING); BEGIN IO.Write("trace: "); IO.WriteLn(S) END Trace;
+PROCEDURE Debug(S: CSTRING); BEGIN IO.Write("debug: "); IO.WriteLn(S) END Debug;
+PROCEDURE Info(S: CSTRING); BEGIN IO.Write("info: "); IO.WriteLn(S) END Info;
+PROCEDURE Warning(S: CSTRING); BEGIN IO.Write("warning: "); IO.WriteLn(S) END Warning;
+PROCEDURE Error(S: CSTRING); BEGIN IO.Write("error: "); IO.WriteLn(S) END Error;
+PROCEDURE Critical(S: CSTRING); BEGIN IO.Write("critical: "); IO.WriteLn(S) END Critical;
+END Logging.

@@ -1,0 +1,20 @@
+MODULE DivisionPrivate;
+
+DIVISION first;
+
+PROCEDURE Hidden;
+BEGIN
+END Hidden;
+
+END first;
+
+DIVISION second;
+
+PROCEDURE UseHidden;
+BEGIN
+  Hidden
+END UseHidden;
+
+END second;
+
+END DivisionPrivate.

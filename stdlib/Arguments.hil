@@ -1,0 +1,17 @@
+MODULE Arguments;
+EXPORT Count, Get, ProgramName;
+(* The compiler runtime initializes these before the user module body. *)
+VAR
+    ArgCount: INTEGER;
+    ArgVector: POINTER TO CSTRING;
+PROCEDURE Count(): INTEGER; BEGIN RETURN ArgCount END Count;
+PROCEDURE ProgramName(): CSTRING;
+BEGIN
+    IF ArgCount = 0 THEN RETURN NIL END;
+    UNSAFE BEGIN RETURN ArgVector[0] END
+END ProgramName;
+PROCEDURE Get(Index: INTEGER): CSTRING;
+PRE Index >= 0;
+PRE Index < ArgCount;
+BEGIN UNSAFE BEGIN RETURN ArgVector[Index] END END Get;
+END Arguments.

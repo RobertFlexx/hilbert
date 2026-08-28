@@ -1,0 +1,37 @@
+DEFINITION MODULE Tokens;
+
+FROM HStrings IMPORT Text;
+
+TYPE TokenKind = (
+    TkEOF, TkIdentifier, TkInteger, TkReal, TkString, TkChar,
+    TkPlus, TkMinus, TkStar, TkSlash, TkEqual, TkNotEqual,
+    TkLess, TkLessEqual, TkGreater, TkGreaterEqual,
+    TkAssign, TkColon, TkSemicolon, TkComma, TkDot, TkRange,
+    TkLParen, TkRParen, TkLBracket, TkRBracket, TkLBrace, TkRBrace,
+    TkArrow, TkFatArrow, TkBar, TkApostrophe, TkCaret,
+    KwMODULE, KwDEFINITION, KwIMPORT, KwFROM, KwEXPORT, KwCONST, KwTYPE, KwSUBTYPE, KwVAR,
+    KwPROCEDURE, KwBEGIN, KwEND, KwRETURN, KwIF, KwTHEN, KwELSIF, KwELSE,
+    KwCASE, KwOF, KwWHILE, KwDO, KwFOR, KwTO, KwBY, KwIN, KwLOOP, KwEXIT,
+    KwRECORD, KwARRAY, KwSLICE, KwSET, KwPOINTER, KwREF, KwDISTINCT, KwRANGE,
+    KwTRUE, KwFALSE, KwNIL, KwAND, KwOR, KwXOR, KwNOT, KwDIV, KwMOD, KwSHL, KwSHR,
+    KwPRE, KwPOST, KwASSERT, KwINVARIANT,
+    KwTASK, KwSTART, KwAWAIT, KwPARALLEL, KwPROTECTED, KwATOMIC,
+    KwUNSAFE, KwFOREIGN, KwEXTERNAL, KwNAME, KwLIBRARY, KwVARARGS,
+    KwEXCEPTION, KwRAISE, KwEXCEPT,
+    KwGENERIC, KwWHERE, KwIS, KwABSTRACT, KwPRIVATE,
+    KwNEW, KwWITH, KwDEFER, KwREPEAT, KwUNTIL, KwSIZEOF, KwALIGNOF, KwADR,
+    KwDIVISION, KwWHEN
+);
+
+TYPE Token = RECORD
+    Kind: TokenKind;
+    Text: Text;
+    Line, Column, Offset: CARDINAL;
+    IntValue: LONGINT;
+END;
+
+PROCEDURE FromOrdinal(Value: LONGINT): TokenKind;
+PROCEDURE IsComparison(K: TokenKind): BOOLEAN;
+PROCEDURE KindName(K: TokenKind; VAR Out: Text);
+
+END Tokens.

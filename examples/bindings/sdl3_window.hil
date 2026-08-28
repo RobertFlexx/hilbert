@@ -1,0 +1,21 @@
+MODULE SDL3Window;
+IMPORT IO, SDL3;
+
+VAR Window: SDL3.Window;
+
+BEGIN
+    IF NOT SDL3.SDL_Init(SDL3.SDL_INIT_VIDEO) THEN
+        IO.Write("SDL initialization failed: "); IO.WriteLn(SDL3.SDL_GetError())
+    ELSE
+        DEFER SDL3.SDL_Quit();
+        Window := SDL3.SDL_CreateWindow(
+            "Hilbert + SDL3", 800, 450, SDL3.SDL_WINDOW_RESIZABLE);
+        IF Window = NIL THEN
+            IO.Write("window creation failed: "); IO.WriteLn(SDL3.SDL_GetError())
+        ELSE
+            IO.WriteLn("showing an SDL3 window for two seconds");
+            SDL3.SDL_Delay(2000);
+            SDL3.SDL_DestroyWindow(Window)
+        END
+    END
+END SDL3Window.

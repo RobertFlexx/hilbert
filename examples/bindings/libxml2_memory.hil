@@ -1,0 +1,16 @@
+MODULE LibXML2Memory;
+IMPORT IO, LibXML2;
+
+VAR Document: ADDRESS;
+
+BEGIN
+    LibXML2.xmlInitParser();
+    DEFER LibXML2.xmlCleanupParser();
+    Document := LibXML2.xmlReadMemory("<root><item/></root>", 20, NIL, NIL, 0);
+    IF Document = NIL THEN
+        IO.WriteLn("libxml2 rejected the document")
+    ELSE
+        IO.WriteLn("libxml2 parsed an in-memory document");
+        LibXML2.xmlFreeDoc(Document)
+    END
+END LibXML2Memory.

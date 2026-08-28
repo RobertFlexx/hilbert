@@ -1,0 +1,22 @@
+MODULE Parallel;
+IMPORT Atomics;
+
+VAR Count: Atomics.Counter64;
+
+PROCEDURE First;
+BEGIN
+    Count.FetchAdd(1)
+END First;
+
+PROCEDURE Second;
+BEGIN
+    Count.FetchAdd(1)
+END Second;
+
+BEGIN
+    PARALLEL BEGIN
+        First()
+    AND
+        Second()
+    END
+END Parallel.

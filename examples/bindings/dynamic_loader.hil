@@ -1,0 +1,16 @@
+MODULE DynamicLoaderExample;
+IMPORT IO, DynamicLoader;
+
+VAR Library: DynamicLoader.Handle;
+    Cosine: ADDRESS;
+
+BEGIN
+    Library := DynamicLoader.dlopen("libm.so.6", DynamicLoader.RTLD_NOW);
+    IF Library = NIL THEN
+        IO.Write("dlopen failed: "); IO.WriteLn(DynamicLoader.dlerror())
+    ELSE
+        Cosine := DynamicLoader.dlsym(Library, "cos");
+        IF Cosine # NIL THEN IO.WriteLn("found libm's cos symbol") END;
+        DynamicLoader.dlclose(Library)
+    END
+END DynamicLoaderExample.

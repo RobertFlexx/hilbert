@@ -1,0 +1,52 @@
+MODULE Process;
+EXPORT Pid, InvalidPid, CurrentPid, ParentPid, Kill, SpawnRaw, Spawn, Wait,
+       RunRaw, Run,
+       Execute, Exit, Abort;
+TYPE Pid = INTEGER32;
+CONST InvalidPid = -1;
+FOREIGN "C" PROCEDURE getpid(): Pid;
+FOREIGN "C" PROCEDURE getppid(): Pid;
+FOREIGN "C" PROCEDURE kill(PidData: Pid; Signal: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE system(Command: CSTRING): INTEGER32;
+FOREIGN "C" PROCEDURE exit(Status: INTEGER32);
+FOREIGN "C" PROCEDURE abort();
+FOREIGN "C" PROCEDURE hilbert_rt_posix_spawn(Arguments: POINTER TO CSTRING; Count: SIZE): Pid;
+FOREIGN "C" PROCEDURE hilbert_rt_posix_wait(Process: Pid; ExitStatus: POINTER TO INTEGER32): INTEGER32;
+PROCEDURE CurrentPid():Pid; BEGIN RETURN getpid() END CurrentPid;
+PROCEDURE ParentPid():Pid; BEGIN RETURN getppid() END ParentPid;
+PROCEDURE Kill(P:Pid;Signal:INTEGER32):BOOLEAN; BEGIN RETURN kill(P,Signal)=0 END Kill;
+PROCEDURE SpawnRaw(Arguments: POINTER TO CSTRING; Count: SIZE): Pid;
+BEGIN
+    IF (Arguments = NIL) OR (Count = 0) THEN RETURN InvalidPid END;
+    RETURN hilbert_rt_posix_spawn(Arguments, Count)
+END SpawnRaw;
+PROCEDURE Spawn(Arguments: SLICE OF CSTRING): Pid;
+BEGIN
+    IF Arguments.Length = 0 THEN RETURN InvalidPid END;
+    UNSAFE BEGIN RETURN SpawnRaw(ADR(Arguments[0]), Arguments.Length) END
+END Spawn;
+PROCEDURE Wait(P: Pid; VAR ExitStatus: INTEGER32): BOOLEAN;
+BEGIN
+    IF P <= 0 THEN RETURN FALSE END;
+    UNSAFE BEGIN RETURN hilbert_rt_posix_wait(P, ADR(ExitStatus)) = 0 END
+END Wait;
+PROCEDURE Run(Arguments: SLICE OF CSTRING): INTEGER32;
+VAR P: Pid; Status: INTEGER32;
+BEGIN
+    P := Spawn(Arguments);
+    IF P = InvalidPid THEN RETURN -1 END;
+    IF NOT Wait(P, Status) THEN RETURN -1 END;
+    RETURN Status
+END Run;
+PROCEDURE RunRaw(Arguments: POINTER TO CSTRING; Count: SIZE): INTEGER32;
+VAR P: Pid; Status: INTEGER32;
+BEGIN
+    P := SpawnRaw(Arguments, Count);
+    IF P = InvalidPid THEN RETURN -1 END;
+    IF NOT Wait(P, Status) THEN RETURN -1 END;
+    RETURN Status
+END RunRaw;
+PROCEDURE Execute(Command:CSTRING):INTEGER32; BEGIN IF Command=NIL THEN RETURN -1 END; RETURN system(Command) END Execute;
+PROCEDURE Exit(Status:INTEGER32); BEGIN exit(Status) END Exit;
+PROCEDURE Abort; BEGIN abort() END Abort;
+END Process.

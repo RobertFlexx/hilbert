@@ -1,0 +1,10 @@
+DEFINITION MODULE BorrowCheck;
+
+FROM AST IMPORT NodeId;
+
+(* Hilbert's borrow rules are smaller than Rust's ownership system.
+   VAR parameters are exclusive borrows for a call, REF is GC-managed, and raw
+   POINTER values remain the explicit unsafe/manual escape hatch. *)
+PROCEDURE Check(Root:NodeId):BOOLEAN;
+
+END BorrowCheck.

@@ -1,0 +1,9 @@
+MODULE SetElementFailure;
+TYPE Small = INTEGER RANGE 0 .. 7;
+     Values = SET OF Small;
+VAR V: Values;
+    N: INTEGER;
+BEGIN
+    N := 8;
+    V := {N}
+END SetElementFailure.

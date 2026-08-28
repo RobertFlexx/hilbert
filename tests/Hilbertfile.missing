@@ -1,0 +1,6 @@
+PROJECT MissingRoot;
+ROOT "tests/does-not-exist.hil";
+OUTPUT "build/hilmake-missing";
+BUILD_DIR "build/.hilmake-missing-cache";
+PROFILE DEBUG;
+END MissingRoot;

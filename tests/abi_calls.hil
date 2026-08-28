@@ -1,0 +1,47 @@
+MODULE ABICalls;
+
+TYPE
+    Pair = RECORD Left, Right: INTEGER; END;
+    Base = RECORD First: INTEGER; END;
+    Extended = RECORD(Base) Second: INTEGER; END;
+    Mixed = RECORD Number: INTEGER; Fraction: REAL64; END;
+
+PROCEDURE MakePair(A, B: INTEGER): Pair;
+VAR P: Pair;
+BEGIN P.Left := A; P.Right := B; RETURN P END MakePair;
+
+PROCEDURE PairSum(P: Pair): INTEGER;
+BEGIN RETURN P.Left + P.Right END PairSum;
+
+PROCEDURE (VAR P: Pair) Increment(N: INTEGER);
+BEGIN P.Left := P.Left + N; P.Right := P.Right + N END Increment;
+
+PROCEDURE (P: Pair) Total(): INTEGER;
+BEGIN RETURN P.Left + P.Right END Total;
+
+PROCEDURE MakeMixed(N: INTEGER; F: REAL64): Mixed;
+VAR M: Mixed;
+BEGIN M.Number := N; M.Fraction := F; RETURN M END MakeMixed;
+
+PROCEDURE CheckMixed(M: Mixed): BOOLEAN;
+BEGIN RETURN (M.Number = 9) AND (M.Fraction = 2.5) END CheckMixed;
+
+PROCEDURE SumEight(A, B, C, D, E, F, G, H: INTEGER): INTEGER;
+BEGIN RETURN A + B + C + D + E + F + G + H END SumEight;
+
+PROCEDURE SumNineReals(A, B, C, D, E, F, G, H, I: REAL64): REAL64;
+BEGIN RETURN A + B + C + D + E + F + G + H + I END SumNineReals;
+
+VAR P: Pair; E: Extended; M: Mixed;
+BEGIN
+    P := MakePair(4, 5);
+    ASSERT PairSum(P) = 9;
+    P.Increment(3);
+    ASSERT P.Total() = 15;
+    E.First := 10; E.Second := 11;
+    ASSERT E.First + E.Second = 21;
+    M := MakeMixed(9, 2.5);
+    ASSERT CheckMixed(M);
+    ASSERT SumEight(1, 2, 3, 4, 5, 6, 7, 8) = 36;
+    ASSERT SumNineReals(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) = 45.0
+END ABICalls.

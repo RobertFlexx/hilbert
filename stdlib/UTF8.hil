@@ -1,0 +1,65 @@
+MODULE UTF8;
+IMPORT CStrings;
+EXPORT IsContinuation, SequenceLength, IsASCII, IsValid, CodepointCount;
+
+PROCEDURE IsContinuation(B: BYTE): BOOLEAN;
+BEGIN RETURN (B AND 192) = 128 END IsContinuation;
+
+PROCEDURE IsASCII(B: BYTE): BOOLEAN;
+BEGIN RETURN B < 128 END IsASCII;
+
+PROCEDURE SequenceLength(Lead: BYTE): INTEGER32;
+BEGIN
+    IF Lead < 128 THEN RETURN 1
+    ELSIF (Lead >= 194) AND (Lead <= 223) THEN RETURN 2
+    ELSIF (Lead >= 224) AND (Lead <= 239) THEN RETURN 3
+    ELSIF (Lead >= 240) AND (Lead <= 244) THEN RETURN 4
+    ELSE RETURN 0
+    END
+END SequenceLength;
+
+PROCEDURE IsValid(S: CSTRING): BOOLEAN;
+VAR I, N: SIZE; B0, B1, B2, B3: BYTE;
+BEGIN
+    IF S = NIL THEN RETURN FALSE END;
+    N := CStrings.Length(S); I := 0;
+    WHILE I < N DO
+        B0 := BYTE(S[I]);
+        IF B0 < 128 THEN I := I + 1
+        ELSIF (B0 >= 194) AND (B0 <= 223) THEN
+            IF I + 1 >= N THEN RETURN FALSE END;
+            B1 := BYTE(S[I + 1]); IF NOT IsContinuation(B1) THEN RETURN FALSE END; I := I + 2
+        ELSIF (B0 >= 224) AND (B0 <= 239) THEN
+            IF I + 2 >= N THEN RETURN FALSE END;
+            B1 := BYTE(S[I + 1]); B2 := BYTE(S[I + 2]);
+            IF NOT IsContinuation(B1) OR NOT IsContinuation(B2) THEN RETURN FALSE END;
+            IF (B0 = 224) AND (B1 < 160) THEN RETURN FALSE END;
+            IF (B0 = 237) AND (B1 >= 160) THEN RETURN FALSE END;
+            I := I + 3
+        ELSIF (B0 >= 240) AND (B0 <= 244) THEN
+            IF I + 3 >= N THEN RETURN FALSE END;
+            B1 := BYTE(S[I + 1]); B2 := BYTE(S[I + 2]); B3 := BYTE(S[I + 3]);
+            IF NOT IsContinuation(B1) OR NOT IsContinuation(B2) OR NOT IsContinuation(B3) THEN RETURN FALSE END;
+            IF (B0 = 240) AND (B1 < 144) THEN RETURN FALSE END;
+            IF (B0 = 244) AND (B1 >= 144) THEN RETURN FALSE END;
+            I := I + 4
+        ELSE RETURN FALSE
+        END
+    END;
+    RETURN TRUE
+END IsValid;
+
+PROCEDURE CodepointCount(S: CSTRING): SIZE;
+VAR I, N, Count: SIZE; W: INTEGER32;
+BEGIN
+    IF (S = NIL) OR NOT IsValid(S) THEN RETURN 0 END;
+    N := CStrings.Length(S); I := 0; Count := 0;
+    WHILE I < N DO
+        W := SequenceLength(BYTE(S[I]));
+        IF W = 0 THEN RETURN 0 END;
+        I := I + SIZE(W); Count := Count + 1
+    END;
+    RETURN Count
+END CodepointCount;
+
+END UTF8.

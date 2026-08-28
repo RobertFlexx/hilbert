@@ -1,0 +1,19 @@
+MODULE NativeThreadCallback;
+IMPORT NativeThread;
+
+VAR Count: ATOMIC[CARDINAL32];
+    Thread: NativeThread.Thread;
+
+PROCEDURE Worker(Data: ADDRESS): ADDRESS;
+BEGIN
+    ASSERT Data = NIL;
+    Count.FetchAdd(1);
+    RETURN NIL
+END Worker;
+
+BEGIN
+    Count.Store(0);
+    ASSERT NativeThread.Create(Thread, Worker, NIL);
+    ASSERT NativeThread.Join(Thread);
+    ASSERT Count.Load() = 1
+END NativeThreadCallback.

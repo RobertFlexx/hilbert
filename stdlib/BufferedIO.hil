@@ -1,0 +1,66 @@
+MODULE BufferedIO;
+IMPORT Buffer, CStrings, Files;
+EXPORT Writer, Init, Flush, WriteBytes, WriteString, WriteByte, WriteLine,
+       Failed, Dispose;
+
+TYPE
+    Writer = RECORD
+        Storage: Buffer.Buffer;
+        Destination: Files.Handle;
+        HasFailed: BOOLEAN;
+    END;
+
+PROCEDURE Init(VAR W: Writer; Destination: Files.Handle; Capacity: SIZE);
+BEGIN
+    IF Capacity = 0 THEN Capacity := 65536 END;
+    Buffer.Init(W.Storage, Capacity);
+    W.Destination := Destination;
+    W.HasFailed := W.Storage.Data = NIL
+END Init;
+
+PROCEDURE Flush(VAR W: Writer): BOOLEAN;
+BEGIN
+    IF W.HasFailed THEN RETURN FALSE END;
+    IF W.Storage.Length = 0 THEN RETURN TRUE END;
+    IF NOT Files.WriteAll(W.Destination, W.Storage.Data, W.Storage.Length) THEN
+        W.HasFailed := TRUE;
+        RETURN FALSE
+    END;
+    Buffer.Clear(W.Storage);
+    RETURN TRUE
+END Flush;
+
+PROCEDURE WriteBytes(VAR W: Writer; Data: ADDRESS; Count: SIZE): BOOLEAN;
+BEGIN
+    IF W.HasFailed THEN RETURN FALSE END;
+    IF Count = 0 THEN RETURN TRUE END;
+    IF Data = NIL THEN W.HasFailed := TRUE; RETURN FALSE END;
+    IF Count >= W.Storage.Capacity THEN
+        IF NOT Flush(W) OR NOT Files.WriteAll(W.Destination, Data, Count) THEN
+            W.HasFailed := TRUE; RETURN FALSE
+        END;
+        RETURN TRUE
+    END;
+    IF (W.Storage.Length + Count > W.Storage.Capacity) AND NOT Flush(W) THEN RETURN FALSE END;
+    IF NOT Buffer.Append(W.Storage, Data, Count) THEN W.HasFailed := TRUE; RETURN FALSE END;
+    RETURN TRUE
+END WriteBytes;
+
+PROCEDURE WriteString(VAR W: Writer; Text: CSTRING): BOOLEAN;
+BEGIN
+    IF Text = NIL THEN RETURN TRUE END;
+    RETURN WriteBytes(W, ADDRESS(Text), CStrings.Length(Text))
+END WriteString;
+
+PROCEDURE WriteByte(VAR W: Writer; Value: BYTE): BOOLEAN;
+BEGIN UNSAFE BEGIN RETURN WriteBytes(W, ADR(Value), 1) END END WriteByte;
+
+PROCEDURE WriteLine(VAR W: Writer; Text: CSTRING): BOOLEAN;
+BEGIN RETURN WriteString(W, Text) AND WriteByte(W, BYTE(10)) END WriteLine;
+
+PROCEDURE Failed(VAR W: Writer): BOOLEAN; BEGIN RETURN W.HasFailed END Failed;
+
+PROCEDURE Dispose(VAR W: Writer);
+BEGIN Flush(W); Buffer.Dispose(W.Storage); W.HasFailed := FALSE END Dispose;
+
+END BufferedIO.

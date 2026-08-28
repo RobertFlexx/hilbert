@@ -1,0 +1,7 @@
+MODULE ImplicitIntegerNarrowing;
+VAR Wide: INTEGER;
+    Narrow: INTEGER32;
+BEGIN
+    Wide := 42;
+    Narrow := Wide
+END ImplicitIntegerNarrowing.

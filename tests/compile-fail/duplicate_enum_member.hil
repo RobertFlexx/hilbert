@@ -1,0 +1,3 @@
+MODULE DuplicateEnumMember;
+TYPE Bad = (First, First);
+END DuplicateEnumMember.

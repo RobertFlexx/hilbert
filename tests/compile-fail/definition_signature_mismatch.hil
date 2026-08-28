@@ -1,0 +1,3 @@
+MODULE DefinitionSignatureMismatch;
+IMPORT DefinitionMismatch;
+END DefinitionSignatureMismatch.

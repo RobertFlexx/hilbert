@@ -1,0 +1,8 @@
+MODULE ArgumentsTest;
+IMPORT Arguments, CStrings;
+BEGIN
+    ASSERT Arguments.Count() = 3;
+    ASSERT CStrings.Equal(Arguments.ProgramName(), Arguments.Get(0));
+    ASSERT CStrings.Equal(Arguments.Get(1), "alpha");
+    ASSERT CStrings.Equal(Arguments.Get(2), "beta")
+END ArgumentsTest.

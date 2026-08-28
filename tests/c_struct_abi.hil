@@ -1,0 +1,25 @@
+MODULE CStructABI;
+
+TYPE
+    RealPair = RECORD X, Y: REAL64; END;
+    Mixed = RECORD Code: INTEGER64; Value: REAL64; END;
+    NestedReals = RECORD Values: ARRAY 2 OF REAL64; END;
+
+FOREIGN "C" PROCEDURE hilbert_test_sum_real_pair(Pair: RealPair): REAL64;
+FOREIGN "C" PROCEDURE hilbert_test_make_mixed(Code: INTEGER64; Value: REAL64): Mixed;
+FOREIGN "C" PROCEDURE hilbert_test_check_nested(Value: NestedReals): BOOLEAN;
+
+VAR Pair: RealPair;
+    M: Mixed;
+    Nested: NestedReals;
+
+BEGIN
+    Pair.X := 1.25; Pair.Y := 2.75;
+    ASSERT hilbert_test_sum_real_pair(Pair) = 4.0;
+    M := hilbert_test_make_mixed(42, 3.5);
+    ASSERT M.Code = 42;
+    ASSERT M.Value = 3.5;
+    Nested.Values[0] := 10.0;
+    Nested.Values[1] := 32.0;
+    ASSERT hilbert_test_check_nested(Nested)
+END CStructABI.

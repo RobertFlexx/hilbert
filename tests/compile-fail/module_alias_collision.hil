@@ -1,0 +1,3 @@
+MODULE ModuleAliasCollision;
+IMPORT Same := ImportSurfaceDep, Same := ImportValuesDep;
+END ModuleAliasCollision.

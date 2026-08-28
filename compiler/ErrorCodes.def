@@ -1,0 +1,42 @@
+DEFINITION MODULE ErrorCodes;
+
+FROM HStrings IMPORT Text;
+
+(* Stable public diagnostic numbers.  The text can improve without breaking tools. *)
+CONST
+    EUnexpectedToken=1001; EExpectedIdentifier=1002; EInvalidCharacter=1003; EUnterminatedComment=1004;
+    EUnterminatedLiteral=1005; EInvalidNumber=1006; EExpectedModule=1007; EModuleEndMismatch=1008;
+    EDeclarationExpected=1009; EStatementExpected=1010; ETypeExpected=1011; EExpressionExpected=1012;
+    EExpectedSemicolon=1013; EExpectedRightParen=1014; EExpectedRightBracket=1015; EExpectedEnd=1016; EProcedureEndMismatch=1017;
+    ETokenTooLong=1018;
+    EDuplicateDeclaration=1101; EUnknownIdentifier=1102; EUnknownType=1103; EUnknownModule=1104;
+    EPrivateMember=1105; EUnknownField=1106; ENotProcedure=1107; EWrongArgumentCount=1108;
+    EArgumentType=1109; EAssignmentType=1110; EReturnType=1111; EReturnValueRequired=1112;
+    EVoidReturnValue=1113; EConditionBoolean=1114; EAssertBoolean=1115; EIndexInteger=1116;
+    ENotIndexable=1117; EDerefType=1118; ENotAssignable=1119; EIncompatibleOperands=1120;
+    EBitwiseInteger=1121; ERangeBounds=1122; EBadRecordBase=1123; ERecursiveValueType=1124;
+    EExportMissing=1125; EDistinctConversion=1126; EGenericConstraint=1127; EGenericArity=1128;
+    ETypeConversionArity=1129; EIntrinsicArity=1130; EInvalidTypeExpression=1131; EReceiverType=1132;
+    EBorrowAlias=1133; EEscapingBorrow=1134; EUnsafePointerAccess=1135; EManagedRawConversion=1136; EReservedFeature=1137;
+    EConstantExpression=1138; EDivisionCondition=1139; EDivisionEndMismatch=1140; EDivisionVisibility=1141;
+    EAddressableRequired=1201; EExitOutsideLoop=1202; EForIterator=1203; EDeferLowering=1204;
+    EParallelLowering=1205; EExceptionLowering=1206; ETaskLowering=1207; EAtomicCASLowering=1208;
+    ETooManyCallArgs=1209; EUnsupportedABIArg=1210; EUnsupportedABIReturn=1211; EHirMalformed=1212;
+    EBackendUnsupportedType=1213; EBackendUnsupportedOp=1214; EStackFrameTooLarge=1215; ERelocationUnsupported=1216;
+    ESourceOpen=2001; ESourceTooLarge=2002; EModuleNotFound=2003; ECircularImport=2004;
+    EModuleGraphLimit=2005; EImportLimit=2006; EForeignLibraryLimit=2007; EModuleChanged=2008;
+    EOutputCreate=2009; EAssemblerFailed=2010; ELinkerFailed=2011; EBuildDirectory=2012;
+    EUnknownTarget=2013; EBackendTarget=2014; EStaticLinkFailed=2015; EObjectWrite=2016; ERuntimeBuild=2017; ECommandTooLong=2018;
+    EOptionUnknown=2101; EOptionValue=2102; EMissingInput=2103; ETooManySearchPaths=2104;
+    ETooManyLibraries=2105; EArgumentTooLong=2106; EProjectOpen=2201; EProjectSyntax=2202; EProjectMissingRoot=2203;
+    EProjectUnknownKey=2204; EProjectBuildFailed=2205; EProjectCycle=2206;
+    EArenaAST=9001; EArenaHIR=9002; EArenaTypes=9003; EArenaSymbols=9004; EArenaScopes=9005;
+    EArenaLayout=9006; EArenaSignatures=9007; EArenaInterfaces=9008; EInternalInvariant=9998; EInternal=9999;
+
+    WUnusedImport=3001; WUnusedLocal=3002; WShadowedName=3003; WImplicitNumericConversion=3004;
+    WDeprecated=3005; WUnreachable=3006; WEmptyBody=3007; WForeignUnsafe=3008; WRangeCheckElided=3009;
+    WRawAddress=3010; WGCConservativeRoot=3011;
+
+PROCEDURE DefaultMessage(Code:CARDINAL; VAR Out:Text);
+
+END ErrorCodes.

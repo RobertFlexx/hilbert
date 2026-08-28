@@ -1,0 +1,24 @@
+MODULE GenericProceduresTest;
+
+PROCEDURE Max[T](A, B: T): T;
+BEGIN
+    IF A > B THEN RETURN A ELSE RETURN B END
+END Max;
+
+PROCEDURE Identity[T](Value: T): T;
+BEGIN
+    RETURN Value
+END Identity;
+
+PROCEDURE Second[A, B](First: A; Value: B): B;
+BEGIN
+    RETURN Value
+END Second;
+
+BEGIN
+    ASSERT Max[INTEGER](7, 12) = 12;
+    ASSERT Max[REAL64](4.5, 2.0) = 4.5;
+    ASSERT Identity[INTEGER](42) = 42;
+    ASSERT Identity[REAL64](3.25) = 3.25;
+    ASSERT Second[INTEGER, REAL64](7, 9.5) = 9.5
+END GenericProceduresTest.

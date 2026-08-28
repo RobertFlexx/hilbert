@@ -1,0 +1,16 @@
+MODULE TextFileLines;
+IMPORT IO, TextFile;
+
+VAR Input: TextFile.Reader; Line: CSTRING; Count: CARDINAL;
+
+BEGIN
+    ASSERT TextFile.Open(Input, "README.md");
+    DEFER TextFile.Close(Input);
+    Count := 0;
+    Line := TextFile.Next(Input);
+    WHILE Line # NIL DO
+        Count := Count + 1;
+        Line := TextFile.Next(Input)
+    END;
+    IO.WriteCard(Count); IO.WriteLn(" lines in README.md")
+END TextFileLines.

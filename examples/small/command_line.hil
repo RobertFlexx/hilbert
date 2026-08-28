@@ -1,0 +1,12 @@
+MODULE CommandLine;
+IMPORT IO, Arguments;
+
+VAR I: INTEGER;
+
+BEGIN
+    IO.Write("program: "); IO.WriteLn(Arguments.ProgramName());
+    IO.Write("argument count: "); IO.WriteInt(Arguments.Count()); IO.NewLine;
+    FOR I := 1 TO Arguments.Count() - 1 DO
+        IO.Write("  "); IO.WriteLn(Arguments.Get(I))
+    END
+END CommandLine.

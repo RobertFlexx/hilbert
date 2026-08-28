@@ -1,0 +1,11 @@
+MODULE ForStep;
+VAR I, Step, Sum: INTEGER;
+BEGIN
+    Step := -2;
+    Sum := 0;
+    FOR I := 6 TO 0 BY Step DO
+        Sum := Sum + I
+    END;
+    ASSERT Sum = 12;
+    ASSERT I = -2
+END ForStep.

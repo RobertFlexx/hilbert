@@ -1,0 +1,15 @@
+DEFINITION MODULE Types;
+FROM HStrings IMPORT Text;
+CONST MaxTypes=32767;
+TYPE TypeId=CARDINAL;
+TYPE TypeKind=(TyInvalid,TyVoid,TyBoolean,TyChar,TyByte,TyI8,TyI16,TyI32,TyI64,TyU8,TyU16,TyU32,TyU64,TyInteger,TyCardinal,TySize,TyAddress,TyR32,TyR64,TyString,TyCString,TyRange,TyDistinct,TyPointer,TyRef,TyArray,TySlice,TySet,TyRecord,TyEnum,TyVariant,TyProtected,TyProcedure,TyAtomic,TyGeneric);
+TYPE Type=RECORD Kind:TypeKind; Name:Text; Base,Arg,Result:TypeId; Lo,Hi:LONGINT; Size,Align:CARDINAL; Flags:BITSET END;
+PROCEDURE Init;
+PROCEDURE Builtin(Name:ARRAY OF CHAR):TypeId;
+PROCEDURE NewType(K:TypeKind):TypeId;
+PROCEDURE Get(Id:TypeId):Type;
+PROCEDURE Put(Id:TypeId; T:Type);
+PROCEDURE Compatible(A,B:TypeId):BOOLEAN;
+PROCEDURE IsInteger(T:TypeId):BOOLEAN;
+PROCEDURE IsNumeric(T:TypeId):BOOLEAN;
+END Types.

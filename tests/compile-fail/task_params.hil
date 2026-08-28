@@ -1,0 +1,4 @@
+MODULE TaskParams;
+TASK Worker(Id: INTEGER);
+BEGIN END Worker;
+BEGIN END TaskParams.

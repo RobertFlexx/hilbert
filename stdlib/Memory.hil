@@ -1,0 +1,52 @@
+MODULE Memory;
+EXPORT Alloc, AllocAligned, Calloc, Realloc, Free, Copy, Move, Compare, Fill, Zero;
+
+FOREIGN "C" PROCEDURE malloc(N: SIZE): ADDRESS;
+FOREIGN "C" PROCEDURE calloc(Count, Size: SIZE): ADDRESS;
+FOREIGN "C" PROCEDURE realloc(P: ADDRESS; N: SIZE): ADDRESS;
+FOREIGN "C" PROCEDURE free(P: ADDRESS);
+FOREIGN "C" PROCEDURE posix_memalign(Out: POINTER TO ADDRESS; Alignment, N: SIZE): INTEGER32;
+FOREIGN "C" PROCEDURE memcpy(Dst, Src: ADDRESS; N: SIZE): ADDRESS;
+FOREIGN "C" PROCEDURE memmove(Dst, Src: ADDRESS; N: SIZE): ADDRESS;
+FOREIGN "C" PROCEDURE memcmp(A, B: ADDRESS; N: SIZE): INTEGER32;
+FOREIGN "C" PROCEDURE memset(Dst: ADDRESS; Byte: INTEGER32; N: SIZE): ADDRESS;
+
+PROCEDURE Alloc(N: SIZE): ADDRESS;
+BEGIN RETURN malloc(N) END Alloc;
+
+PROCEDURE AllocAligned(N, Alignment: SIZE): ADDRESS;
+VAR P: ADDRESS;
+BEGIN
+    IF (Alignment < SIZEOF(ADDRESS)) OR ((Alignment AND (Alignment - 1)) # 0) THEN RETURN NIL END;
+    P := NIL;
+    UNSAFE BEGIN
+        IF posix_memalign(ADR(P), Alignment, N) # 0 THEN RETURN NIL END
+    END;
+    RETURN P
+END AllocAligned;
+
+PROCEDURE Calloc(Count, Size: SIZE): ADDRESS;
+BEGIN RETURN calloc(Count, Size) END Calloc;
+
+PROCEDURE Realloc(P: ADDRESS; N: SIZE): ADDRESS;
+BEGIN RETURN realloc(P, N) END Realloc;
+
+PROCEDURE Free(P: ADDRESS);
+BEGIN IF P # NIL THEN free(P) END END Free;
+
+PROCEDURE Copy(Dst, Src: ADDRESS; N: SIZE);
+BEGIN IF N # 0 THEN memcpy(Dst, Src, N) END END Copy;
+
+PROCEDURE Move(Dst, Src: ADDRESS; N: SIZE);
+BEGIN IF N # 0 THEN memmove(Dst, Src, N) END END Move;
+
+PROCEDURE Compare(A, B: ADDRESS; N: SIZE): INTEGER32;
+BEGIN IF N = 0 THEN RETURN 0 END; RETURN memcmp(A, B, N) END Compare;
+
+PROCEDURE Fill(Dst: ADDRESS; Byte: BYTE; N: SIZE);
+BEGIN IF N # 0 THEN memset(Dst, INTEGER32(Byte), N) END END Fill;
+
+PROCEDURE Zero(Dst: ADDRESS; N: SIZE);
+BEGIN Fill(Dst, 0, N) END Zero;
+
+END Memory.

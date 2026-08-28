@@ -1,0 +1,23 @@
+DEFINITION MODULE Diagnostics;
+
+TYPE
+    Severity = (Note, Warning, Error, Fatal);
+
+PROCEDURE Init(Color:BOOLEAN);
+PROCEDURE Configure(MaxErrors:CARDINAL; WarningsAsErrors,Quiet,ShowSummary:BOOLEAN);
+PROCEDURE SetColor(Color:BOOLEAN);
+PROCEDURE Report(Level:Severity; File:ARRAY OF CHAR; Line,Column:CARDINAL; Message:ARRAY OF CHAR);
+PROCEDURE ReportContext(Level:Severity; File:ARRAY OF CHAR; Line,Column:CARDINAL; Message,Context:ARRAY OF CHAR);
+PROCEDURE Coded(Level:Severity; Code:CARDINAL; File:ARRAY OF CHAR; Line,Column:CARDINAL; Message:ARRAY OF CHAR);
+PROCEDURE CodedContext(Level:Severity; Code:CARDINAL; File:ARRAY OF CHAR; Line,Column:CARDINAL; Message,Context:ARRAY OF CHAR);
+PROCEDURE Help(Message:ARRAY OF CHAR);
+PROCEDURE NoteMessage(Message:ARRAY OF CHAR);
+PROCEDURE Simple(Level:Severity; Message:ARRAY OF CHAR);
+PROCEDURE SimpleCode(Level:Severity; Code:CARDINAL; Message:ARRAY OF CHAR);
+PROCEDURE Summary;
+PROCEDURE ErrorCount():CARDINAL;
+PROCEDURE WarningCount():CARDINAL;
+PROCEDURE HasErrors():BOOLEAN;
+PROCEDURE LimitReached():BOOLEAN;
+
+END Diagnostics.

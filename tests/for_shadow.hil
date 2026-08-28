@@ -1,0 +1,11 @@
+MODULE ForShadow;
+
+VAR I, Sum: INTEGER;
+
+BEGIN
+    I := 99;
+    Sum := 0;
+    FOR I := 1 TO 3 DO Sum := Sum + I END;
+    ASSERT Sum = 6;
+    ASSERT I = 4
+END ForShadow.

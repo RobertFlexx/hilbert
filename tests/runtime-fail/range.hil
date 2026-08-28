@@ -1,0 +1,8 @@
+MODULE RangeFailure;
+TYPE Small = INTEGER RANGE 0 .. 3;
+VAR Source: INTEGER;
+    Value: Small;
+BEGIN
+    Source := 4;
+    Value := Source
+END RangeFailure.

@@ -1,0 +1,12 @@
+MODULE EnumCase;
+TYPE Color = (Red, Green, Blue);
+VAR C: Color;
+BEGIN
+    C := Green;
+    CASE C OF
+    Red: ASSERT FALSE
+    | Green: ASSERT TRUE
+    | Blue: ASSERT FALSE
+    ELSE ASSERT FALSE
+    END
+END EnumCase.

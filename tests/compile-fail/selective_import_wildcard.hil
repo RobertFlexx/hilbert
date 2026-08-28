@@ -1,0 +1,3 @@
+MODULE SelectiveImportWildcard;
+FROM ImportSurfaceDep IMPORT *;
+END SelectiveImportWildcard.

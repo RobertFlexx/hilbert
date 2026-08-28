@@ -1,0 +1,10 @@
+MODULE Atomics;
+EXPORT Counter32, Counter64, SignedCounter32, SignedCounter64;
+
+TYPE
+    Counter32 = ATOMIC[CARDINAL32];
+    Counter64 = ATOMIC[CARDINAL64];
+    SignedCounter32 = ATOMIC[INTEGER32];
+    SignedCounter64 = ATOMIC[INTEGER64];
+
+END Atomics.

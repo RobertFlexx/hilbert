@@ -1,0 +1,12 @@
+MODULE Vector;
+EXPORT Vector, VectorView;
+TYPE
+    Vector[T] = RECORD
+        Data: POINTER TO T;
+        Length, Capacity: SIZE;
+    END;
+    VectorView[T] = RECORD
+        Data: POINTER TO T;
+        Length: SIZE;
+    END;
+END Vector.

@@ -1,0 +1,20 @@
+MODULE DivisionSelection;
+
+IMPORT IO, Platform;
+
+DIVISION linux WHEN TARGET("linux") AND HOSTED;
+EXPORT PlatformCode;
+CONST PlatformCode = 1;
+END linux;
+
+DIVISION bare WHEN FREESTANDING;
+EXPORT PlatformCode;
+CONST PlatformCode = 2;
+END bare;
+
+BEGIN
+  ASSERT(Platform.IsHosted);
+  ASSERT(Platform.PointerBits = 64);
+  ASSERT(PlatformCode = 1);
+  IO.WriteLn("selected the hosted Linux division")
+END DivisionSelection.

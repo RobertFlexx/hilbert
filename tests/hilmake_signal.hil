@@ -1,0 +1,6 @@
+MODULE HilmakeSignal;
+
+BEGIN
+  LOOP
+  END
+END HilmakeSignal.

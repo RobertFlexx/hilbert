@@ -1,0 +1,39 @@
+MODULE StdlibIntegration;
+
+IMPORT ASCII, Arena, Bits, Buffer, CStrings, Endian, Math, Path, Random, UTF8;
+
+VAR A: Arena.Allocator;
+    B: Buffer.Buffer;
+    G: Random.Generator;
+    P: ADDRESS;
+
+BEGIN
+    ASSERT ASCII.IsDigit('7');
+    ASSERT ASCII.ToUpper('q') = 'Q';
+    ASSERT Bits.IsPowerOfTwo(64);
+    ASSERT Endian.Swap16(4660) = 13330;
+    ASSERT CStrings.Length("hilbert") = 7;
+    ASSERT CStrings.StartsWith("hilbert", "hil");
+    ASSERT UTF8.IsValid("technically spiritually modula 4");
+    ASSERT UTF8.CodepointCount("wirth") = 5;
+    ASSERT Path.IsAbsolute("/tmp");
+    ASSERT Path.IsDot(".");
+    ASSERT Math.Sqrt(81.0) = 9.0;
+
+    Arena.Init(A, 64);
+    ASSERT Arena.Remaining(A) = 64;
+    P := Arena.AllocateZeroed(A, 8);
+    ASSERT P # NIL;
+    ASSERT Arena.Remaining(A) = 56;
+    Arena.Destroy(A);
+
+    Buffer.Init(B, 8);
+    ASSERT Buffer.Empty(B);
+    ASSERT Buffer.Resize(B, 4);
+    ASSERT B.Length = 4;
+    Buffer.Dispose(B);
+
+    Random.Seed(G, 1234);
+    ASSERT Random.Next(G) # 0;
+    ASSERT Random.Range(G, 6) < 6
+END StdlibIntegration.

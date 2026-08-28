@@ -1,0 +1,17 @@
+MODULE ConstTypes;
+CONST
+    Width = 4;
+    Count = Width * 2;
+    Last = Count - 1;
+TYPE
+    Index = INTEGER RANGE 0 .. Last;
+    Row = ARRAY Count OF INTEGER;
+VAR R: Row; I: Index;
+BEGIN
+    I := Last;
+    R[I] := Count;
+    CASE I OF
+    Last: ASSERT R[I] = 8
+    ELSE ASSERT FALSE
+    END
+END ConstTypes.

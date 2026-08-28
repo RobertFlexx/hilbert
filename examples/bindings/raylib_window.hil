@@ -1,0 +1,18 @@
+MODULE RaylibWindow;
+IMPORT Raylib;
+
+VAR Background, Foreground: Raylib.Color;
+
+BEGIN
+    Background := Raylib.MakeColor(24, 28, 40, 255);
+    Foreground := Raylib.MakeColor(230, 235, 245, 255);
+    Raylib.InitWindow(800, 450, "Hilbert + raylib");
+    Raylib.SetTargetFPS(60);
+    WHILE NOT Raylib.WindowShouldClose() DO
+        Raylib.BeginDrawing();
+        Raylib.ClearBackground(Background);
+        Raylib.DrawText("technically spiritually Modula 4", 80, 205, 28, Foreground);
+        Raylib.EndDrawing()
+    END;
+    Raylib.CloseWindow()
+END RaylibWindow.

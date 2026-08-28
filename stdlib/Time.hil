@@ -1,0 +1,7 @@
+MODULE Time;
+IMPORT DateTime;
+EXPORT Unix, Sleep, SleepMilliseconds;
+PROCEDURE Unix(): INTEGER64; BEGIN RETURN DateTime.NowUnix() END Unix;
+PROCEDURE Sleep(Seconds: CARDINAL64): BOOLEAN; BEGIN RETURN DateTime.Sleep(INTEGER64(Seconds),0) END Sleep;
+PROCEDURE SleepMilliseconds(Milliseconds: CARDINAL64): BOOLEAN; BEGIN RETURN DateTime.SleepMilliseconds(Milliseconds) END SleepMilliseconds;
+END Time.

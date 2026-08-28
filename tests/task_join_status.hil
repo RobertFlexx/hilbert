@@ -1,0 +1,18 @@
+MODULE TaskJoinStatus;
+IMPORT Tasks;
+
+VAR Count: ATOMIC[CARDINAL32];
+    Handle: Tasks.Handle;
+
+TASK Worker;
+BEGIN
+    Count.FetchAdd(1)
+END Worker;
+
+BEGIN
+    Count.Store(0);
+    Handle := START Worker;
+    ASSERT Tasks.TryJoin(Handle);
+    ASSERT Count.Load() = 1;
+    ASSERT NOT Tasks.TryJoin(Handle)
+END TaskJoinStatus.

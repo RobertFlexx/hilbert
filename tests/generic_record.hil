@@ -1,0 +1,14 @@
+MODULE GenericRecord;
+TYPE Box[T] = RECORD Value: T; END;
+
+PROCEDURE Read(B: Box[INTEGER]): INTEGER;
+BEGIN
+    RETURN B.Value
+END Read;
+
+VAR B, C: Box[INTEGER];
+BEGIN
+    B.Value := 17;
+    C := B;
+    ASSERT Read(C) = 17
+END GenericRecord.

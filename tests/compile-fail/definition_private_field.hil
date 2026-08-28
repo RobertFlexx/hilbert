@@ -1,0 +1,6 @@
+MODULE DefinitionPrivateField;
+IMPORT DefinitionStack;
+VAR S: DefinitionStack.Stack;
+BEGIN
+    S.Used := 0
+END DefinitionPrivateField.

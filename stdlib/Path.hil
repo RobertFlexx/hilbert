@@ -1,0 +1,111 @@
+MODULE Path;
+IMPORT Buffer, CStrings, Memory;
+EXPORT Builder, Separator, IsAbsolute, IsRelative, IsRoot, Empty,
+       HasTrailingSeparator, IsDot, IsDotDot, BaseName, Extension,
+       HasExtension, Init, Dispose, Clear, Assign, Join, Append,
+       Value, Length;
+TYPE Builder = RECORD Storage: Buffer.Buffer; END;
+CONST Separator = '/';
+PROCEDURE Empty(P: CSTRING): BOOLEAN; BEGIN RETURN (P = NIL) OR (P[0] = CHR(0)) END Empty;
+PROCEDURE IsAbsolute(P: CSTRING): BOOLEAN; BEGIN RETURN (P # NIL) AND (P[0] = Separator) END IsAbsolute;
+PROCEDURE IsRelative(P: CSTRING): BOOLEAN; BEGIN RETURN NOT IsAbsolute(P) END IsRelative;
+PROCEDURE IsRoot(P: CSTRING): BOOLEAN; BEGIN RETURN (P # NIL) AND (P[0] = Separator) AND (P[1] = CHR(0)) END IsRoot;
+PROCEDURE HasTrailingSeparator(P: CSTRING): BOOLEAN;
+VAR I: SIZE;
+BEGIN
+    IF Empty(P) THEN RETURN FALSE END;
+    I := 0; WHILE P[I + 1] # CHR(0) DO I := I + 1 END;
+    RETURN P[I] = Separator
+END HasTrailingSeparator;
+PROCEDURE IsDot(P: CSTRING): BOOLEAN; BEGIN RETURN (P # NIL) AND (P[0] = '.') AND (P[1] = CHR(0)) END IsDot;
+PROCEDURE IsDotDot(P: CSTRING): BOOLEAN; BEGIN RETURN (P # NIL) AND (P[0] = '.') AND (P[1] = '.') AND (P[2] = CHR(0)) END IsDotDot;
+
+PROCEDURE BaseName(P: CSTRING): CSTRING;
+VAR I, Last: SIZE;
+BEGIN
+    IF Empty(P) THEN RETURN P END;
+    I := 0; Last := 0;
+    WHILE P[I] # CHR(0) DO
+        IF (P[I] = Separator) AND (P[I + 1] # CHR(0)) THEN Last := I + 1 END;
+        I := I + 1
+    END;
+    RETURN CStrings.At(P, Last)
+END BaseName;
+
+PROCEDURE Extension(P: CSTRING): CSTRING;
+VAR Name: CSTRING; I, Dot: SIZE;
+BEGIN
+    Name := BaseName(P);
+    IF Name = NIL THEN RETURN NIL END;
+    I := 0; Dot := 0;
+    WHILE Name[I] # CHR(0) DO
+        IF (Name[I] = '.') AND (I # 0) THEN Dot := I + 1 END;
+        I := I + 1
+    END;
+    IF (Dot = 0) OR (Dot = I) THEN RETURN NIL END;
+    RETURN CStrings.At(Name, Dot)
+END Extension;
+
+PROCEDURE HasExtension(P, Suffix: CSTRING): BOOLEAN;
+VAR Found: CSTRING;
+BEGIN
+    Found := Extension(P);
+    IF Suffix # NIL THEN WHILE Suffix[0] = '.' DO Suffix := CStrings.At(Suffix, 1) END END;
+    RETURN (Found # NIL) AND CStrings.Equal(Found, Suffix)
+END HasExtension;
+
+PROCEDURE Init(VAR B: Builder; Capacity: SIZE);
+BEGIN
+    IF Capacity = 0 THEN Capacity := 64 END;
+    Buffer.Init(B.Storage, Capacity);
+    Clear(B)
+END Init;
+
+PROCEDURE Dispose(VAR B: Builder); BEGIN Buffer.Dispose(B.Storage) END Dispose;
+
+PROCEDURE Clear(VAR B: Builder);
+BEGIN
+    IF (B.Storage.Capacity = 0) AND NOT Buffer.Reserve(B.Storage, 1) THEN RETURN END;
+    B.Storage.Length := 0;
+    IF B.Storage.Data # NIL THEN Memory.Fill(B.Storage.Data, 0, 1) END
+END Clear;
+
+PROCEDURE Assign(VAR B: Builder; P: CSTRING): BOOLEAN;
+VAR N: SIZE;
+BEGIN
+    N := CStrings.Length(P);
+    IF NOT Buffer.Reserve(B.Storage, N + 1) THEN RETURN FALSE END;
+    IF N # 0 THEN Memory.Copy(B.Storage.Data, ADDRESS(P), N) END;
+    Memory.Fill(ADDRESS(SIZE(B.Storage.Data) + N), 0, 1);
+    B.Storage.Length := N;
+    RETURN TRUE
+END Assign;
+
+PROCEDURE Append(VAR B: Builder; Component: CSTRING): BOOLEAN;
+VAR N, At, Needed: SIZE; Slash: BOOLEAN; Current: CSTRING;
+BEGIN
+    IF Component = NIL THEN RETURN FALSE END;
+    N := CStrings.Length(Component);
+    Current := CSTRING(B.Storage.Data);
+    Slash := (B.Storage.Length # 0) AND
+             (Current[B.Storage.Length - 1] # Separator);
+    Needed := B.Storage.Length + N;
+    IF Slash THEN Needed := Needed + 1 END;
+    IF (Needed < B.Storage.Length) OR NOT Buffer.Reserve(B.Storage, Needed + 1) THEN RETURN FALSE END;
+    At := B.Storage.Length;
+    IF Slash THEN
+        Memory.Fill(ADDRESS(SIZE(B.Storage.Data) + At), BYTE(ORD(Separator)), 1);
+        At := At + 1
+    END;
+    IF N # 0 THEN Memory.Copy(ADDRESS(SIZE(B.Storage.Data) + At), ADDRESS(Component), N) END;
+    Memory.Fill(ADDRESS(SIZE(B.Storage.Data) + Needed), 0, 1);
+    B.Storage.Length := Needed;
+    RETURN TRUE
+END Append;
+
+PROCEDURE Join(VAR B: Builder; Parent, Component: CSTRING): BOOLEAN;
+BEGIN RETURN Assign(B, Parent) AND Append(B, Component) END Join;
+
+PROCEDURE Value(VAR B: Builder): CSTRING; BEGIN RETURN CSTRING(B.Storage.Data) END Value;
+PROCEDURE Length(VAR B: Builder): SIZE; BEGIN RETURN B.Storage.Length END Length;
+END Path.

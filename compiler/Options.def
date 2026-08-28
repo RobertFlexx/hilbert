@@ -1,0 +1,27 @@
+DEFINITION MODULE Options;
+
+FROM HStrings IMPORT Text;
+
+CONST MaxSearchPaths=64; MaxLinkLibraries=128;
+TYPE
+    Command=(CmdBuild,CmdCheck,CmdEmitAsm,CmdEmitObj,CmdDumpAST,CmdDumpHIR,CmdGraph,CmdTargets,CmdHelp,CmdVersion);
+    OptLevel=(O0,O1,O2,O3,Os);
+    TextList=ARRAY [0..MaxSearchPaths-1] OF Text;
+    LinkList=ARRAY [0..MaxLinkLibraries-1] OF Text;
+    Settings=RECORD
+        Cmd:Command;
+        Input,Output,Target,Sysroot,CacheDir,ToolchainRoot,Profile,Runtime:Text;
+        ModulePaths:TextList; LibraryPaths:TextList; LinkLibraries:LinkList;
+        ModulePathCount,LibraryPathCount,LinkLibraryCount:CARDINAL;
+        Opt:OptLevel;
+        ErrorLimit,Jobs:CARDINAL;
+        StaticLink,Strip,KeepTemps,Color,DebugInfo,Verbose,NoStdlib:BOOLEAN;
+        Incremental,WarningsAsErrors,Quiet,ShowSummary,Explain,Trace,GraphDot,GraphCount,Progress:BOOLEAN;
+    END;
+
+PROCEDURE Parse(VAR S:Settings):BOOLEAN;
+PROCEDURE PrintHelp;
+PROCEDURE PrintVersion;
+PROCEDURE PrintTargets;
+
+END Options.

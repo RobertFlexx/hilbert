@@ -1,0 +1,5 @@
+MODULE ImplicitIntegerChar;
+VAR C: CHAR;
+BEGIN
+    C := 65
+END ImplicitIntegerChar.

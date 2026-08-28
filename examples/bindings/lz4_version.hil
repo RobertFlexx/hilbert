@@ -1,0 +1,8 @@
+MODULE LZ4Version;
+IMPORT IO, LZ4;
+
+BEGIN
+    IO.Write("LZ4 version: "); IO.WriteLn(LZ4.LZ4_versionString());
+    IO.Write("maximum bytes for a 4096-byte block: ");
+    IO.WriteInt(LZ4.LZ4_compressBound(4096)); IO.NewLine
+END LZ4Version.

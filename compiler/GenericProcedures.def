@@ -1,0 +1,13 @@
+DEFINITION MODULE GenericProcedures;
+
+FROM AST IMPORT NodeId;
+FROM Generics IMPORT ActualArray;
+FROM HStrings IMPORT Text;
+
+PROCEDURE Init;
+PROCEDURE Request(Owner,Name,LinkName:ARRAY OF CHAR; VAR Actuals:ActualArray; Count:CARDINAL; VAR SpecializedLink:Text);
+PROCEDURE NeedsEmission(Owner:ARRAY OF CHAR):BOOLEAN;
+PROCEDURE MarkEmitted(Owner:ARRAY OF CHAR);
+PROCEDURE Materialize(Owner:ARRAY OF CHAR; VAR Declarations:NodeId);
+
+END GenericProcedures.

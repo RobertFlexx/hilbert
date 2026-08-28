@@ -1,0 +1,17 @@
+MODULE LZ4;
+(* First-party LZ4 C ABI binding. *)
+EXPORT LZ4_versionNumber, LZ4_versionString, LZ4_compress_default, LZ4_decompress_safe, LZ4_compressBound, LZ4_compress_fast, LZ4_compress_fast_extState, LZ4_sizeofState, LZ4_decompress_safe_partial;
+
+FOREIGN "C" LIBRARY "lz4";
+
+FOREIGN "C" PROCEDURE LZ4_versionNumber(): INTEGER32;
+FOREIGN "C" PROCEDURE LZ4_versionString(): CSTRING;
+FOREIGN "C" PROCEDURE LZ4_compress_default(Src, Dst: CSTRING; SrcSize, DstCapacity: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE LZ4_decompress_safe(Src, Dst: CSTRING; CompressedSize, DstCapacity: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE LZ4_compressBound(InputSize: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE LZ4_compress_fast(Src, Dst: CSTRING; SrcSize, DstCapacity, Acceleration: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE LZ4_compress_fast_extState(State: ADDRESS; Src, Dst: CSTRING; SrcSize, DstCapacity, Acceleration: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE LZ4_sizeofState(): INTEGER32;
+FOREIGN "C" PROCEDURE LZ4_decompress_safe_partial(Src, Dst: CSTRING; SrcSize, TargetOutputSize, DstCapacity: INTEGER32): INTEGER32;
+
+END LZ4.

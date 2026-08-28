@@ -1,0 +1,10 @@
+DEFINITION MODULE Target;
+FROM HStrings IMPORT Text;
+TYPE Architecture=(ArchUnknown,ArchX8664,ArchAArch64);
+TYPE OperatingSystem=(OSUnknown,OSLinux,OSFreeBSD,OSWindows,OSMacOS);
+TYPE ABI=(ABIUnknown,ABISysV,ABIWin64);
+TYPE Info=RECORD Triple:Text; Arch:Architecture; OS:OperatingSystem; Calling:ABI; PointerSize,PointerAlign:CARDINAL END;
+PROCEDURE Default(VAR T:Info);
+PROCEDURE Parse(Name:ARRAY OF CHAR; VAR T:Info):BOOLEAN;
+PROCEDURE Supported(T:Info):BOOLEAN;
+END Target.

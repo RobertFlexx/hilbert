@@ -1,0 +1,3 @@
+MODULE ReservedVariant;
+TYPE Choice = CASE A(Value: INTEGER) | B END;
+END ReservedVariant.

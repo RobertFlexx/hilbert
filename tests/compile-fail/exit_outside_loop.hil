@@ -1,0 +1,4 @@
+MODULE ExitOutsideLoop;
+BEGIN
+    EXIT
+END ExitOutsideLoop.

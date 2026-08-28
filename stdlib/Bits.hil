@@ -1,0 +1,28 @@
+MODULE Bits;
+EXPORT ShiftLeft, ShiftRight, RotateLeft32, RotateRight32, RotateLeft64, RotateRight64, PopCount32, PopCount64, IsPowerOfTwo, AlignUp, AlignDown;
+PROCEDURE ShiftLeft(Value, Count: CARDINAL): CARDINAL; BEGIN RETURN Value SHL Count END ShiftLeft;
+PROCEDURE ShiftRight(Value, Count: CARDINAL): CARDINAL; BEGIN RETURN Value SHR Count END ShiftRight;
+PROCEDURE RotateLeft32(Value: CARDINAL32; Count: CARDINAL32): CARDINAL32;
+VAR N: CARDINAL32;
+BEGIN N := Count AND 31; IF N = 0 THEN RETURN Value END; RETURN (Value SHL N) OR (Value SHR (32 - N)) END RotateLeft32;
+PROCEDURE RotateRight32(Value: CARDINAL32; Count: CARDINAL32): CARDINAL32;
+VAR N: CARDINAL32;
+BEGIN N := Count AND 31; IF N = 0 THEN RETURN Value END; RETURN (Value SHR N) OR (Value SHL (32 - N)) END RotateRight32;
+PROCEDURE RotateLeft64(Value: CARDINAL64; Count: CARDINAL64): CARDINAL64;
+VAR N: CARDINAL64;
+BEGIN N := Count AND 63; IF N = 0 THEN RETURN Value END; RETURN (Value SHL N) OR (Value SHR (64 - N)) END RotateLeft64;
+PROCEDURE RotateRight64(Value: CARDINAL64; Count: CARDINAL64): CARDINAL64;
+VAR N: CARDINAL64;
+BEGIN N := Count AND 63; IF N = 0 THEN RETURN Value END; RETURN (Value SHR N) OR (Value SHL (64 - N)) END RotateRight64;
+PROCEDURE PopCount32(Value: CARDINAL32): CARDINAL32;
+VAR X, Count: CARDINAL32;
+BEGIN X := Value; Count := 0; WHILE X # 0 DO X := X AND (X - 1); Count := Count + 1 END; RETURN Count END PopCount32;
+PROCEDURE PopCount64(Value: CARDINAL64): CARDINAL32;
+VAR X: CARDINAL64; Count: CARDINAL32;
+BEGIN X := Value; Count := 0; WHILE X # 0 DO X := X AND (X - 1); Count := Count + 1 END; RETURN Count END PopCount64;
+PROCEDURE IsPowerOfTwo(Value: CARDINAL): BOOLEAN; BEGIN RETURN (Value # 0) AND ((Value AND (Value - 1)) = 0) END IsPowerOfTwo;
+PROCEDURE AlignUp(Value, Alignment: SIZE): SIZE;
+BEGIN IF Alignment = 0 THEN RETURN Value END; RETURN ((Value + Alignment - 1) DIV Alignment) * Alignment END AlignUp;
+PROCEDURE AlignDown(Value, Alignment: SIZE): SIZE;
+BEGIN IF Alignment = 0 THEN RETURN Value END; RETURN (Value DIV Alignment) * Alignment END AlignDown;
+END Bits.

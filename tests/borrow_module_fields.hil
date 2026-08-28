@@ -1,0 +1,14 @@
+MODULE BorrowModuleFields;
+IMPORT BorrowModuleFieldsDep;
+
+PROCEDURE SetBoth(VAR A, B: INTEGER);
+BEGIN
+    A := 11;
+    B := 22
+END SetBoth;
+
+BEGIN
+    SetBoth(BorrowModuleFieldsDep.Left, BorrowModuleFieldsDep.Right);
+    ASSERT BorrowModuleFieldsDep.Left = 11;
+    ASSERT BorrowModuleFieldsDep.Right = 22
+END BorrowModuleFields.

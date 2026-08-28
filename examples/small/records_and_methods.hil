@@ -1,0 +1,32 @@
+MODULE RecordsAndMethods;
+IMPORT IO;
+
+TYPE
+    Point = RECORD
+        X, Y: INTEGER;
+    END;
+
+    NamedPoint = RECORD(Point)
+        Name: STRING;
+    END;
+
+PROCEDURE (VAR P: Point) Move(DX, DY: INTEGER);
+BEGIN
+    P.X := P.X + DX;
+    P.Y := P.Y + DY
+END Move;
+
+PROCEDURE LengthSquared(VAR P: NamedPoint): INTEGER;
+BEGIN
+    RETURN P.X * P.X + P.Y * P.Y
+END LengthSquared;
+
+VAR P: NamedPoint;
+
+BEGIN
+    P.Name := "cursor";
+    P.Move(3, 4);
+    IO.Write(P.Name); IO.Write(" length squared = ");
+    IO.WriteInt(LengthSquared(P)); IO.NewLine;
+    ASSERT LengthSquared(P) = 25
+END RecordsAndMethods.

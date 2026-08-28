@@ -1,0 +1,11 @@
+MODULE FileMetadata;
+IMPORT Arguments, FileInfo, Format;
+
+VAR Metadata: FileInfo.Info;
+
+BEGIN
+    ASSERT FileInfo.Stat(Arguments.ProgramName(), Metadata);
+    ASSERT FileInfo.IsFile(Metadata);
+    Format.Print("this executable is %lld bytes and mode %o\n",
+                 Metadata.Size, Metadata.Mode)
+END FileMetadata.

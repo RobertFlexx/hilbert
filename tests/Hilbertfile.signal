@@ -1,0 +1,6 @@
+PROJECT HilmakeSignal;
+ROOT "tests/hilmake_signal.hil";
+OUTPUT "build/hilmake-signal";
+BUILD_DIR "build/.hilmake-signal-cache";
+PROFILE RELEASE;
+END HilmakeSignal;

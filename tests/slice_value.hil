@@ -1,0 +1,23 @@
+MODULE SliceValue;
+
+VAR Data: ARRAY 5 OF BYTE;
+    Saved: SLICE OF BYTE;
+
+PROCEDURE View(): SLICE OF BYTE;
+BEGIN RETURN Data END View;
+
+PROCEDURE CopyLength(Input: SLICE OF BYTE): SIZE;
+VAR Copy: SLICE OF BYTE;
+BEGIN
+    Copy := Input;
+    RETURN Copy.Length
+END CopyLength;
+
+BEGIN
+    Data[0] := 7; Data[4] := 9;
+    Saved := View();
+    ASSERT Saved.Length = 5;
+    ASSERT Saved[0] = 7;
+    ASSERT Saved[4] = 9;
+    ASSERT CopyLength(Saved) = 5
+END SliceValue.

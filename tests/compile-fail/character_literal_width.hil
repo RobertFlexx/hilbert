@@ -1,0 +1,3 @@
+MODULE CharacterLiteralWidth;
+VAR C: CHAR;
+BEGIN C := 'ab' END CharacterLiteralWidth.

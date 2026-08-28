@@ -1,0 +1,3 @@
+MODULE AtomicReal;
+TYPE Bad = ATOMIC[REAL64];
+END AtomicReal.

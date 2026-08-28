@@ -1,0 +1,4 @@
+MODULE SelectiveImportCollision;
+FROM ImportSurfaceDep IMPORT Answer;
+CONST Answer = 1;
+END SelectiveImportCollision.

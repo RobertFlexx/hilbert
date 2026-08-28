@@ -1,0 +1,20 @@
+MODULE GrowingBuffer;
+IMPORT IO, Buffer;
+
+VAR Bytes: Buffer.Buffer;
+    Text: ARRAY 5 OF BYTE;
+
+BEGIN
+    Text[0] := 72; Text[1] := 101; Text[2] := 108;
+    Text[3] := 108; Text[4] := 111;
+    Buffer.Init(Bytes, 2);
+    DEFER Buffer.Dispose(Bytes);
+    UNSAFE BEGIN
+        ASSERT Buffer.Append(Bytes, ADR(Text), 5)
+    END;
+    ASSERT Bytes.Length = 5;
+    ASSERT Bytes.Capacity >= 5;
+    IO.Write("buffer length: "); IO.WriteCard(CARDINAL(Bytes.Length)); IO.NewLine;
+    Buffer.Clear(Bytes);
+    ASSERT Buffer.Empty(Bytes)
+END GrowingBuffer.

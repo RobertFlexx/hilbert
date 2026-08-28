@@ -1,0 +1,13 @@
+MODULE SubprocessRun;
+IMPORT IO, Process;
+
+VAR Command: ARRAY 3 OF CSTRING; Status: INTEGER32;
+
+BEGIN
+    Command[0] := "/bin/sh";
+    Command[1] := "-c";
+    Command[2] := "test 6 -lt 7";
+    Status := Process.Run(Command);
+    ASSERT Status = 0;
+    IO.WriteLn("child process completed successfully")
+END SubprocessRun.

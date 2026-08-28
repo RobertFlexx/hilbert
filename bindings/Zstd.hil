@@ -1,0 +1,38 @@
+MODULE Zstd;
+(* First-party Zstandard C ABI binding. *)
+EXPORT CCtx, DCtx, CDict, DDict, ZSTD_versionNumber, ZSTD_versionString, ZSTD_compress, ZSTD_decompress, ZSTD_getFrameContentSize, ZSTD_compressBound, ZSTD_isError, ZSTD_getErrorName, ZSTD_minCLevel, ZSTD_maxCLevel, ZSTD_defaultCLevel, ZSTD_createCCtx;
+EXPORT ZSTD_freeCCtx, ZSTD_compressCCtx, ZSTD_createDCtx, ZSTD_freeDCtx, ZSTD_decompressDCtx, ZSTD_createCDict, ZSTD_freeCDict, ZSTD_createDDict, ZSTD_freeDDict, ZSTD_compress_usingCDict, ZSTD_decompress_usingDDict;
+
+FOREIGN "C" LIBRARY "zstd";
+
+TYPE
+    CCtx = ADDRESS;
+    DCtx = ADDRESS;
+    CDict = ADDRESS;
+    DDict = ADDRESS;
+
+FOREIGN "C" PROCEDURE ZSTD_versionNumber(): CARDINAL32;
+FOREIGN "C" PROCEDURE ZSTD_versionString(): CSTRING;
+FOREIGN "C" PROCEDURE ZSTD_compress(Dst: ADDRESS; DstCapacity: SIZE; Src: ADDRESS; SrcSize: SIZE; Level: INTEGER32): SIZE;
+FOREIGN "C" PROCEDURE ZSTD_decompress(Dst: ADDRESS; DstCapacity: SIZE; Src: ADDRESS; CompressedSize: SIZE): SIZE;
+FOREIGN "C" PROCEDURE ZSTD_getFrameContentSize(Src: ADDRESS; SrcSize: SIZE): CARDINAL64;
+FOREIGN "C" PROCEDURE ZSTD_compressBound(SrcSize: SIZE): SIZE;
+FOREIGN "C" PROCEDURE ZSTD_isError(Code: SIZE): CARDINAL32;
+FOREIGN "C" PROCEDURE ZSTD_getErrorName(Code: SIZE): CSTRING;
+FOREIGN "C" PROCEDURE ZSTD_minCLevel(): INTEGER32;
+FOREIGN "C" PROCEDURE ZSTD_maxCLevel(): INTEGER32;
+FOREIGN "C" PROCEDURE ZSTD_defaultCLevel(): INTEGER32;
+FOREIGN "C" PROCEDURE ZSTD_createCCtx(): CCtx;
+FOREIGN "C" PROCEDURE ZSTD_freeCCtx(Ctx: CCtx): SIZE;
+FOREIGN "C" PROCEDURE ZSTD_compressCCtx(Ctx: CCtx; Dst: ADDRESS; DstCapacity: SIZE; Src: ADDRESS; SrcSize: SIZE; Level: INTEGER32): SIZE;
+FOREIGN "C" PROCEDURE ZSTD_createDCtx(): DCtx;
+FOREIGN "C" PROCEDURE ZSTD_freeDCtx(Ctx: DCtx): SIZE;
+FOREIGN "C" PROCEDURE ZSTD_decompressDCtx(Ctx: DCtx; Dst: ADDRESS; DstCapacity: SIZE; Src: ADDRESS; SrcSize: SIZE): SIZE;
+FOREIGN "C" PROCEDURE ZSTD_createCDict(DictBuffer: ADDRESS; DictSize: SIZE; Level: INTEGER32): CDict;
+FOREIGN "C" PROCEDURE ZSTD_freeCDict(Dict: CDict): SIZE;
+FOREIGN "C" PROCEDURE ZSTD_createDDict(DictBuffer: ADDRESS; DictSize: SIZE): DDict;
+FOREIGN "C" PROCEDURE ZSTD_freeDDict(Dict: DDict): SIZE;
+FOREIGN "C" PROCEDURE ZSTD_compress_usingCDict(Ctx: CCtx; Dst: ADDRESS; DstCapacity: SIZE; Src: ADDRESS; SrcSize: SIZE; Dict: CDict): SIZE;
+FOREIGN "C" PROCEDURE ZSTD_decompress_usingDDict(Ctx: DCtx; Dst: ADDRESS; DstCapacity: SIZE; Src: ADDRESS; SrcSize: SIZE; Dict: DDict): SIZE;
+
+END Zstd.

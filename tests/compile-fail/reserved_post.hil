@@ -1,0 +1,9 @@
+MODULE ReservedPost;
+
+PROCEDURE F(X: INTEGER): INTEGER;
+POST X = X;
+BEGIN
+    RETURN X
+END F;
+
+END ReservedPost.

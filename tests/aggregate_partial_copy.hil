@@ -1,0 +1,60 @@
+MODULE AggregatePartialCopy;
+
+TYPE
+    Triple = RECORD A, B, C: INTEGER32; END;
+    Bytes9 = ARRAY 9 OF BYTE;
+    Bytes10 = ARRAY 10 OF BYTE;
+    Bytes11 = ARRAY 11 OF BYTE;
+    Bytes12 = ARRAY 12 OF BYTE;
+    Bytes13 = ARRAY 13 OF BYTE;
+    Bytes14 = ARRAY 14 OF BYTE;
+    Bytes15 = ARRAY 15 OF BYTE;
+    Container = RECORD
+        T: Triple;
+        GuardT: INTEGER32;
+        B9: Bytes9; Guard9: BYTE;
+        B10: Bytes10; Guard10: BYTE;
+        B11: Bytes11; Guard11: BYTE;
+        B12: Bytes12; Guard12: BYTE;
+        B13: Bytes13; Guard13: BYTE;
+        B14: Bytes14; Guard14: BYTE;
+        B15: Bytes15; Guard15: BYTE;
+    END;
+
+VAR SourceT: Triple;
+    Source9: Bytes9;
+    Source10: Bytes10;
+    Source11: Bytes11;
+    Source12: Bytes12;
+    Source13: Bytes13;
+    Source14: Bytes14;
+    Source15: Bytes15;
+    Dest: Container;
+
+BEGIN
+    SourceT.A := 1; SourceT.B := 2; SourceT.C := 3;
+    Source9[0] := 9; Source9[8] := 19;
+    Source10[0] := 10; Source10[9] := 20;
+    Source11[0] := 11; Source11[10] := 21;
+    Source12[0] := 12; Source12[11] := 22;
+    Source13[0] := 13; Source13[12] := 23;
+    Source14[0] := 14; Source14[13] := 24;
+    Source15[0] := 15; Source15[14] := 25;
+    Dest.GuardT := 1234567;
+    Dest.Guard9 := 101; Dest.Guard10 := 102; Dest.Guard11 := 103; Dest.Guard12 := 104;
+    Dest.Guard13 := 105; Dest.Guard14 := 106; Dest.Guard15 := 107;
+    Dest.T := SourceT;
+    Dest.B9 := Source9; Dest.B10 := Source10; Dest.B11 := Source11; Dest.B12 := Source12;
+    Dest.B13 := Source13; Dest.B14 := Source14; Dest.B15 := Source15;
+    ASSERT Dest.T.A = 1; ASSERT Dest.T.B = 2; ASSERT Dest.T.C = 3;
+    ASSERT Dest.B9[0] = 9; ASSERT Dest.B9[8] = 19;
+    ASSERT Dest.B10[0] = 10; ASSERT Dest.B10[9] = 20;
+    ASSERT Dest.B11[0] = 11; ASSERT Dest.B11[10] = 21;
+    ASSERT Dest.B12[0] = 12; ASSERT Dest.B12[11] = 22;
+    ASSERT Dest.B13[0] = 13; ASSERT Dest.B13[12] = 23;
+    ASSERT Dest.B14[0] = 14; ASSERT Dest.B14[13] = 24;
+    ASSERT Dest.B15[0] = 15; ASSERT Dest.B15[14] = 25;
+    ASSERT Dest.GuardT = 1234567;
+    ASSERT Dest.Guard9 = 101; ASSERT Dest.Guard10 = 102; ASSERT Dest.Guard11 = 103; ASSERT Dest.Guard12 = 104;
+    ASSERT Dest.Guard13 = 105; ASSERT Dest.Guard14 = 106; ASSERT Dest.Guard15 = 107
+END AggregatePartialCopy.

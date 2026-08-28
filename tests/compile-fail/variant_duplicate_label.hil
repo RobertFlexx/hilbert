@@ -1,0 +1,9 @@
+MODULE VariantDuplicateLabel;
+TYPE Kind = (First, Second);
+     Value = RECORD
+         CASE Tag: Kind OF
+             First: A: INTEGER;
+         | First: B: INTEGER;
+         END
+     END;
+END VariantDuplicateLabel.

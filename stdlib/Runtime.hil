@@ -1,0 +1,6 @@
+MODULE Runtime;
+EXPORT Panic, BoundsFail;
+IMPORT IO, Process;
+PROCEDURE Panic(Message: CSTRING); BEGIN IO.WriteLn(Message); Process.Exit(1) END Panic;
+PROCEDURE BoundsFail; BEGIN Panic("array index out of bounds") END BoundsFail;
+END Runtime.

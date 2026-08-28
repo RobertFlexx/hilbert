@@ -1,0 +1,12 @@
+MODULE CaseGlobal;
+
+VAR State: INTEGER32;
+
+BEGIN
+    State := 1;
+    CASE State OF
+    0: ASSERT FALSE
+    | 1: ASSERT TRUE
+    ELSE ASSERT FALSE
+    END
+END CaseGlobal.

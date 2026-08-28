@@ -1,0 +1,8 @@
+MODULE ZlibVersion;
+IMPORT IO, Zlib;
+
+BEGIN
+    IO.Write("zlib version: "); IO.WriteLn(Zlib.zlibVersion());
+    IO.Write("compression bound for 4096 bytes: ");
+    IO.WriteCard(CARDINAL(Zlib.compressBound(4096))); IO.NewLine
+END ZlibVersion.

@@ -1,0 +1,58 @@
+MODULE TextFile;
+IMPORT Memory;
+EXPORT Reader, Open, Valid, Next, Length, Rewind, Close;
+
+TYPE
+    Reader = RECORD
+        Stream: ADDRESS;
+        Line: CSTRING;
+        Capacity: SIZE;
+        LineLength: SIZE;
+    END;
+
+FOREIGN "C" PROCEDURE fopen(Path, Mode: CSTRING): ADDRESS;
+FOREIGN "C" PROCEDURE getline(Line: POINTER TO CSTRING; Capacity: POINTER TO SIZE; Stream: ADDRESS): INTEGER64;
+FOREIGN "C" PROCEDURE rewind(Stream: ADDRESS);
+FOREIGN "C" PROCEDURE fclose(Stream: ADDRESS): INTEGER32;
+
+PROCEDURE Open(VAR R: Reader; Path: CSTRING): BOOLEAN;
+BEGIN
+    R.Line := NIL; R.Capacity := 0; R.LineLength := 0;
+    IF Path = NIL THEN R.Stream := NIL; RETURN FALSE END;
+    R.Stream := fopen(Path, "r");
+    RETURN R.Stream # NIL
+END Open;
+
+PROCEDURE Valid(VAR R: Reader): BOOLEAN; BEGIN RETURN R.Stream # NIL END Valid;
+
+PROCEDURE Next(VAR R: Reader): CSTRING;
+VAR Amount: INTEGER64;
+BEGIN
+    IF R.Stream = NIL THEN RETURN NIL END;
+    UNSAFE BEGIN Amount := getline(ADR(R.Line), ADR(R.Capacity), R.Stream) END;
+    IF Amount < 0 THEN R.LineLength := 0; RETURN NIL END;
+    R.LineLength := SIZE(Amount);
+    WHILE (R.LineLength # 0) AND
+          ((R.Line[R.LineLength - 1] = CHR(10)) OR (R.Line[R.LineLength - 1] = CHR(13))) DO
+        R.LineLength := R.LineLength - 1;
+        UNSAFE BEGIN R.Line[R.LineLength] := CHR(0) END
+    END;
+    RETURN R.Line
+END Next;
+
+PROCEDURE Length(VAR R: Reader): SIZE; BEGIN RETURN R.LineLength END Length;
+
+PROCEDURE Rewind(VAR R: Reader);
+BEGIN IF R.Stream # NIL THEN rewind(R.Stream); R.LineLength := 0 END END Rewind;
+
+PROCEDURE Close(VAR R: Reader): BOOLEAN;
+VAR Result: BOOLEAN;
+BEGIN
+    Result := TRUE;
+    IF R.Stream # NIL THEN Result := fclose(R.Stream) = 0 END;
+    IF R.Line # NIL THEN Memory.Free(ADDRESS(R.Line)) END;
+    R.Stream := NIL; R.Line := NIL; R.Capacity := 0; R.LineLength := 0;
+    RETURN Result
+END Close;
+
+END TextFile.

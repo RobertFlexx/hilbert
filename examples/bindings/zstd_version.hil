@@ -1,0 +1,11 @@
+MODULE ZstdVersion;
+IMPORT IO, Zstd;
+
+BEGIN
+    IO.Write("Zstandard version: "); IO.WriteLn(Zstd.ZSTD_versionString());
+    IO.Write("default compression level: ");
+    IO.WriteInt(INTEGER(Zstd.ZSTD_defaultCLevel())); IO.NewLine;
+    IO.Write("supported level range: ");
+    IO.WriteInt(INTEGER(Zstd.ZSTD_minCLevel())); IO.Write(" .. ");
+    IO.WriteInt(INTEGER(Zstd.ZSTD_maxCLevel())); IO.NewLine
+END ZstdVersion.

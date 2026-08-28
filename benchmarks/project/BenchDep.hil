@@ -1,0 +1,9 @@
+MODULE BenchDep;
+EXPORT Compute;
+
+PROCEDURE Compute(Value: INTEGER): INTEGER;
+BEGIN
+    RETURN Value * 7
+END Compute;
+
+END BenchDep.

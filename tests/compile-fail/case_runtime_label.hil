@@ -1,0 +1,7 @@
+MODULE CaseRuntimeLabel;
+VAR X, Label: INTEGER;
+BEGIN
+    CASE X OF
+    Label: X := 1
+    END
+END CaseRuntimeLabel.

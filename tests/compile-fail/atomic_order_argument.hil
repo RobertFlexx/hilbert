@@ -1,0 +1,5 @@
+MODULE AtomicOrderArgument;
+VAR Count: ATOMIC[CARDINAL32];
+BEGIN
+    Count.FetchAdd(1, 0)
+END AtomicOrderArgument.

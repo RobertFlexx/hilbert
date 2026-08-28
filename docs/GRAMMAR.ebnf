@@ -1,0 +1,341 @@
+(* ========================================================================== *)
+(*  Hilbert 1.0 reference grammar                                             *)
+(*                                                                            *)
+(*  Notation: Wirth-style EBNF. Terminals are quoted. { } is zero or more,    *)
+(*  [ ] is zero or one, ( ) groups alternatives separated by |, and each      *)
+(*  production ends with a period.                                            *)
+(*                                                                            *)
+(*  A file ending in .def.hil holds a DefinitionModule; the matching          *)
+(*  .hil file holds the ImplementationModule of the same name. Every other    *)
+(*  .hil file holds an ImplementationModule.                                  *)
+(*                                                                            *)
+(*  Comments in source are "//" to end of line or nesting "(* ... *)".        *)
+(*  Keywords are uppercase and case sensitive; identifiers and keywords       *)
+(*  must not collide (see the reserved word list at the end).                 *)
+(* ========================================================================== *)
+
+
+(* -------------------------------------------------------------------------- *)
+(* Compilation units                                                           *)
+(* -------------------------------------------------------------------------- *)
+
+Module          = ImplementationModule | DefinitionModule .
+
+ImplementationModule
+                = "MODULE" Identifier ";"
+                  { ModuleHeader }
+                  { Declaration | Division }
+                  [ "BEGIN" StatementSequence ]
+                  "END" Identifier "." .
+
+DefinitionModule
+                = "DEFINITION" "MODULE" Identifier ";"
+                  { ModuleHeader }
+                  { DefinitionDeclaration }
+                  "END" Identifier "." .
+
+(* Static semantics: the identifier after END must repeat the module name.    *)
+
+ModuleHeader    = Import | FromImport | Export .
+
+Import          = "IMPORT" ImportItem { "," ImportItem } ";" .
+ImportItem      = [ Identifier ":=" ] QualifiedName .
+FromImport      = "FROM" QualifiedName "IMPORT" Identifier
+                  { "," Identifier } ";" .
+Export          = "EXPORT" Identifier { "," Identifier } ";" .
+
+(* Headers may appear only before any Declaration or Division. There are no   *)
+(* wildcard imports. Two headers may not introduce the same local name.       *)
+
+
+(* -------------------------------------------------------------------------- *)
+(* Divisions                                                                   *)
+(* -------------------------------------------------------------------------- *)
+
+Division        = "DIVISION" Identifier [ "WHEN" DivisionCondition ] ";"
+                  { ModuleHeader }
+                  { Declaration }
+                  "END" Identifier ";" .
+
+(* Static semantics: the identifier after END must repeat the division name.  *)
+(* A division contains declarations only; it has no BEGIN body. Its EXPORT     *)
+(* list exposes names only within the containing module.                      *)
+
+DivisionCondition = DivisionOr .
+DivisionOr      = DivisionAnd { "OR" DivisionAnd } .
+DivisionAnd     = DivisionUnary { "AND" DivisionUnary } .
+DivisionUnary   = [ "NOT" ] DivisionPrimary .
+DivisionPrimary = "HOSTED" | "FREESTANDING" | "DEBUG" | "RELEASE" | "SIZE"
+                | "TARGET" "(" StringLiteral ")"
+                | "ARCH" "(" StringLiteral ")"
+                | "TRUE" | "FALSE" | "(" DivisionCondition ")" .
+
+(* HOSTED, FREESTANDING, DEBUG, RELEASE, SIZE, TARGET and ARCH are ordinary    *)
+(* identifiers, not keywords. The reference parser admits a full Expression    *)
+(* after WHEN and rejects invalid conditions during checking; this production  *)
+(* documents exactly which conditions are accepted.                           *)
+
+
+(* -------------------------------------------------------------------------- *)
+(* Declarations                                                                *)
+(* -------------------------------------------------------------------------- *)
+
+Declaration     = ConstSection | TypeSection | SubtypeSection | VarSection
+                | ProcedureDeclaration | TaskDeclaration | ForeignDeclaration .
+
+DefinitionDeclaration
+                = ConstSection | DefinitionTypeSection | SubtypeSection
+                | VarSection | ProcedureHeading | ForeignDeclaration .
+
+ConstSection    = "CONST" { ConstantItem } .
+ConstantItem    = Identifier "=" Expression ";" .
+
+TypeSection     = "TYPE" { TypeDefinition } .
+TypeDefinition  = Identifier [ GenericParams ] "=" Type ";" .
+
+DefinitionTypeSection = "TYPE" { DefinitionTypeDefinition } .
+DefinitionTypeDefinition
+                = Identifier [ GenericParams ] [ "=" Type ] ";" .
+
+(* In a definition module the "=" part may be omitted: "TYPE Name;" declares   *)
+(* an opaque type whose representation stays private to the implementation.   *)
+
+SubtypeSection  = "SUBTYPE" { SubtypeDefinition } .
+SubtypeDefinition = Identifier "=" Type ";" .
+
+VarSection      = "VAR" { VariableItem } .
+VariableItem    = Identifier { "," Identifier } ":" Type
+                  [ ":=" Expression ] ";" .
+
+
+(* -------------------------------------------------------------------------- *)
+(* Types                                                                       *)
+(* -------------------------------------------------------------------------- *)
+
+Type            = "DISTINCT" Type
+                | "POINTER" "TO" Type
+                | "REF" Type
+                | "SLICE" "OF" Type
+                | "SET" "OF" Type
+                | "ARRAY" Expression "OF" Type
+                | "ATOMIC" "[" Type "]"
+                | ProcedureType
+                | RecordType
+                | EnumType
+                | NamedType [ "RANGE" Expression ".." Expression ] .
+
+NamedType       = QualifiedName [ TypeArguments ] .
+
+RecordType      = "RECORD" [ "(" Type ")" ] { Field } [ VariantPart ] "END" .
+Field           = Identifier { "," Identifier } ":" Type ";" .
+
+VariantPart     = "CASE" Identifier ":" Type "OF" VariantArm
+                  { "|" VariantArm } "END" .
+VariantArm      = LabelList ":" { Field } .
+LabelList       = Expression { "," Expression } .
+
+EnumType        = "(" [ Identifier { "," Identifier } ] ")" .
+ProcedureType   = "PROCEDURE" [ FormalParams ] [ ":" Type ] .
+TypeArguments   = "[" Type { "," Type } "]" .
+GenericParams   = "[" Identifier { "," Identifier } "]" .
+
+
+(* -------------------------------------------------------------------------- *)
+(* Procedures and tasks                                                        *)
+(* -------------------------------------------------------------------------- *)
+
+ProcedureDeclaration
+                = ProcedureHeading
+                  { Precondition }
+                  { LocalSection }
+                  "BEGIN" StatementSequence
+                  "END" [ Identifier ] ";" .
+
+LocalSection    = ConstSection | TypeSection | SubtypeSection | VarSection .
+
+ProcedureHeading
+                = "PROCEDURE" [ Receiver ] Identifier [ GenericParams ]
+                  [ FormalParams ] [ ":" Type ] ";" .
+
+TaskDeclaration = "TASK" Identifier ";"
+                  { LocalSection }
+                  "BEGIN" StatementSequence
+                  "END" [ Identifier ] ";" .
+
+Receiver        = "(" [ "VAR" ] Identifier ":" Type ")" .
+
+FormalParams    = "(" [ FormalGroup { ";" FormalGroup } ] ")" .
+FormalGroup     = [ "VAR" ] Identifier { "," Identifier } ":" Type .
+
+Precondition    = "PRE" Expression ";" .
+
+(* Static semantics: if an identifier follows END it must repeat the procedure *)
+(* or task name. A TASK takes no parameters, receiver or generic parameters.   *)
+
+ForeignDeclaration
+                = "FOREIGN" StringLiteral "LIBRARY" StringLiteral ";"
+                | "FOREIGN" StringLiteral "PROCEDURE" Identifier
+                  [ FormalParams ] [ ":" Type ]
+                  [ "VARARGS" ] [ "EXTERNAL" "NAME" StringLiteral ] ";" .
+
+
+(* -------------------------------------------------------------------------- *)
+(* Statements                                                                  *)
+(* -------------------------------------------------------------------------- *)
+
+StatementSequence
+                = [ Statement { ";" Statement } [ ";" ] ] .
+
+(* At most one semicolon may follow the last statement. Empty statements do    *)
+(* not exist; two consecutive separators are a syntax error.                  *)
+
+Statement       = AssignmentOrCallStatement
+                | IfStatement | CaseStatement | WhileStatement
+                | RepeatStatement | ForStatement | ForInStatement
+                | LoopStatement | ReturnStatement | ExitStatement
+                | AssertStatement | UnsafeStatement | DeferStatement
+                | ParallelStatement | BlockStatement .
+
+AssignmentOrCallStatement
+                = Expression [ ":=" Expression ] .
+
+(* The reference parser accepts any Expression here; checking requires a bare  *)
+(* expression to be a call statement and ":=" to have a designator target.     *)
+(* START and AWAIT are prefix operators of expressions, so "START Worker" and  *)
+(* "AWAIT Handle" are AssignmentOrCallStatements whose expressions begin with  *)
+(* those prefixes; they are deliberately not separate statement forms.         *)
+
+IfStatement     = "IF" Expression "THEN" StatementSequence
+                  { "ELSIF" Expression "THEN" StatementSequence }
+                  [ "ELSE" StatementSequence ] "END" .
+
+CaseStatement   = "CASE" Expression "OF" CaseArm { "|" CaseArm }
+                  [ "ELSE" StatementSequence ] "END" .
+CaseArm         = LabelList ":" StatementSequence .
+
+WhileStatement  = "WHILE" Expression "DO" StatementSequence "END" .
+RepeatStatement = "REPEAT" StatementSequence "UNTIL" Expression .
+ForStatement    = "FOR" Identifier ":=" Expression "TO" Expression
+                  [ "BY" Expression ] "DO" StatementSequence "END" .
+ForInStatement  = "FOR" Identifier "IN" Expression "DO" StatementSequence "END" .
+LoopStatement   = "LOOP" StatementSequence "END" .
+ReturnStatement = "RETURN" [ Expression ] .
+ExitStatement   = "EXIT" .
+AssertStatement = "ASSERT" Expression .
+UnsafeStatement = "UNSAFE" "BEGIN" StatementSequence "END" .
+DeferStatement  = "DEFER" Statement .
+BlockStatement  = "BEGIN" StatementSequence "END" .
+
+ParallelStatement = "PARALLEL" "BEGIN" ParallelBranch
+                    { "AND" ParallelBranch } "END" .
+ParallelBranch  = Designator [ "(" ")" ] .
+
+
+(* -------------------------------------------------------------------------- *)
+(* Expressions                                                                 *)
+(* -------------------------------------------------------------------------- *)
+(* Precedence from loosest to tightest: OR XOR, AND, relations, adding,        *)
+(* multiplying, unary sign and NOT, postfixes, primaries. All binary levels    *)
+(* associate left. AND and OR short-circuit on boolean operands.               *)
+
+Expression      = OrExpression .
+OrExpression    = AndExpression { ( "OR" | "XOR" ) AndExpression } .
+AndExpression   = RelationExpression { "AND" RelationExpression } .
+RelationExpression
+                = AddExpression
+                  { ( "=" | "#" | "<" | "<=" | ">" | ">=" | "IN" )
+                    AddExpression } .
+AddExpression   = MultiplyExpression { ( "+" | "-" ) MultiplyExpression } .
+MultiplyExpression
+                = UnaryExpression
+                  { ( "*" | "/" | "DIV" | "MOD" | "SHL" | "SHR" )
+                    UnaryExpression } .
+UnaryExpression = ( "+" | "-" | "NOT" ) UnaryExpression
+                | PostfixExpression .
+
+PostfixExpression
+                = PrimaryExpression
+                  { ActualParameters
+                  | "." Identifier
+                  | IndexSuffix
+                  | "^" } .
+IndexSuffix     = "[" Expression { "," Expression } "]" .
+ActualParameters= "(" [ Expression { "," Expression } ] ")" .
+
+PrimaryExpression
+                = Identifier
+                | IntegerLiteral | RealLiteral | StringLiteral
+                | CharacterLiteral
+                | "TRUE" | "FALSE" | "NIL"
+                | "(" Expression ")"
+                | SetLiteral
+                | "SIZEOF" "(" Type ")"
+                | "ALIGNOF" "(" Type ")"
+                | "NEW" "(" Type ")"
+                | "ADR" "(" Expression ")"
+                | ( "START" | "AWAIT" ) PostfixExpression .
+
+SetLiteral      = "{" [ Expression { "," Expression } ] "}" .
+
+Designator      = Identifier
+                  { "." Identifier | IndexSuffix | "^" } .
+QualifiedName   = Identifier { "." Identifier } .
+
+
+(* -------------------------------------------------------------------------- *)
+(* Lexical syntax                                                              *)
+(* -------------------------------------------------------------------------- *)
+
+Identifier      = ( Letter | "_" ) { Letter | Digit | "_" } .
+
+IntegerLiteral  = DecimalInteger | HexInteger | BinaryInteger | OctalInteger .
+DecimalInteger  = Digit { [ "_" ] Digit } .
+HexInteger      = "0" ( "x" | "X" ) HexDigit { [ "_" ] HexDigit } .
+BinaryInteger   = "0" ( "b" | "B" ) Bit { [ "_" ] Bit } .
+OctalInteger    = "0" ( "o" | "O" ) OctalDigit { [ "_" ] OctalDigit } .
+
+RealLiteral     = Digit { [ "_" ] Digit } "." Digit { [ "_" ] Digit }
+                  [ Exponent ] .
+Exponent        = ( "e" | "E" ) [ "+" | "-" ]
+                  Digit { [ "_" ] Digit } .
+
+(* Underscores between digits are ignored; a leading or trailing underscore    *)
+(* is a syntax error. A real literal needs digits on both sides of the dot     *)
+(* and at least one exponent digit.                                           *)
+
+StringLiteral   = '"' { StringCharacter } '"' .
+CharacterLiteral = "'" Character "'" .
+
+StringCharacter = EscapeSequence | RawStringCharacter .
+RawStringCharacter
+                = ? any source character except '"', "\", CR or LF ? .
+
+Character       = EscapeSequence | RawCharacter .
+RawCharacter    = ? any source character except "'", "\", CR or LF ?
+                  (* exactly one Unicode scalar value *) .
+
+Quote           = '"' .
+EscapeSequence  = "\" ( "n" | "r" | "t" | "e" | Quote | "'"
+                      | "\" | UnicodeEscape ) .
+UnicodeEscape   = "u" HexDigit HexDigit HexDigit HexDigit .
+                  (* surrogate code points are rejected *) .
+
+Letter          = ? ASCII letter ? .
+Digit           = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" .
+Bit             = "0" | "1" .
+HexDigit        = Digit | "a" | "b" | "c" | "d" | "e" | "f"
+                | "A" | "B" | "C" | "D" | "E" | "F" .
+OctalDigit      = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" .
+
+
+(* -------------------------------------------------------------------------- *)
+(* Reserved words                                                              *)
+(* -------------------------------------------------------------------------- *)
+(* The lexer recognizes these spellings as keywords even though no production  *)
+(* above uses them. Writing one produces a front-end diagnostic naming it as   *)
+(* reserved for a later language revision:                                     *)
+(*                                                                             *)
+(*   POST  INVARIANT  PROTECTED  PRIVATE  EXCEPTION  RAISE  EXCEPT             *)
+(*   GENERIC  WHERE  IS  ABSTRACT  WITH                                       *)
+(*                                                                             *)
+(* The token stream additionally contains "->" and "=>" for that future work.  *)

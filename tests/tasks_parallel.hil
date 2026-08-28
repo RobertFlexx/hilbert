@@ -1,0 +1,25 @@
+MODULE TasksParallel;
+
+VAR Count: ATOMIC[CARDINAL64];
+    Handle: ADDRESS;
+
+TASK Worker;
+BEGIN Count.FetchAdd(1) END Worker;
+
+PROCEDURE First;
+BEGIN Count.FetchAdd(1) END First;
+
+PROCEDURE Second;
+BEGIN Count.FetchAdd(1) END Second;
+
+BEGIN
+    Count.Store(0);
+    Handle := START Worker;
+    AWAIT Handle;
+    PARALLEL BEGIN
+        First()
+    AND
+        Second()
+    END;
+    ASSERT Count.Load() = 3
+END TasksParallel.

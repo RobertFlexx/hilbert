@@ -1,0 +1,39 @@
+MODULE DefinitionStack;
+
+TYPE
+    Items = ARRAY 8 OF INTEGER;
+    Stack = RECORD
+        Values: Items;
+        Used: SIZE;
+    END;
+
+PROCEDURE Init(VAR S: Stack);
+BEGIN
+    S.Used := 0
+END Init;
+
+PROCEDURE Push(VAR S: Stack; X: INTEGER);
+BEGIN
+    ASSERT S.Used < 8;
+    S.Values[S.Used] := X;
+    S.Used := S.Used + 1
+END Push;
+
+PROCEDURE Pop(VAR S: Stack): INTEGER;
+BEGIN
+    ASSERT S.Used > 0;
+    S.Used := S.Used - 1;
+    RETURN S.Values[S.Used]
+END Pop;
+
+PROCEDURE Count(VAR S: Stack): SIZE;
+BEGIN
+    RETURN S.Used
+END Count;
+
+PROCEDURE Echo[T](Value: T): T;
+BEGIN
+    RETURN Value
+END Echo;
+
+END DefinitionStack.

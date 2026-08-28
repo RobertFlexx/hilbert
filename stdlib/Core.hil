@@ -1,0 +1,26 @@
+MODULE Core;
+EXPORT OptionalKind, EmptyOptional, FullOptional, Optional,
+       ResultKind, ValueResult, ErrorResult, Result, Min, Max, Clamp;
+TYPE
+    OptionalKind = (EmptyOptional, FullOptional);
+    Optional[T] = RECORD
+        CASE State: OptionalKind OF
+            EmptyOptional:
+                Empty: CARDINAL8;
+        | FullOptional:
+                Value: T;
+        END
+    END;
+    ResultKind = (ValueResult, ErrorResult);
+    Result[T, E] = RECORD
+        CASE State: ResultKind OF
+            ValueResult:
+                Value: T;
+        | ErrorResult:
+                Error: E;
+        END
+    END;
+PROCEDURE Min(A, B: INTEGER): INTEGER; BEGIN IF A < B THEN RETURN A END; RETURN B END Min;
+PROCEDURE Max(A, B: INTEGER): INTEGER; BEGIN IF A > B THEN RETURN A END; RETURN B END Max;
+PROCEDURE Clamp(X, Lo, Hi: INTEGER): INTEGER; BEGIN IF X < Lo THEN RETURN Lo ELSIF X > Hi THEN RETURN Hi END; RETURN X END Clamp;
+END Core.

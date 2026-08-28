@@ -1,0 +1,19 @@
+MODULE GenericRecursiveRecord;
+TYPE
+    Node[T] = RECORD
+        Value: T;
+        Next: REF Node[T];
+    END;
+    List[T] = RECORD
+        Head: REF Node[T];
+        Length: SIZE;
+    END;
+VAR
+    L: List[INTEGER];
+    P: REF Node[INTEGER];
+BEGIN
+    L.Head := P;
+    L.Length := 0;
+    ASSERT L.Head = NIL;
+    ASSERT L.Length = 0
+END GenericRecursiveRecord.

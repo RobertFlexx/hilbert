@@ -1,0 +1,12 @@
+DEFINITION MODULE DefinitionStack;
+
+TYPE
+    Stack;
+
+PROCEDURE Init(VAR S: Stack);
+PROCEDURE Push(VAR S: Stack; X: INTEGER);
+PROCEDURE Pop(VAR S: Stack): INTEGER;
+PROCEDURE Count(VAR S: Stack): SIZE;
+PROCEDURE Echo[T](Value: T): T;
+
+END DefinitionStack.

@@ -1,0 +1,6 @@
+MODULE BorrowModuleFieldsDep;
+EXPORT Left, Right;
+VAR
+    Left: INTEGER := 0;
+    Right: INTEGER := 0;
+END BorrowModuleFieldsDep.

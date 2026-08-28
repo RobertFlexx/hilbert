@@ -1,0 +1,7 @@
+MODULE HilmakeExitStatus;
+
+FOREIGN "C" PROCEDURE exit(Status: INTEGER32);
+
+BEGIN
+  exit(7)
+END HilmakeExitStatus.

@@ -1,0 +1,45 @@
+MODULE Algorithms;
+EXPORT Min, Max, Clamp, Swap,
+       MinInteger, MaxInteger, ClampInteger, SwapInteger,
+       MinReal, MaxReal, ClampReal, SwapReal;
+
+PROCEDURE Min[T](A, B: T): T;
+BEGIN IF A < B THEN RETURN A END; RETURN B END Min;
+
+PROCEDURE Max[T](A, B: T): T;
+BEGIN IF A > B THEN RETURN A END; RETURN B END Max;
+
+PROCEDURE Clamp[T](X, Lo, Hi: T): T;
+BEGIN IF X < Lo THEN RETURN Lo END; IF X > Hi THEN RETURN Hi END; RETURN X END Clamp;
+
+PROCEDURE Swap[T](VAR A, B: T);
+VAR Temp: T;
+BEGIN Temp := A; A := B; B := Temp END Swap;
+
+PROCEDURE MinInteger(A, B: INTEGER): INTEGER;
+BEGIN IF A < B THEN RETURN A END; RETURN B END MinInteger;
+
+PROCEDURE MaxInteger(A, B: INTEGER): INTEGER;
+BEGIN IF A > B THEN RETURN A END; RETURN B END MaxInteger;
+
+PROCEDURE ClampInteger(X, Lo, Hi: INTEGER): INTEGER;
+BEGIN IF X < Lo THEN RETURN Lo END; IF X > Hi THEN RETURN Hi END; RETURN X END ClampInteger;
+
+PROCEDURE SwapInteger(VAR A, B: INTEGER);
+VAR Temp: INTEGER;
+BEGIN Temp := A; A := B; B := Temp END SwapInteger;
+
+PROCEDURE MinReal(A, B: REAL64): REAL64;
+BEGIN IF A < B THEN RETURN A END; RETURN B END MinReal;
+
+PROCEDURE MaxReal(A, B: REAL64): REAL64;
+BEGIN IF A > B THEN RETURN A END; RETURN B END MaxReal;
+
+PROCEDURE ClampReal(X, Lo, Hi: REAL64): REAL64;
+BEGIN IF X < Lo THEN RETURN Lo END; IF X > Hi THEN RETURN Hi END; RETURN X END ClampReal;
+
+PROCEDURE SwapReal(VAR A, B: REAL64);
+VAR Temp: REAL64;
+BEGIN Temp := A; A := B; B := Temp END SwapReal;
+
+END Algorithms.

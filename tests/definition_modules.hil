@@ -1,0 +1,16 @@
+MODULE DefinitionModules;
+
+IMPORT DefinitionStack;
+
+VAR S: DefinitionStack.Stack;
+
+BEGIN
+    DefinitionStack.Init(S);
+    DefinitionStack.Push(S, 11);
+    DefinitionStack.Push(S, 31);
+    ASSERT DefinitionStack.Count(S) = 2;
+    ASSERT DefinitionStack.Pop(S) = 31;
+    ASSERT DefinitionStack.Pop(S) = 11;
+    ASSERT DefinitionStack.Count(S) = 0;
+    ASSERT DefinitionStack.Echo[INTEGER](42) = 42
+END DefinitionModules.

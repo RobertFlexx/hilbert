@@ -1,0 +1,46 @@
+MODULE Directory;
+EXPORT Directory, Entry, Unknown, RegularFile, DirectoryFile, SymbolicLink, Other,
+       EndOfDirectory, EntryAvailable, ReadError, Valid, Open, Read, NextRaw, Next,
+       Descriptor, Rewind, Close;
+TYPE
+    Directory = ADDRESS;
+    Entry = RECORD
+        Name: CSTRING;
+        Kind: INTEGER32;
+    END;
+CONST
+    Unknown = 0; RegularFile = 1; DirectoryFile = 2; SymbolicLink = 3; Other = 4;
+    ReadError = -1; EndOfDirectory = 0; EntryAvailable = 1;
+FOREIGN "C" PROCEDURE opendir(Name: CSTRING): Directory;
+FOREIGN "C" PROCEDURE readdir(Dir: Directory): ADDRESS;
+FOREIGN "C" PROCEDURE rewinddir(Dir: Directory);
+FOREIGN "C" PROCEDURE closedir(Dir: Directory): INTEGER32;
+FOREIGN "C" PROCEDURE hilbert_rt_posix_dir_next(Dir: Directory; Name: POINTER TO CSTRING; Kind: POINTER TO INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE hilbert_rt_posix_dir_descriptor(Dir: Directory): INTEGER32;
+PROCEDURE Valid(Dir:Directory):BOOLEAN; BEGIN RETURN Dir # NIL END Valid;
+PROCEDURE Open(Name: CSTRING): Directory; BEGIN IF Name=NIL THEN RETURN NIL END; RETURN opendir(Name) END Open;
+PROCEDURE Read(Dir: Directory): ADDRESS; BEGIN IF Dir=NIL THEN RETURN NIL END; RETURN readdir(Dir) END Read;
+PROCEDURE NextRaw(Dir: Directory; VAR Item: Entry): INTEGER32;
+BEGIN
+    Item.Name := NIL; Item.Kind := Unknown;
+    IF Dir = NIL THEN RETURN ReadError END;
+    UNSAFE BEGIN RETURN hilbert_rt_posix_dir_next(Dir, ADR(Item.Name), ADR(Item.Kind)) END
+END NextRaw;
+PROCEDURE IsSpecial(Name: CSTRING): BOOLEAN;
+BEGIN
+    IF Name = NIL THEN RETURN FALSE END;
+    IF (Name[0] = '.') AND (Name[1] = CHR(0)) THEN RETURN TRUE END;
+    RETURN (Name[0] = '.') AND (Name[1] = '.') AND (Name[2] = CHR(0))
+END IsSpecial;
+PROCEDURE Next(Dir: Directory; VAR Item: Entry): INTEGER32;
+VAR Status: INTEGER32;
+BEGIN
+    Status := NextRaw(Dir, Item);
+    WHILE (Status = EntryAvailable) AND IsSpecial(Item.Name) DO Status := NextRaw(Dir, Item) END;
+    RETURN Status
+END Next;
+PROCEDURE Descriptor(Dir: Directory): INTEGER32;
+BEGIN IF Dir = NIL THEN RETURN -1 END; RETURN hilbert_rt_posix_dir_descriptor(Dir) END Descriptor;
+PROCEDURE Rewind(Dir: Directory); BEGIN IF Dir#NIL THEN rewinddir(Dir) END END Rewind;
+PROCEDURE Close(Dir: Directory): BOOLEAN; BEGIN RETURN (Dir#NIL) AND (closedir(Dir)=0) END Close;
+END Directory.

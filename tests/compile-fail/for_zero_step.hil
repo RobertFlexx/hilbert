@@ -1,0 +1,6 @@
+MODULE ForZeroStep;
+VAR I: INTEGER;
+BEGIN
+    FOR I := 0 TO 10 BY 0 DO
+    END
+END ForZeroStep.

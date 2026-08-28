@@ -1,0 +1,9 @@
+MODULE CVarargs;
+
+FOREIGN "C" LIBRARY "hilbert_test_varargs";
+FOREIGN "C" PROCEDURE hilbert_test_varargs(Marker: INTEGER32): INTEGER32 VARARGS;
+
+BEGIN
+    ASSERT hilbert_test_varargs(77, TRUE, CHR(65), BYTE(250), REAL32(1.5),
+                                CARDINAL64(18446744073709551615)) = 1
+END CVarargs.

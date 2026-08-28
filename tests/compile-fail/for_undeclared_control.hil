@@ -1,0 +1,5 @@
+MODULE ForUndeclaredControl;
+BEGIN
+    FOR I := 0 TO 3 DO
+    END
+END ForUndeclaredControl.

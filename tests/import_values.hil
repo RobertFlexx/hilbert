@@ -1,0 +1,7 @@
+MODULE ImportValues;
+IMPORT ImportValuesDep;
+BEGIN
+    ASSERT ImportValuesDep.Answer = 41;
+    ImportValuesDep.Mutable := ImportValuesDep.Mutable + 1;
+    ASSERT ImportValuesDep.Mutable = 2
+END ImportValues.

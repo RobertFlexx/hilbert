@@ -1,0 +1,8 @@
+MODULE SliceFromArray;
+VAR A: ARRAY 4 OF BYTE;
+PROCEDURE Check(S: SLICE OF BYTE);
+BEGIN ASSERT S.Length = 4 END Check;
+BEGIN
+    A[0] := 1;
+    Check(A)
+END SliceFromArray.

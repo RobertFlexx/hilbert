@@ -1,0 +1,15 @@
+MODULE Hex;
+EXPORT Digit, Value;
+PROCEDURE Digit(N: BYTE): CHAR;
+BEGIN
+    IF N < 10 THEN RETURN CHR(ORD('0') + N) END;
+    RETURN CHR(ORD('A') + (N - 10))
+END Digit;
+PROCEDURE Value(C: CHAR): INTEGER32;
+BEGIN
+    IF (C >= '0') AND (C <= '9') THEN RETURN ORD(C) - ORD('0') END;
+    IF (C >= 'A') AND (C <= 'F') THEN RETURN INTEGER32(10 + ORD(C) - ORD('A')) END;
+    IF (C >= 'a') AND (C <= 'f') THEN RETURN INTEGER32(10 + ORD(C) - ORD('a')) END;
+    RETURN -1
+END Value;
+END Hex.

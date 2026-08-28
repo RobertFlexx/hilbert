@@ -1,0 +1,9 @@
+MODULE Signals;
+EXPORT Handler, SetHandler, Raise, SIGINT, SIGTERM, SIGABRT, SIGSEGV, SIGPIPE, SIGUSR1, SIGUSR2;
+TYPE Handler = ADDRESS;
+CONST SIGINT = 2; SIGABRT = 6; SIGSEGV = 11; SIGPIPE = 13; SIGTERM = 15; SIGUSR1 = 10; SIGUSR2 = 12;
+FOREIGN "C" PROCEDURE signal(Number: INTEGER32; HandlerData: Handler): Handler;
+FOREIGN "C" PROCEDURE raise(Number: INTEGER32): INTEGER32;
+PROCEDURE SetHandler(Number: INTEGER32; H: Handler): Handler; BEGIN RETURN signal(Number,H) END SetHandler;
+PROCEDURE Raise(Number: INTEGER32): BOOLEAN; BEGIN RETURN raise(Number)=0 END Raise;
+END Signals.

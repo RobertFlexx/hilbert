@@ -1,0 +1,13 @@
+PROJECT DivisionHilmakeTest;
+IDENTIFICATION
+  NAME "division-hilmake-test"
+  VERSION "1.0.0"
+  DESCRIPTION "parallel and graph integration fixture"
+END
+ROOT "tests/division_import.hil";
+OUTPUT "build/division-hilmake-test";
+BUILD_DIR "build/.division-hilmake-test-cache";
+MODULE_PATH "tests";
+PROFILE RELEASE;
+RUNTIME HOSTED;
+END DivisionHilmakeTest;

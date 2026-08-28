@@ -1,0 +1,51 @@
+MODULE FileSystem;
+IMPORT FileInfo;
+EXPORT Access, Exists, Readable, Writable, Executable, Metadata, LinkMetadata,
+       Kind, IsFile, IsDirectory, IsLink, Size, Remove, Rename, Link, Symlink,
+       ReadLink, CurrentDirectory, ChangeDirectory, MakeDirectory, RemoveDirectory;
+CONST AccessExists = 0; AccessExecute = 1; AccessWrite = 2; AccessRead = 4;
+FOREIGN "C" PROCEDURE access(Path: CSTRING; Mode: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE unlink(Path: CSTRING): INTEGER32;
+FOREIGN "C" PROCEDURE rename(OldPath, NewPath: CSTRING): INTEGER32;
+FOREIGN "C" PROCEDURE link(OldPath, NewPath: CSTRING): INTEGER32;
+FOREIGN "C" PROCEDURE symlink(Target, LinkPath: CSTRING): INTEGER32;
+FOREIGN "C" PROCEDURE readlink(Path: CSTRING; Buffer: CSTRING; Size: SIZE): INTEGER64;
+FOREIGN "C" PROCEDURE getcwd(Buffer: CSTRING; Size: SIZE): CSTRING;
+FOREIGN "C" PROCEDURE chdir(Path: CSTRING): INTEGER32;
+FOREIGN "C" PROCEDURE mkdir(Path: CSTRING; Mode: CARDINAL32): INTEGER32;
+FOREIGN "C" PROCEDURE rmdir(Path: CSTRING): INTEGER32;
+PROCEDURE Access(Path: CSTRING; Mode: INTEGER32): BOOLEAN; BEGIN RETURN (Path # NIL) AND (access(Path,Mode)=0) END Access;
+PROCEDURE Exists(Path:CSTRING):BOOLEAN; BEGIN RETURN Access(Path,AccessExists) END Exists;
+PROCEDURE Readable(Path:CSTRING):BOOLEAN; BEGIN RETURN Access(Path,AccessRead) END Readable;
+PROCEDURE Writable(Path:CSTRING):BOOLEAN; BEGIN RETURN Access(Path,AccessWrite) END Writable;
+PROCEDURE Executable(Path:CSTRING):BOOLEAN; BEGIN RETURN Access(Path,AccessExecute) END Executable;
+PROCEDURE Metadata(Path: CSTRING; VAR Value: FileInfo.Info): BOOLEAN;
+BEGIN RETURN FileInfo.Stat(Path, Value) END Metadata;
+PROCEDURE LinkMetadata(Path: CSTRING; VAR Value: FileInfo.Info): BOOLEAN;
+BEGIN RETURN FileInfo.LinkStat(Path, Value) END LinkMetadata;
+PROCEDURE Kind(Path: CSTRING; Follow: BOOLEAN): INTEGER32;
+VAR Value: FileInfo.Info;
+BEGIN
+    IF Follow THEN
+        IF NOT FileInfo.Stat(Path, Value) THEN RETURN FileInfo.Unknown END
+    ELSE
+        IF NOT FileInfo.LinkStat(Path, Value) THEN RETURN FileInfo.Unknown END
+    END;
+    RETURN Value.Kind
+END Kind;
+PROCEDURE IsFile(Path: CSTRING): BOOLEAN; BEGIN RETURN Kind(Path, TRUE) = FileInfo.RegularFile END IsFile;
+PROCEDURE IsDirectory(Path: CSTRING): BOOLEAN; BEGIN RETURN Kind(Path, TRUE) = FileInfo.Directory END IsDirectory;
+PROCEDURE IsLink(Path: CSTRING): BOOLEAN; BEGIN RETURN Kind(Path, FALSE) = FileInfo.SymbolicLink END IsLink;
+PROCEDURE Size(Path: CSTRING): INTEGER64;
+VAR Value: FileInfo.Info;
+BEGIN IF NOT FileInfo.Stat(Path, Value) THEN RETURN -1 END; RETURN Value.Size END Size;
+PROCEDURE Remove(Path: CSTRING): BOOLEAN; BEGIN RETURN (Path # NIL) AND (unlink(Path)=0) END Remove;
+PROCEDURE Rename(OldPath,NewPath:CSTRING):BOOLEAN; BEGIN RETURN (OldPath # NIL) AND (NewPath # NIL) AND (rename(OldPath,NewPath)=0) END Rename;
+PROCEDURE Link(OldPath,NewPath:CSTRING):BOOLEAN; BEGIN RETURN (OldPath # NIL) AND (NewPath # NIL) AND (link(OldPath,NewPath)=0) END Link;
+PROCEDURE Symlink(Target,LinkPath:CSTRING):BOOLEAN; BEGIN RETURN (Target # NIL) AND (LinkPath # NIL) AND (symlink(Target,LinkPath)=0) END Symlink;
+PROCEDURE ReadLink(Path:CSTRING;Buffer:CSTRING;Size:SIZE):INTEGER64; BEGIN IF (Path = NIL) OR (Buffer = NIL) THEN RETURN -1 END; RETURN readlink(Path,Buffer,Size) END ReadLink;
+PROCEDURE CurrentDirectory(Buffer:CSTRING;Size:SIZE):CSTRING; BEGIN IF Buffer = NIL THEN RETURN NIL END; RETURN getcwd(Buffer,Size) END CurrentDirectory;
+PROCEDURE ChangeDirectory(Path:CSTRING):BOOLEAN; BEGIN RETURN (Path # NIL) AND (chdir(Path)=0) END ChangeDirectory;
+PROCEDURE MakeDirectory(Path:CSTRING;Mode:CARDINAL32):BOOLEAN; BEGIN RETURN (Path # NIL) AND (mkdir(Path,Mode)=0) END MakeDirectory;
+PROCEDURE RemoveDirectory(Path:CSTRING):BOOLEAN; BEGIN RETURN (Path # NIL) AND (rmdir(Path)=0) END RemoveDirectory;
+END FileSystem.

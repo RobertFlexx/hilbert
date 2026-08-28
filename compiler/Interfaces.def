@@ -1,0 +1,26 @@
+DEFINITION MODULE Interfaces;
+FROM HStrings IMPORT Text;
+FROM Types IMPORT TypeId;
+CONST MaxInterfaceModules=512; MaxInterfaceMembers=32768;
+TYPE
+    MemberKind=(MemberNone,MemberType,MemberProcedure,MemberConst,MemberVar,MemberException);
+    Member=RECORD Module,Name,LinkName,ConstText:Text; Kind:MemberKind; TypeId:TypeId; ConstValue:LONGINT; HasConst:BOOLEAN END;
+PROCEDURE Init;
+PROCEDURE RegisterModule(Name:ARRAY OF CHAR);
+PROCEDURE RegisterDefinition(Name:ARRAY OF CHAR);
+PROCEDURE HasDefinition(Name:ARRAY OF CHAR):BOOLEAN;
+PROCEDURE Add(Module,Name:ARRAY OF CHAR; Kind:MemberKind; Ty:TypeId; LinkName:ARRAY OF CHAR);
+PROCEDURE AddConst(Module,Name:ARRAY OF CHAR; Ty:TypeId; Value:LONGINT);
+PROCEDURE AddConstText(Module,Name:ARRAY OF CHAR; Ty:TypeId; Value:ARRAY OF CHAR);
+PROCEDURE Find(Module,Name:ARRAY OF CHAR; VAR Out:Member):BOOLEAN;
+PROCEDURE FindQualified(Name:ARRAY OF CHAR; VAR Out:Member):BOOLEAN;
+PROCEDURE RegisterAlias(Owner,LocalName,ModuleName:ARRAY OF CHAR);
+PROCEDURE RegisterSelective(Owner,LocalName,ModuleName,MemberName:ARRAY OF CHAR);
+PROCEDURE ResolveModule(Owner,LocalName:ARRAY OF CHAR; VAR ModuleName:Text):BOOLEAN;
+PROCEDURE FindVisible(Owner,LocalModule,Name:ARRAY OF CHAR; VAR Out:Member):BOOLEAN;
+PROCEDURE FindSelective(Owner,LocalName:ARRAY OF CHAR; VAR Out:Member):BOOLEAN;
+PROCEDURE FindQualifiedVisible(Owner,Name:ARRAY OF CHAR; VAR Out:Member):BOOLEAN;
+PROCEDURE ModuleKnown(Name:ARRAY OF CHAR):BOOLEAN;
+PROCEDURE Count():CARDINAL;
+PROCEDURE Get(Index:CARDINAL):Member;
+END Interfaces.

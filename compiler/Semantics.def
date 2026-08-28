@@ -1,0 +1,7 @@
+DEFINITION MODULE Semantics;
+FROM AST IMPORT NodeId;
+PROCEDURE InitGraph;
+PROCEDURE Check(Root:NodeId):BOOLEAN;
+PROCEDURE CheckImplementation(Root:NodeId):BOOLEAN;
+PROCEDURE TypeOf(N:NodeId):CARDINAL;
+END Semantics.

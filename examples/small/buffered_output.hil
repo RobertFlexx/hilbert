@@ -1,0 +1,16 @@
+MODULE BufferedOutput;
+IMPORT BufferedIO, Files;
+
+VAR Output: BufferedIO.Writer; I: INTEGER;
+
+BEGIN
+    BufferedIO.Init(Output, Files.Handle(Files.StandardOutput), 4096);
+    DEFER BufferedIO.Dispose(Output);
+    I := 1;
+    WHILE I <= 4 DO
+        ASSERT BufferedIO.WriteString(Output, "buffered Hilbert output");
+        ASSERT BufferedIO.WriteByte(Output, BYTE(10));
+        I := I + 1
+    END;
+    ASSERT BufferedIO.Flush(Output)
+END BufferedOutput.

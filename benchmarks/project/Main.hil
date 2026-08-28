@@ -1,0 +1,6 @@
+MODULE Main;
+IMPORT BenchDep;
+
+BEGIN
+    ASSERT BenchDep.Compute(6) = 42
+END Main.

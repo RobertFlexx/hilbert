@@ -1,0 +1,10 @@
+MODULE Tasks;
+EXPORT Handle, Join, TryJoin;
+TYPE Handle = ADDRESS;
+FOREIGN "C" PROCEDURE hilbert_rt_task_join(H: Handle): INTEGER32;
+PROCEDURE Join(H: Handle); BEGIN AWAIT H END Join;
+PROCEDURE TryJoin(H: Handle): BOOLEAN;
+BEGIN
+    RETURN hilbert_rt_task_join(H) = 0
+END TryJoin;
+END Tasks.

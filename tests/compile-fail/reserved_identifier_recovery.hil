@@ -1,0 +1,6 @@
+MODULE ReservedIdentifierRecovery;
+VAR AX, BY, T: INTEGER;
+BEGIN
+    AX := 1;
+    T := AX
+END ReservedIdentifierRecovery.

@@ -1,0 +1,7 @@
+MODULE ShiftCountFailure;
+VAR Value, Count: INTEGER;
+BEGIN
+    Value := 1;
+    Count := 64;
+    Value := Value SHL Count
+END ShiftCountFailure.

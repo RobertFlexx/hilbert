@@ -1,0 +1,33 @@
+MODULE NativeSync;
+IMPORT NativeThread;
+
+VAR Mutex: NativeThread.Mutex;
+    Changed: NativeThread.Condition;
+    Thread: NativeThread.Thread;
+    Ready: CARDINAL32;
+
+PROCEDURE Worker(Data: ADDRESS): ADDRESS;
+BEGIN
+    ASSERT Data = NIL;
+    ASSERT NativeThread.MutexLock(Mutex);
+    Ready := 1;
+    ASSERT NativeThread.ConditionSignal(Changed);
+    ASSERT NativeThread.MutexUnlock(Mutex);
+    RETURN NIL
+END Worker;
+
+BEGIN
+    ASSERT NativeThread.MutexInit(Mutex);
+    ASSERT NativeThread.ConditionInit(Changed);
+    ASSERT NativeThread.MutexLock(Mutex);
+    ASSERT NOT NativeThread.MutexTryLock(Mutex);
+    ASSERT NativeThread.Create(Thread, Worker, NIL);
+    WHILE Ready = 0 DO
+        ASSERT NativeThread.ConditionWait(Changed, Mutex)
+    END;
+    ASSERT NativeThread.MutexUnlock(Mutex);
+    ASSERT NativeThread.Join(Thread);
+    ASSERT Ready = 1;
+    ASSERT NativeThread.ConditionDestroy(Changed);
+    ASSERT NativeThread.MutexDestroy(Mutex)
+END NativeSync.

@@ -1,0 +1,16 @@
+MODULE RandomNumbers;
+IMPORT IO, Random;
+
+VAR Generator: Random.Generator;
+    I: INTEGER;
+    Roll: CARDINAL64;
+
+BEGIN
+    Random.Seed(Generator, 12345);
+    IO.Write("deterministic dice:");
+    FOR I := 1 TO 6 DO
+        Roll := Random.Range(Generator, 6) + 1;
+        IO.Write(" "); IO.WriteCard(CARDINAL(Roll))
+    END;
+    IO.NewLine
+END RandomNumbers.

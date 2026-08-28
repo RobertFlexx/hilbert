@@ -1,0 +1,14 @@
+DEFINITION MODULE Generics;
+
+FROM Types IMPORT TypeId;
+
+CONST MaxGenericParams=16;
+TYPE ActualArray=ARRAY [0..MaxGenericParams-1] OF TypeId;
+
+PROCEDURE Init;
+PROCEDURE RegisterTemplate(Template:TypeId; VAR Params:ActualArray; Count:CARDINAL);
+PROCEDURE IsTemplate(Template:TypeId):BOOLEAN;
+PROCEDURE ParameterCount(Template:TypeId):CARDINAL;
+PROCEDURE Instantiate(Template:TypeId; VAR Actuals:ActualArray; Count:CARDINAL):TypeId;
+
+END Generics.

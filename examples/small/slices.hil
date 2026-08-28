@@ -1,0 +1,21 @@
+MODULE SliceExample;
+IMPORT IO;
+
+PROCEDURE Sum(Values: SLICE OF INTEGER): INTEGER;
+VAR Total: INTEGER;
+BEGIN
+    Total := 0;
+    FOR Value IN Values DO
+        Total := Total + Value
+    END;
+    RETURN Total
+END Sum;
+
+VAR Values: ARRAY 6 OF INTEGER;
+
+BEGIN
+    Values[0] := 2; Values[1] := 3; Values[2] := 5;
+    Values[3] := 7; Values[4] := 11; Values[5] := 13;
+    IO.Write("sum of primes = "); IO.WriteInt(Sum(Values)); IO.NewLine;
+    ASSERT Sum(Values) = 41
+END SliceExample.

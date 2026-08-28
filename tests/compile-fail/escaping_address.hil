@@ -1,0 +1,9 @@
+MODULE EscapingAddress;
+
+PROCEDURE Bad(): ADDRESS;
+VAR X: INTEGER;
+BEGIN
+    RETURN ADR(X);
+END Bad;
+
+END EscapingAddress.

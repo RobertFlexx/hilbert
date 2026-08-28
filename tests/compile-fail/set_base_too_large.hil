@@ -1,0 +1,3 @@
+MODULE SetBaseTooLarge;
+TYPE Values = SET OF CARDINAL8;
+END SetBaseTooLarge.

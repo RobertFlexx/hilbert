@@ -1,0 +1,5 @@
+MODULE DuplicateParameter;
+PROCEDURE Bad(Value: INTEGER; Value: INTEGER);
+BEGIN
+END Bad;
+END DuplicateParameter.

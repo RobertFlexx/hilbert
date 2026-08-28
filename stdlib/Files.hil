@@ -1,0 +1,112 @@
+MODULE Files;
+IMPORT Errors;
+EXPORT Handle, Invalid, StandardInput, StandardOutput, StandardError,
+       SeekSet, SeekCurrent, SeekEnd, ReadOnly, WriteOnly, ReadWrite, CreateIfMissing,
+       TruncateExisting, AppendWrites, CloseOnExec, Open, OpenRead, OpenWrite,
+       OpenReadWrite, OpenAppend, Create, Read, ReadFull, Write, WriteAll, Seek,
+       Tell, Rewind, Truncate, Sync, Close, Valid, Descriptor;
+
+TYPE Handle = DISTINCT INTEGER32;
+CONST
+    Invalid = -1; StandardInput = 0; StandardOutput = 1; StandardError = 2;
+    SeekSet = 0; SeekCurrent = 1; SeekEnd = 2;
+    OReadOnly = 0; OWriteOnly = 1; OReadWrite = 2; OCreate = 64; OTruncate = 512; OAppend = 1024;
+    OCloExec = 524288;
+    ReadOnly = OReadOnly; WriteOnly = OWriteOnly; ReadWrite = OReadWrite;
+    CreateIfMissing = OCreate; TruncateExisting = OTruncate; AppendWrites = OAppend;
+    CloseOnExec = OCloExec;
+    DefaultMode = 420;
+
+FOREIGN "C" PROCEDURE open(Path: CSTRING; Flags: INTEGER32; Mode: CARDINAL32): INTEGER32;
+FOREIGN "C" PROCEDURE read(Fd: INTEGER32; Buffer: ADDRESS; Count: SIZE): INTEGER64;
+FOREIGN "C" PROCEDURE write(Fd: INTEGER32; Buffer: ADDRESS; Count: SIZE): INTEGER64;
+FOREIGN "C" PROCEDURE lseek(Fd: INTEGER32; Offset: INTEGER64; Whence: INTEGER32): INTEGER64;
+FOREIGN "C" PROCEDURE ftruncate(Fd: INTEGER32; Length: INTEGER64): INTEGER32;
+FOREIGN "C" PROCEDURE fsync(Fd: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE close(Fd: INTEGER32): INTEGER32;
+
+PROCEDURE Open(Path: CSTRING; Flags: INTEGER32; Mode: CARDINAL32): Handle;
+BEGIN IF Path = NIL THEN RETURN Handle(Invalid) END; RETURN Handle(open(Path, Flags, Mode)) END Open;
+
+PROCEDURE OpenRead(Path: CSTRING): Handle;
+BEGIN RETURN Handle(open(Path, OReadOnly, 0)) END OpenRead;
+
+PROCEDURE OpenWrite(Path: CSTRING): Handle;
+BEGIN RETURN Handle(open(Path, OWriteOnly OR OCreate OR OTruncate, DefaultMode)) END OpenWrite;
+
+PROCEDURE OpenReadWrite(Path: CSTRING): Handle;
+BEGIN RETURN Handle(open(Path, OReadWrite OR OCreate, DefaultMode)) END OpenReadWrite;
+
+PROCEDURE OpenAppend(Path: CSTRING): Handle;
+BEGIN RETURN Handle(open(Path, OWriteOnly OR OCreate OR OAppend, DefaultMode)) END OpenAppend;
+
+PROCEDURE Create(Path: CSTRING; Mode: CARDINAL32): Handle;
+BEGIN RETURN Handle(open(Path, OWriteOnly OR OCreate OR OTruncate, Mode)) END Create;
+
+PROCEDURE Valid(H: Handle): BOOLEAN;
+BEGIN RETURN INTEGER32(H) >= 0 END Valid;
+
+PROCEDURE Read(H: Handle; Buffer: ADDRESS; Count: SIZE): INTEGER64;
+BEGIN RETURN read(INTEGER32(H), Buffer, Count) END Read;
+
+PROCEDURE ReadFull(H: Handle; Buffer: ADDRESS; Count: SIZE): INTEGER64;
+VAR Total, Amount: INTEGER64; At: ADDRESS;
+BEGIN
+    IF (Buffer = NIL) AND (Count # 0) THEN RETURN -1 END;
+    Total := 0;
+    WHILE SIZE(Total) < Count DO
+        At := ADDRESS(SIZE(Buffer) + SIZE(Total));
+        Amount := read(INTEGER32(H), At, Count - SIZE(Total));
+        IF Amount = 0 THEN RETURN Total END;
+        IF Amount < 0 THEN
+            IF Errors.Errno() # Errors.Interrupted THEN RETURN -1 END
+        ELSE
+            Total := Total + Amount
+        END
+    END;
+    RETURN Total
+END ReadFull;
+
+PROCEDURE Write(H: Handle; Buffer: ADDRESS; Count: SIZE): INTEGER64;
+BEGIN RETURN write(INTEGER32(H), Buffer, Count) END Write;
+
+PROCEDURE WriteAll(H: Handle; Buffer: ADDRESS; Count: SIZE): BOOLEAN;
+VAR Total: SIZE; Amount: INTEGER64; At: ADDRESS;
+BEGIN
+    IF (Buffer = NIL) AND (Count # 0) THEN RETURN FALSE END;
+    Total := 0;
+    WHILE Total < Count DO
+        At := ADDRESS(SIZE(Buffer) + Total);
+        Amount := write(INTEGER32(H), At, Count - Total);
+        IF Amount < 0 THEN
+            IF Errors.Errno() # Errors.Interrupted THEN RETURN FALSE END
+        ELSIF Amount = 0 THEN
+            RETURN FALSE
+        ELSE
+            Total := Total + SIZE(Amount)
+        END
+    END;
+    RETURN TRUE
+END WriteAll;
+
+PROCEDURE Seek(H: Handle; Offset: INTEGER64; Whence: INTEGER32): INTEGER64;
+BEGIN RETURN lseek(INTEGER32(H), Offset, Whence) END Seek;
+
+PROCEDURE Tell(H: Handle): INTEGER64;
+BEGIN RETURN Seek(H, 0, SeekCurrent) END Tell;
+
+PROCEDURE Rewind(H: Handle): BOOLEAN;
+BEGIN RETURN Seek(H, 0, SeekSet) >= 0 END Rewind;
+
+PROCEDURE Truncate(H: Handle; Length: INTEGER64): BOOLEAN;
+BEGIN RETURN ftruncate(INTEGER32(H), Length) = 0 END Truncate;
+
+PROCEDURE Sync(H: Handle): BOOLEAN;
+BEGIN RETURN fsync(INTEGER32(H)) = 0 END Sync;
+
+PROCEDURE Close(H: Handle): BOOLEAN;
+BEGIN IF NOT Valid(H) THEN RETURN FALSE END; RETURN close(INTEGER32(H)) = 0 END Close;
+
+PROCEDURE Descriptor(H: Handle): INTEGER32; BEGIN RETURN INTEGER32(H) END Descriptor;
+
+END Files.

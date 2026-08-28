@@ -1,0 +1,9 @@
+MODULE Queue;
+EXPORT Queue;
+TYPE Queue[T] = RECORD
+    Data: POINTER TO T;
+    Head: SIZE;
+    Length: SIZE;
+    Capacity: SIZE;
+END;
+END Queue.

@@ -1,0 +1,10 @@
+MODULE RecursiveRecord;
+TYPE Node = RECORD
+    Value: INTEGER;
+    Next: POINTER TO Node;
+END;
+VAR N: Node;
+BEGIN
+    N.Value := 7;
+    ASSERT N.Value = 7
+END RecursiveRecord.

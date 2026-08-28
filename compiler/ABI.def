@@ -1,0 +1,6 @@
+DEFINITION MODULE ABI;
+FROM Types IMPORT TypeId;
+TYPE Class=(NoClass,IntegerClass,SSEClass,MemoryClass);
+TYPE Classification=RECORD Count:CARDINAL; A,B:Class; Size,Align:CARDINAL END;
+PROCEDURE ClassifySysV(Ty:TypeId; VAR C:Classification);
+END ABI.

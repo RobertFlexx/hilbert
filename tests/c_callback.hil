@@ -1,0 +1,18 @@
+MODULE CCallback;
+
+TYPE Binary = PROCEDURE(A, B: INTEGER): INTEGER;
+
+FOREIGN "C" PROCEDURE CallCallback(F: Binary; A, B: INTEGER): INTEGER EXTERNAL NAME "hilbert_test_call_callback";
+FOREIGN "C" PROCEDURE CSubtract(A, B: INTEGER): INTEGER EXTERNAL NAME "hilbert_test_subtract";
+
+PROCEDURE Add(A, B: INTEGER): INTEGER;
+BEGIN RETURN A + B END Add;
+
+VAR F: Binary;
+
+BEGIN
+    ASSERT CallCallback(Add, 20, 22) = 42;
+    F := CSubtract;
+    ASSERT F(50, 8) = 42;
+    ASSERT CallCallback(F, 90, 48) = 42
+END CCallback.

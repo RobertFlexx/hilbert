@@ -1,0 +1,13 @@
+MODULE ImportSurfaceDep;
+EXPORT Number, Counter, Answer, Huge, Add, State, Ready, Busy;
+
+TYPE Number = INTEGER32;
+     State = (Ready, Busy);
+CONST Answer = 42;
+      Huge = 18446744073709551615;
+VAR Counter: Number;
+
+PROCEDURE Add(A, B: Number): Number;
+BEGIN RETURN A + B END Add;
+
+BEGIN Counter := 5 END ImportSurfaceDep.

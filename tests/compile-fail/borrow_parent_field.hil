@@ -1,0 +1,17 @@
+MODULE BorrowParentField;
+
+TYPE Pair = RECORD
+    Left, Right: INTEGER;
+END;
+
+PROCEDURE Touch(VAR Whole: Pair; VAR Field: INTEGER);
+BEGIN
+    Whole.Left := Whole.Left + 1;
+    Field := Field + 1
+END Touch;
+
+VAR P: Pair;
+
+BEGIN
+    Touch(P, P.Left)
+END BorrowParentField.

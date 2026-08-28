@@ -1,0 +1,13 @@
+MODULE BorrowAlias;
+
+PROCEDURE Pair(VAR A, B: INTEGER);
+BEGIN
+    A := A + 1;
+    B := B + 1;
+END Pair;
+
+VAR X: INTEGER;
+
+BEGIN
+    Pair(X, X);
+END BorrowAlias.

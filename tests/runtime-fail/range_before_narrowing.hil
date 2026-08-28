@@ -1,0 +1,8 @@
+MODULE RangeBeforeNarrowing;
+TYPE Tiny = INTEGER8 RANGE 0 .. 100;
+VAR Wide: INTEGER;
+    Value: Tiny;
+BEGIN
+    Wide := 300;
+    Value := Wide
+END RangeBeforeNarrowing.

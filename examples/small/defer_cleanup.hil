@@ -1,0 +1,27 @@
+MODULE DeferCleanup;
+IMPORT IO;
+
+VAR Trace: INTEGER;
+
+PROCEDURE Mark(Digit: INTEGER);
+BEGIN
+    Trace := Trace * 10 + Digit
+END Mark;
+
+PROCEDURE Work(Early: BOOLEAN): INTEGER;
+BEGIN
+    DEFER Mark(3);
+    Mark(1);
+    BEGIN
+        DEFER Mark(2);
+        IF Early THEN RETURN 42 END
+    END;
+    RETURN 0
+END Work;
+
+BEGIN
+    Trace := 0;
+    ASSERT Work(TRUE) = 42;
+    ASSERT Trace = 123;
+    IO.WriteLn("deferred cleanup ran in lexical order")
+END DeferCleanup.

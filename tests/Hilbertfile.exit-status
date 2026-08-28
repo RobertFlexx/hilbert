@@ -1,0 +1,6 @@
+PROJECT HilmakeExitStatus;
+ROOT "tests/hilmake_exit_status.hil";
+OUTPUT "build/hilmake-exit-status";
+BUILD_DIR "build/.hilmake-exit-status-cache";
+PROFILE RELEASE;
+END HilmakeExitStatus;

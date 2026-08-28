@@ -1,0 +1,32 @@
+MODULE PosixDirectory;
+IMPORT Directory, IO;
+
+VAR
+    Dir: Directory.Directory;
+    Item: Directory.Entry;
+    Status: INTEGER32;
+    Count: INTEGER;
+
+PROCEDURE KindName(Kind: INTEGER32): CSTRING;
+BEGIN
+    IF Kind = Directory.RegularFile THEN RETURN "file" END;
+    IF Kind = Directory.DirectoryFile THEN RETURN "directory" END;
+    IF Kind = Directory.SymbolicLink THEN RETURN "link" END;
+    IF Kind = Directory.Other THEN RETURN "other" END;
+    RETURN "unknown"
+END KindName;
+
+BEGIN
+    Dir := Directory.Open(".");
+    ASSERT Directory.Valid(Dir);
+    DEFER Directory.Close(Dir);
+
+    Count := 0;
+    Status := Directory.Next(Dir, Item);
+    WHILE (Status = Directory.EntryAvailable) AND (Count < 5) DO
+        IO.Write(KindName(Item.Kind)); IO.Write("  "); IO.WriteLn(Item.Name);
+        Count := Count + 1;
+        Status := Directory.Next(Dir, Item)
+    END;
+    ASSERT Status # Directory.ReadError
+END PosixDirectory.

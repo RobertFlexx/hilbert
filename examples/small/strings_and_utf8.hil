@@ -1,0 +1,17 @@
+MODULE StringsAndUTF8;
+IMPORT IO, Strings, CStrings, UTF8, ASCII;
+
+VAR Greeting: STRING;
+
+BEGIN
+    Greeting := "hello, Hilbert";
+    ASSERT Strings.StartsWith(Greeting, "hello");
+    ASSERT Strings.EndsWith(Greeting, "Hilbert");
+    ASSERT CStrings.Contains("module procedure record", "procedure");
+    ASSERT UTF8.IsValid("snowman: \u2603");
+    ASSERT ASCII.ToUpper('h') = 'H';
+
+    IO.Write(Greeting); IO.Write(" has ");
+    IO.WriteCard(CARDINAL(UTF8.CodepointCount(Greeting)));
+    IO.WriteLn(" codepoints")
+END StringsAndUTF8.

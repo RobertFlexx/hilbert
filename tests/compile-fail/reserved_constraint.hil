@@ -1,0 +1,3 @@
+MODULE ReservedConstraint;
+TYPE Box[T: INTEGER] = RECORD Value: T; END;
+END ReservedConstraint.

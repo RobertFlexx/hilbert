@@ -1,0 +1,8 @@
+MODULE DivisionGenericImport;
+
+IMPORT DivisionGenericLibrary;
+
+BEGIN
+  ASSERT(DivisionGenericLibrary.Identity[INTEGER](42) = 42);
+  ASSERT(DivisionGenericLibrary.Identity[REAL64](3.5) = 3.5)
+END DivisionGenericImport.

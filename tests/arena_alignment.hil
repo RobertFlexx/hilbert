@@ -1,0 +1,26 @@
+MODULE ArenaAlignment;
+IMPORT Arena, Memory;
+
+VAR A: Arena.Allocator;
+    First, Second, Direct: ADDRESS;
+    FirstEnd: SIZE;
+
+BEGIN
+    Arena.Init(A, 128);
+    First := Arena.AllocateAligned(A, 3, 16);
+    Second := Arena.AllocateZeroedAligned(A, 5, 32);
+    ASSERT (SIZE(First) MOD 16) = 0;
+    ASSERT (SIZE(Second) MOD 32) = 0;
+    FirstEnd := SIZE(First) + 3;
+    ASSERT SIZE(Second) >= FirstEnd;
+    ASSERT A.Used <= A.Capacity;
+    ASSERT Arena.Remaining(A) = A.Capacity - A.Used;
+    Arena.Destroy(A);
+    ASSERT A.Base = NIL;
+
+    Direct := Memory.AllocAligned(127, 64);
+    ASSERT Direct # NIL;
+    ASSERT (SIZE(Direct) MOD 64) = 0;
+    Memory.Free(Direct);
+    ASSERT Memory.AllocAligned(16, 3) = NIL
+END ArenaAlignment.

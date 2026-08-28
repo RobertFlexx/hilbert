@@ -1,0 +1,7 @@
+PROJECT BenchProject;
+ROOT "Main.hil";
+OUTPUT "build/bench-project";
+BUILD_DIR "build/cache";
+PROFILE RELEASE;
+INCREMENTAL TRUE;
+END BenchProject;

@@ -1,0 +1,8 @@
+MODULE RingBuffer;
+EXPORT RingBuffer;
+TYPE
+    RingBuffer[T] = RECORD
+        Data: POINTER TO T;
+        Capacity, Count, ReadIndex, WriteIndex: SIZE;
+    END;
+END RingBuffer.

@@ -1,0 +1,24 @@
+MODULE EnumsAndCase;
+IMPORT IO;
+
+TYPE State = (Idle, Starting, Running, Stopped);
+
+PROCEDURE Describe(Value: State): CSTRING;
+BEGIN
+    CASE Value OF
+    Idle: RETURN "idle"
+    | Starting: RETURN "starting"
+    | Running: RETURN "running"
+    | Stopped: RETURN "stopped"
+    END;
+    RETURN "unknown"
+END Describe;
+
+VAR Current: State;
+
+BEGIN
+    Current := Starting;
+    IO.Write("state: "); IO.WriteLn(Describe(Current));
+    Current := Running;
+    ASSERT Current = Running
+END EnumsAndCase.

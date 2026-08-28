@@ -1,0 +1,13 @@
+MODULE ForeignBool;
+
+FOREIGN "C" LIBRARY "hilbert_test_bool";
+FOREIGN "C" PROCEDURE hilbert_test_true(): BOOLEAN;
+FOREIGN "C" PROCEDURE hilbert_test_false(): BOOLEAN;
+FOREIGN "C" PROCEDURE hilbert_test_not(Value: BOOLEAN): BOOLEAN;
+
+BEGIN
+    ASSERT hilbert_test_true();
+    ASSERT NOT hilbert_test_false();
+    ASSERT hilbert_test_not(FALSE);
+    ASSERT NOT hilbert_test_not(TRUE)
+END ForeignBool.

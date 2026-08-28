@@ -1,0 +1,6 @@
+DEFINITION MODULE Lexer;
+FROM Tokens IMPORT Token;
+PROCEDURE Init;
+PROCEDURE Next(VAR T: Token);
+PROCEDURE Peek(VAR T: Token);
+END Lexer.

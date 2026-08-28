@@ -1,0 +1,15 @@
+MODULE DivisionRuntimeSelect;
+
+DIVISION hosted WHEN HOSTED;
+EXPORT Choice;
+CONST Choice = 1;
+END hosted;
+
+DIVISION bare WHEN FREESTANDING;
+EXPORT Choice;
+CONST Choice = 2;
+END bare;
+
+BEGIN
+  ASSERT(Choice > 0)
+END DivisionRuntimeSelect.

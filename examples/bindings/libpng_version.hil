@@ -1,0 +1,11 @@
+MODULE LibPNGVersion;
+IMPORT IO, LibPNG;
+
+VAR Version: CARDINAL32;
+
+BEGIN
+    Version := LibPNG.png_access_version_number();
+    IO.Write("libpng numeric version: ");
+    IO.WriteCard(CARDINAL(Version)); IO.NewLine;
+    ASSERT Version > 0
+END LibPNGVersion.

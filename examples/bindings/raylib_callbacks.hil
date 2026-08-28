@@ -1,0 +1,20 @@
+MODULE RaylibCallbacks;
+IMPORT Raylib;
+
+PROCEDURE SaveText(FileName, Text: CSTRING): BOOLEAN;
+BEGIN
+    (* A real program can route this to Files or its own asset store. *)
+    RETURN (FileName # NIL) AND (Text # NIL)
+END SaveText;
+
+PROCEDURE ProcessAudio(BufferData: ADDRESS; Frames: CARDINAL32);
+BEGIN
+    (* The callback runs on raylib's audio thread. Keep it short and thread safe. *)
+    IF (BufferData = NIL) OR (Frames = 0) THEN RETURN END
+END ProcessAudio;
+
+BEGIN
+    Raylib.SetSaveFileTextCallback(SaveText);
+    Raylib.AttachAudioMixedProcessor(ProcessAudio);
+    Raylib.DetachAudioMixedProcessor(ProcessAudio)
+END RaylibCallbacks.

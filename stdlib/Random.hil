@@ -1,0 +1,24 @@
+MODULE Random;
+EXPORT Generator, Seed, Next, Next32, Range, Boolean, Unit;
+TYPE Generator = RECORD State: CARDINAL64; END;
+PROCEDURE Seed(VAR G: Generator; Value: CARDINAL64);
+BEGIN IF Value = 0 THEN G.State := 11400714819323198485 ELSE G.State := Value END END Seed;
+PROCEDURE Next(VAR G: Generator): CARDINAL64;
+VAR X: CARDINAL64;
+BEGIN X := G.State; X := X XOR (X SHR 12); X := X XOR (X SHL 25); X := X XOR (X SHR 27); G.State := X; RETURN X * 2685821657736338717 END Next;
+PROCEDURE Next32(VAR G: Generator): CARDINAL32; BEGIN RETURN CARDINAL32(Next(G) SHR 32) END Next32;
+PROCEDURE Range(VAR G: Generator; UpperExclusive: CARDINAL64): CARDINAL64;
+VAR X, Limit: CARDINAL64;
+BEGIN
+    IF UpperExclusive <= 1 THEN RETURN 0 END;
+    (* Rejection sampling costs almost nothing and removes modulo bias. *)
+    (* Keep both operands unsigned. Integer literals otherwise begin as INTEGER,
+       and signed -1 MOD N would collapse this rejection limit to zero. *)
+    Limit := CARDINAL64(18446744073709551615) -
+             (CARDINAL64(18446744073709551615) MOD UpperExclusive);
+    REPEAT X := Next(G) UNTIL X < Limit;
+    RETURN X MOD UpperExclusive
+END Range;
+PROCEDURE Boolean(VAR G: Generator): BOOLEAN; BEGIN RETURN (Next(G) AND 1) # 0 END Boolean;
+PROCEDURE Unit(VAR G: Generator): REAL64; BEGIN RETURN REAL64(Next(G) SHR 11) / 9007199254740992.0 END Unit;
+END Random.

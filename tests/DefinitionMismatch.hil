@@ -1,0 +1,5 @@
+MODULE DefinitionMismatch;
+PROCEDURE Accept(X: REAL64);
+BEGIN
+END Accept;
+END DefinitionMismatch.

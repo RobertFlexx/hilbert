@@ -1,0 +1,14 @@
+MODULE DivisionInactiveImport;
+
+DIVISION native WHEN HOSTED;
+EXPORT Value;
+CONST Value = 42;
+END native;
+
+DIVISION bare WHEN FREESTANDING;
+IMPORT MissingFreestandingConsole;
+END bare;
+
+BEGIN
+  ASSERT(Value = 42)
+END DivisionInactiveImport.

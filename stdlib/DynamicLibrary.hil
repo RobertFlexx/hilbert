@@ -1,0 +1,15 @@
+MODULE DynamicLibrary;
+EXPORT Library, Open, Symbol, Close, LastError, Valid, Lazy, Now, Local, Global;
+TYPE Library = ADDRESS;
+CONST Lazy = 1; Now = 2; Local = 0; Global = 256;
+FOREIGN "C" LIBRARY "dl";
+FOREIGN "C" PROCEDURE dlopen(Name: CSTRING; Flags: INTEGER32): ADDRESS;
+FOREIGN "C" PROCEDURE dlsym(Handle: ADDRESS; Name: CSTRING): ADDRESS;
+FOREIGN "C" PROCEDURE dlclose(Handle: ADDRESS): INTEGER32;
+FOREIGN "C" PROCEDURE dlerror(): CSTRING;
+PROCEDURE Open(Name: CSTRING; Flags: INTEGER32): Library; BEGIN RETURN dlopen(Name, Flags) END Open;
+PROCEDURE Valid(Lib: Library): BOOLEAN; BEGIN RETURN Lib # NIL END Valid;
+PROCEDURE Symbol(Lib: Library; Name: CSTRING): ADDRESS; BEGIN IF (Lib = NIL) OR (Name = NIL) THEN RETURN NIL END; RETURN dlsym(Lib, Name) END Symbol;
+PROCEDURE Close(Lib: Library): INTEGER32; BEGIN IF Lib = NIL THEN RETURN -1 END; RETURN dlclose(Lib) END Close;
+PROCEDURE LastError(): CSTRING; BEGIN RETURN dlerror() END LastError;
+END DynamicLibrary.

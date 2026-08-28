@@ -1,0 +1,35 @@
+MODULE ManualMemory;
+IMPORT Memory;
+EXPORT Alloc, Calloc, Realloc, Free, Copy, Move, Compare, Fill, Zero;
+
+(* Explicit unmanaged storage.  Nothing in this module is traced by the GC.
+   This is the intended layer for allocators, drivers, FFI ownership and other
+   low-level work. *)
+PROCEDURE Alloc(N: SIZE): ADDRESS;
+BEGIN RETURN Memory.Alloc(N) END Alloc;
+
+PROCEDURE Calloc(Count, Size: SIZE): ADDRESS;
+BEGIN RETURN Memory.Calloc(Count, Size) END Calloc;
+
+PROCEDURE Realloc(P: ADDRESS; N: SIZE): ADDRESS;
+BEGIN RETURN Memory.Realloc(P, N) END Realloc;
+
+PROCEDURE Free(P: ADDRESS);
+BEGIN Memory.Free(P) END Free;
+
+PROCEDURE Copy(Dst, Src: ADDRESS; N: SIZE);
+BEGIN Memory.Copy(Dst, Src, N) END Copy;
+
+PROCEDURE Move(Dst, Src: ADDRESS; N: SIZE);
+BEGIN Memory.Move(Dst, Src, N) END Move;
+
+PROCEDURE Compare(A, B: ADDRESS; N: SIZE): INTEGER32;
+BEGIN RETURN Memory.Compare(A, B, N) END Compare;
+
+PROCEDURE Fill(Dst: ADDRESS; Byte: BYTE; N: SIZE);
+BEGIN Memory.Fill(Dst, Byte, N) END Fill;
+
+PROCEDURE Zero(Dst: ADDRESS; N: SIZE);
+BEGIN Memory.Zero(Dst, N) END Zero;
+
+END ManualMemory.

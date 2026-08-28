@@ -1,0 +1,13 @@
+MODULE GenericInvalidOperation;
+
+TYPE Item = RECORD Value: INTEGER; END;
+
+PROCEDURE Greater[T](A, B: T): BOOLEAN;
+BEGIN
+    RETURN A > B
+END Greater;
+
+VAR A, B: Item;
+BEGIN
+    ASSERT Greater[Item](A, B)
+END GenericInvalidOperation.

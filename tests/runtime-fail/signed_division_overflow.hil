@@ -1,0 +1,7 @@
+MODULE SignedDivisionOverflow;
+VAR Dividend, Divisor, Value: INTEGER64;
+BEGIN
+    Dividend := INTEGER64(-9223372036854775807 - 1);
+    Divisor := -1;
+    Value := Dividend DIV Divisor
+END SignedDivisionOverflow.

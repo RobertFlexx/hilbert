@@ -1,0 +1,38 @@
+MODULE Expat;
+(* First-party Expat XML C ABI binding. *)
+EXPORT Parser, XML_STATUS_ERROR, XML_STATUS_OK, XML_STATUS_SUSPENDED, XML_ParserCreate, XML_ParserCreateNS, XML_ParserFree, XML_Parse, XML_ParseBuffer, XML_GetBuffer, XML_SetUserData, XML_SetElementHandler, XML_SetCharacterDataHandler, XML_SetCommentHandler, XML_SetProcessingInstructionHandler, XML_SetDefaultHandler;
+EXPORT XML_GetErrorCode, XML_ErrorString, XML_GetCurrentLineNumber, XML_GetCurrentColumnNumber, XML_GetCurrentByteIndex, XML_GetCurrentByteCount, XML_ParserReset, XML_StopParser, XML_ResumeParser;
+
+FOREIGN "C" LIBRARY "expat";
+
+TYPE
+    Parser = ADDRESS;
+
+CONST
+    XML_STATUS_ERROR = 0;
+    XML_STATUS_OK = 1;
+    XML_STATUS_SUSPENDED = 2;
+
+FOREIGN "C" PROCEDURE XML_ParserCreate(Encoding: CSTRING): Parser;
+FOREIGN "C" PROCEDURE XML_ParserCreateNS(Encoding: CSTRING; NamespaceSeparator: CHAR): Parser;
+FOREIGN "C" PROCEDURE XML_ParserFree(P: Parser);
+FOREIGN "C" PROCEDURE XML_Parse(P: Parser; S: CSTRING; Len: INTEGER32; IsFinal: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE XML_ParseBuffer(P: Parser; Len, IsFinal: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE XML_GetBuffer(P: Parser; Len: INTEGER32): ADDRESS;
+FOREIGN "C" PROCEDURE XML_SetUserData(P: Parser; UserData: ADDRESS);
+FOREIGN "C" PROCEDURE XML_SetElementHandler(P: Parser; StartHandler, EndHandler: ADDRESS);
+FOREIGN "C" PROCEDURE XML_SetCharacterDataHandler(P: Parser; Handler: ADDRESS);
+FOREIGN "C" PROCEDURE XML_SetCommentHandler(P: Parser; Handler: ADDRESS);
+FOREIGN "C" PROCEDURE XML_SetProcessingInstructionHandler(P: Parser; Handler: ADDRESS);
+FOREIGN "C" PROCEDURE XML_SetDefaultHandler(P: Parser; Handler: ADDRESS);
+FOREIGN "C" PROCEDURE XML_GetErrorCode(P: Parser): INTEGER32;
+FOREIGN "C" PROCEDURE XML_ErrorString(Code: INTEGER32): CSTRING;
+FOREIGN "C" PROCEDURE XML_GetCurrentLineNumber(P: Parser): CARDINAL64;
+FOREIGN "C" PROCEDURE XML_GetCurrentColumnNumber(P: Parser): CARDINAL64;
+FOREIGN "C" PROCEDURE XML_GetCurrentByteIndex(P: Parser): INTEGER64;
+FOREIGN "C" PROCEDURE XML_GetCurrentByteCount(P: Parser): INTEGER32;
+FOREIGN "C" PROCEDURE XML_ParserReset(P: Parser; Encoding: CSTRING): INTEGER32;
+FOREIGN "C" PROCEDURE XML_StopParser(P: Parser; Resumable: INTEGER32): INTEGER32;
+FOREIGN "C" PROCEDURE XML_ResumeParser(P: Parser): INTEGER32;
+
+END Expat.

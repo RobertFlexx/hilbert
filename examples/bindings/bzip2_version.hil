@@ -1,0 +1,7 @@
+MODULE BZip2Version;
+IMPORT IO, BZip2;
+
+BEGIN
+    IO.Write("bzip2 version: ");
+    IO.WriteLn(BZip2.BZ2_bzlibVersion())
+END BZip2Version.
