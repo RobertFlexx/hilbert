@@ -373,7 +373,7 @@ for rel in ("compiler/hilbert.mod", "buildsys/hilmake.mod"):
 
 # Keep the source tree boring in the useful sense.  An em dash has a habit of
 # sneaking back in when docs get rewritten, and adjacent duplicate headings are
-# almost always a botched edit in Modula-2 source.
+# almost always a botched edit in Modula-2 source. (please dont put em dashes in repo)
 text_suffixes = {".mod", ".def", ".hil", ".md", ".ebnf", ".py", ".sh", ".c", ".h"}
 for p in root.rglob("*"):
     if not p.is_file():
