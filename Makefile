@@ -1,4 +1,4 @@
-# Hilbert is built as a normal Modula-2 program.  Keep the build boring.
+# Hilbert is built as a normal Modula-2 program.  Keep the build boring. (for maintainers)
 GM2 ?= gm2
 PREFIX ?= /usr/local
 DESTDIR ?=
@@ -61,6 +61,7 @@ hilmake: $(BUILD)/hilmake
 $(BUILD):
 	mkdir -p $(BUILD)
 
+# NOTE TO MAINTAINERS BELOW
 # GNU Modula-2 is not C: every implementation module passed to a link
 # invocation without -c is treated as a program unit and may contribute a
 # scaffold/main. Do not "simplify" this into gm2 *.mod; that shit is how we
